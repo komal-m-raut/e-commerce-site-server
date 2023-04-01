@@ -29,7 +29,7 @@ export abstract class ApiError extends Error {
   }
 
   public static handle(err: ApiError, res: Response): Response {
-    console.log('here', err);
+    console.log('here', err.type, res);
     switch (err.type) {
       case ErrorType.BAD_TOKEN:
       case ErrorType.TOKEN_EXPIRED:

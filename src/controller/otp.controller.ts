@@ -45,6 +45,7 @@ export const createOtp = catchAsync(async (req, res, next) => {
   // Generate 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   // Encrypt OTP using bcrypt
+  console.log('otp', otp);
   const hashedOtp = await bcrypt.hash(otp, saltRounds);
 
   const newOtp = await OtpModel.create({

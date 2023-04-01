@@ -5,7 +5,7 @@ import logger from './utils/logger';
 import { Server } from 'http';
 
 let server: Server;
-
+mongoose.set('strictQuery', config.mongoose.strictQuery);
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   logger.info('Connected to MongoDB');
   server = app.listen(config.port, () => {

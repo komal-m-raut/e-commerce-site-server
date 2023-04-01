@@ -32,9 +32,8 @@ const envVarsSchema = Joi.object()
     EMAIL_FROM: Joi.string().description(
       'the from field in the emails sent by the app',
     ),
-    SENDGRID_API_KEY: Joi.string()
-      .required()
-      .description('SendGrid API key'),
+    SENDGRID_API_KEY: Joi.string().required().description('SendGrid API key'),
+    MONGOOSE_STRICT_MODE: Joi.boolean(),
   })
   .unknown();
 
@@ -57,6 +56,7 @@ const config = {
       useUnifiedTopology: true,
       autoIndex: false,
     },
+    strictQuery: envVars.MONGOOSE_STRICT_MODE,
   },
   jwt: {
     secret: envVars.JWT_SECRET,

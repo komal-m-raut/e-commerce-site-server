@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import xss from 'xss-clean';
 import cors from 'cors';
@@ -48,15 +48,15 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 app.get('/images/icons/gear.png', (req, res) => res.status(204));
 
 // send back a 404 error for any unknown api request
-app.use((err: Error, _req: Request, res: Response) => {
-  console.log('fuck', err);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof ApiError) {
     ApiError.handle(err, res);
   } else {
     if (config.env === 'development') {
       logger.info(err);
     }
-    ApiError.handle(new InternalError(), res);
+    ApiError.handle(new InternalError('Route does not exist'), res);
   }
 });
 
