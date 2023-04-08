@@ -1,32 +1,72 @@
 import { Schema, Document, model } from 'mongoose';
 
 interface ITenant extends Document {
-  name: string;
   phoneNo: number;
+  countryCode: number;
   email: string;
-  description?: string;
-  companyId: Schema.Types.ObjectId;
-  Associations: Schema.Types.ObjectId[];
-  Product: Schema.Types.ObjectId[];
-  SKU: Schema.Types.ObjectId[];
-  Location: Schema.Types.ObjectId[];
-  productImports: Schema.Types.ObjectId[];
-  ApiKey: Schema.Types.ObjectId[];
+  password: string;
+  primaryName: string;
+  ownersName: string;
+  primaryEmail: string;
+  ownersEmail: string;
+  ownersPhone: string;
+  primaryPhone: string;
+  businessModel: string;
+  osmType: string;
+  warehousePincode: string;
+  WarehouseGstin: string;
+  warehouseAddress: string;
+  warehouseCity: string;
+  warehouseState: string;
+  warehouseCountry: string;
+  warehouseEmail: string;
+  warehousePhone: string;
+  startTimings: string;
+  endTimings: string;
+  processingCapacity: string;
+  accountHolder: string;
+  accountNumber: string;
+  accountType: string;
+  ifsc: string;
+  bank: string;
+  cheque: string;
+  brandCount: string;
+  declared: string;
 }
 
 const TenantSchema: Schema = new Schema(
   {
-    name: { type: String },
     phoneNo: { type: Number, unique: true },
+    countryCode: Number,
     email: { type: String, unique: true },
-    description: { type: String },
-    companyId: { type: Schema.Types.ObjectId, unique: true },
-    Associations: [{ type: Schema.Types.ObjectId }],
-    Product: [{ type: Schema.Types.ObjectId }],
-    SKU: [{ type: Schema.Types.ObjectId }],
-    Location: [{ type: Schema.Types.ObjectId }],
-    productImports: [{ type: Schema.Types.ObjectId }],
-    ApiKey: [{ type: Schema.Types.ObjectId }],
+    password: String,
+    primaryName: String,
+    ownersName: String,
+    primaryEmail: String,
+    ownersEmail: String,
+    ownersPhone: String,
+    primaryPhone: String,
+    businessModel: String,
+    osmType: String,
+    warehousePincode: String,
+    WarehouseGstin: String,
+    warehouseAddress: String,
+    warehouseCity: String,
+    warehouseState: String,
+    warehouseCountry: String,
+    warehouseEmail: String,
+    warehousePhone: String,
+    startTimings: String,
+    endTimings: String,
+    processingCapacity: String,
+    accountHolder: String,
+    accountNumber: String,
+    accountType: String,
+    ifsc: String,
+    bank: String,
+    cheque: String,
+    brandCount: String,
+    declared: String,
   },
   { versionKey: false },
 );

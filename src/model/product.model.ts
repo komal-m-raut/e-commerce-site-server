@@ -36,7 +36,7 @@ const productSchema = new Schema<IProduct>(
     supplier: { type: Schema.Types.ObjectId, ref: 'Tenant', required: true },
     published: { type: Boolean, default: false },
     attributes: { type: Schema.Types.Mixed },
-    categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
+    categories: [{ type: Schema.Types.ObjectId, ref: 'ChildCategory' }],
     SKU: [{ type: Schema.Types.ObjectId, ref: 'SKU' }],
     manufacturer: { type: String },
     locations: [{ type: Schema.Types.ObjectId, ref: 'Location' }],

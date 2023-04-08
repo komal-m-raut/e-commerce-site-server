@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createAdminSchema,
   idSchema,
+  loginSchema,
   updateAdminSchema,
 } from '@src/validation/admin.validation';
 import validate from '@src/middleware/validate';
@@ -10,13 +11,15 @@ import {
   deleteAdminById,
   getAdminById,
   getAllAdmins,
+  loginAdmin,
   updateAdmin,
 } from '@src/controller/admin.controller';
 
 export const adminRouter: Router = Router();
 
 //*POST ROUTE
-adminRouter.post('/', validate({ body: createAdminSchema }), createAdmin);
+adminRouter.post('/create', validate({ body: createAdminSchema }), createAdmin);
+adminRouter.post('/login', validate({ body: loginSchema }), loginAdmin);
 
 //*GET ROUTE
 adminRouter.get('/', getAllAdmins);
@@ -30,8 +33,4 @@ adminRouter.patch(
 );
 
 //*DELETE ROUTE
-adminRouter.delete(
-  '/:id',
-  validate({ params: idSchema }),
-  deleteAdminById,
-);
+adminRouter.delete('/:id', validate({ params: idSchema }), deleteAdminById);

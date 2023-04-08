@@ -17,7 +17,9 @@ export const createOtp = catchAsync(async (req, res, next) => {
     case 'admin':
       user = await AdminModel.findOne({
         $or: [{ phoneNo }, { email }],
-      });
+      })
+        .lean()
+        .exec();
       if (!user) {
         user = await AdminModel.create({ phoneNo, email });
       }
@@ -25,7 +27,9 @@ export const createOtp = catchAsync(async (req, res, next) => {
     case 'tenant':
       user = await TenantModel.findOne({
         $or: [{ phoneNo }, { email }],
-      });
+      })
+        .lean()
+        .exec();
       if (!user) {
         user = await TenantModel.create({ phoneNo, email });
       }
@@ -33,7 +37,9 @@ export const createOtp = catchAsync(async (req, res, next) => {
     case 'user':
       user = await UserModel.findOne({
         $or: [{ phoneNo }, { email }],
-      });
+      })
+        .lean()
+        .exec();
       if (!user) {
         user = await UserModel.create({ phoneNo, email });
       }
@@ -65,9 +71,9 @@ export const validateOtp = catchAsync(async (req, res) => {
   const { userType, userId, otp } = req.body;
 
   // find the OTP document
-  const existingOtp = await OtpModel.findOne({ userType, userId }).select(
-    '+otp',
-  );
+  const existingOtp = await OtpModel.findOne({ userType, userId })
+    .select('+otp')
+    .exec();
 
   if (!existingOtp) {
     return res.status(400).json({ message: 'OTP not found' });

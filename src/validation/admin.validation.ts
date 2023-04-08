@@ -11,6 +11,11 @@ export const createAdminSchema = Joi.object({
   role: Joi.string().required(),
 });
 
+export const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
+
 export const updateAdminSchema = Joi.object({
   username: Joi.string(),
   firstName: Joi.string(),

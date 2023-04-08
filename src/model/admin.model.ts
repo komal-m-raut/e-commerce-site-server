@@ -9,9 +9,7 @@ interface IAdmin extends Document {
   passwordHash: string;
   token?: string;
   approved: boolean;
-  email_verified: boolean;
-  verificationCode?: string;
-  verificationExpiry?: Date;
+  emailVerified: boolean;
   role?: Schema.Types.ObjectId;
 }
 
@@ -24,9 +22,7 @@ const AdminSchema = new Schema<IAdmin>({
   passwordHash: { type: String },
   token: { type: String },
   approved: { type: Boolean, default: false },
-  email_verified: { type: Boolean, default: false },
-  verificationCode: { type: String },
-  verificationExpiry: { type: Date },
+  emailVerified: { type: Boolean, default: false },
   role: { type: Schema.Types.ObjectId, ref: 'Role' },
 });
 
