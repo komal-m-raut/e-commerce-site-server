@@ -42,6 +42,7 @@ export const createTenant = catchAsync(async (req, res) => {
   // Check if email or phone number is already registered
   const existingTenant = await TenantModel.findOne({
     $or: [{ email }, { phoneNo }],
+    isVerified: true,
   })
     .lean()
     .exec();
@@ -51,11 +52,19 @@ export const createTenant = catchAsync(async (req, res) => {
 
   // Hash password
   const hashedPassword = await bcrypt.hash(password, saltRounds);
-  const tenant = await TenantModel.create({
-    email,
-    phoneNo,
-    password: hashedPassword,
-  });
+  const tenant = await TenantModel.findOneAndUpdate(
+    {
+      email,
+      phoneNo,
+    },
+    {
+      password: hashedPassword,
+      isVerified: true,
+    },
+    { new: true },
+  )
+    .lean()
+    .exec();
 
   return new SuccessResponse('success', tenant).send(res);
 });
