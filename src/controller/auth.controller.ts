@@ -1,14 +1,13 @@
-import bcrypt from 'bcrypt';
 import catchAsync from '@src/utils/catchAsync';
 import OtpModel from '@src/model/otp.model';
 import { SuccessMsgResponse, SuccessResponse } from '@src/utils/apiResponse';
 import { AdminModel, IAdmin } from '@src/model/admin.model';
 import { ITenant, TenantModel } from '@src/model/tenant.model';
 import { IUser, UserModel } from '@src/model/user.model';
-import { BadRequestError } from '@src/utils/apiError';
 import { Model } from 'mongoose';
-
-const saltRounds = 10;
+import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
+import { sendMail } from '@src/utils/sendMail';
+import { NotFoundError } from '@src/utils/apiError';
 
 const userTypeModel: {
   admin: Model<IAdmin>;
@@ -40,7 +39,7 @@ export const createOtp = catchAsync(async (req, res, _next) => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   // Encrypt OTP using bcrypt
   console.log('otp', otp);
-  const hashedOtp = await bcrypt.hash(otp, saltRounds);
+  const hashedOtp = await encrypt(otp);
 
   const newOtp = await OtpModel.create({
     userId: currUser._id,
@@ -74,7 +73,7 @@ export const validateOtp = catchAsync(async (req, res) => {
   }
 
   // compare the provided OTP with the hashed OTP in the database
-  const isMatch = await bcrypt.compare(otp, existingOtp.otp);
+  const isMatch = await decrypt(otp, existingOtp.otp);
 
   if (!isMatch) {
     return res.status(400).json({ message: 'Invalid OTP' });
@@ -90,4 +89,53 @@ export const validateOtp = catchAsync(async (req, res) => {
   await existingOtp.delete();
 
   return new SuccessMsgResponse('OTP validated successfully').send(res);
+});
+
+export const createPasswordResetLink = catchAsync(async (req, res, next) => {
+  const { email, userType } = req.body;
+  const user = userTypeModel[userType as keyof typeof userTypeModel] as Model<
+    IAdmin | ITenant | IUser
+  >;
+  // find user with the given email
+  const currUser = await user.findOne({ email }, { _id: 1 }).exec();
+
+  if (!currUser) {
+    throw next(new NotFoundError(`${userType} with email ${email} not found`));
+  }
+
+  // generate a new reset token
+  const resetToken = generateToken({ userId: currUser._id, userType });
+
+  // send the reset link to the user's email address
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password?resetToken=${resetToken}`;
+
+  const mailOptions = {
+    to: email,
+    subject: 'Password reset link',
+    html: `<h1>Here is your password reset link: ${resetLink}</h1>`,
+    text: `Here is your password reset link: ${resetLink}`,
+  };
+
+  await sendMail(mailOptions);
+
+  return new SuccessMsgResponse('Password reset link sent successfully').send(
+    res,
+  );
+});
+
+export const verifyPasswordResetLink = catchAsync(async (req, res, next) => {
+  const { decoded, newPassword } = req.body;
+  const user = userTypeModel[
+    decoded.userType as keyof typeof userTypeModel
+  ] as Model<IAdmin | ITenant | IUser>;
+  const hashedPassword = await encrypt(newPassword);
+  const updatedUser = await user
+    .findByIdAndUpdate(
+      decoded.userId,
+      { password: hashedPassword },
+      { new: true },
+    )
+    .lean()
+    .exec();
+  return new SuccessResponse('success', updatedUser).send(res);
 });

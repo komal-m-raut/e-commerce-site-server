@@ -7,7 +7,6 @@ interface IAdmin extends Document {
   phoneNo: number;
   email: string;
   passwordHash: string;
-  token?: string;
   approved: boolean;
   emailVerified: boolean;
   role?: Schema.Types.ObjectId;
@@ -20,7 +19,6 @@ const AdminSchema = new Schema<IAdmin>({
   phoneNo: { type: Number, unique: true },
   email: { type: String, unique: true },
   passwordHash: { type: String },
-  token: { type: String },
   approved: { type: Boolean, default: false },
   emailVerified: { type: Boolean, default: false },
   role: { type: Schema.Types.ObjectId, ref: 'Role' },

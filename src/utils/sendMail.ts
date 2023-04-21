@@ -7,14 +7,15 @@ interface IEmailAttachment {
   type: string;
 }
 
-export const sendMail = async (
-  to: string,
-  subject: string,
-  html: string,
-  text: string,
-  attachments?: IEmailAttachment[],
-): Promise<[sgMail.ClientResponse, Record<string, never>]> => {
+export const sendMail = async (mailOptions: {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  attachments?: IEmailAttachment[];
+}): Promise<[sgMail.ClientResponse, Record<string, never>]> => {
   sgMail.setApiKey(config.email.sendgridApi);
+  const { to, subject, html, text, attachments } = mailOptions;
   const msg: sgMail.MailDataRequired = {
     to,
     from: config.email.from,
@@ -26,18 +27,3 @@ export const sendMail = async (
   const sentMsg = await sgMail.send(msg);
   return sentMsg;
 };
-
-/*
-const testMail = async () => {
-  console.log('here');
-  const mail = await sendMail(
-    'vedavratpp@gmail.com',
-    'testing sendgrid',
-    '<h1>Hey</h1>',
-    'Test mail in text',
-  );
-  console.log('mail', mail);
-  return mail;
-};
-console.log(testMail());
-*/

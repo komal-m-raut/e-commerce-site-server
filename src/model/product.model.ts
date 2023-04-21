@@ -1,58 +1,79 @@
-import { Schema, Document, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
+// Define the Product interface for the document
 interface IProduct extends Document {
+  productId: string;
   name: string;
-  description?: string;
-  shortDescriptions?: string;
+  description: string;
+  shortDescription: string;
   slug: string;
-  quantity: number;
-  supplier: Schema.Types.ObjectId;
-  published: boolean;
-  attributes: any;
-  categories: Schema.Types.ObjectId[];
-  SKU: Schema.Types.ObjectId[];
   manufacturer: string;
-  locations: Schema.Types.ObjectId[];
   countryOfOrigin: string;
-  trending: boolean;
-  featuredFrom?: Date;
-  featuredTo?: Date;
-  guestCheckout: boolean;
-  private_product: boolean;
-  marketPlace: boolean;
-  ProductImports: Schema.Types.ObjectId[];
-  reseller?: any;
-  featureImage?: string;
+  supplier: Schema.Types.ObjectId;
   gallery: string[];
+  locations: Schema.Types.ObjectId[];
+  guestCheckout: boolean;
+  privateProduct: boolean;
+  marketplace: boolean;
+  rootCategory: Schema.Types.ObjectId;
+  mainCategory: Schema.Types.ObjectId;
+  childCategory: Schema.Types.ObjectId;
+  SKU: Schema.Types.ObjectId[];
+  published: boolean;
+  tags: string[];
+  productImports: Schema.Types.ObjectId[];
+  reseller: {
+    allowed: boolean;
+    commissionType: string;
+    amount: number;
+  };
+  isDraft: boolean;
 }
 
-const productSchema = new Schema<IProduct>(
-  {
-    name: { type: String, required: true },
-    description: { type: String },
-    shortDescriptions: { type: String },
-    slug: { type: String, required: true },
-    quantity: { type: Number, default: 0 },
-    supplier: { type: Schema.Types.ObjectId, ref: 'Tenant', required: true },
-    published: { type: Boolean, default: false },
-    attributes: { type: Schema.Types.Mixed },
-    categories: [{ type: Schema.Types.ObjectId, ref: 'ChildCategory' }],
-    SKU: [{ type: Schema.Types.ObjectId, ref: 'SKU' }],
-    manufacturer: { type: String },
-    locations: [{ type: Schema.Types.ObjectId, ref: 'Location' }],
-    countryOfOrigin: { type: String },
-    trending: { type: Boolean, default: false },
-    featuredFrom: { type: Date },
-    featuredTo: { type: Date },
-    guestCheckout: { type: Boolean, default: false },
-    private_product: { type: Boolean, default: false },
-    marketPlace: { type: Boolean, default: false },
-    ProductImports: [{ type: Schema.Types.ObjectId, ref: 'ProductImports' }],
-    reseller: { type: Schema.Types.Mixed },
-    featureImage: { type: String },
-    gallery: [{ type: String }],
+// Define the Product schema
+const productSchema = new Schema<IProduct>({
+  productId: { type: String, required: true },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  shortDescription: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
+  manufacturer: { type: String, required: true },
+  countryOfOrigin: { type: String, required: true },
+  supplier: { type: Schema.Types.ObjectId, ref: 'Tenant', required: true },
+  locations: [{ type: String }],
+  guestCheckout: { type: Boolean, default: false },
+  privateProduct: { type: Boolean, default: false },
+  marketplace: { type: Boolean, default: false },
+  rootCategory: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'RootCategory',
   },
-  { versionKey: false },
-);
+  mainCategory: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'MainCategory',
+  },
+  childCategory: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'ChildCategory',
+  },
+  SKU: [{ type: Schema.Types.ObjectId, required: true, ref: 'SKU' }],
+  published: { type: Boolean, default: false },
+  tags: [{ type: String, required: true }],
+  productImports: [{ type: Schema.Types.ObjectId, ref: 'ProductImports' }],
+  reseller: {
+    allowed: { type: Boolean, default: false },
+    commissionType: { type: String },
+    amount: { type: Number },
+  },
+  isDraft: { type: Boolean, default: true },
+});
 
-export default model<IProduct>('Product', productSchema);
+// Define the unique index on productId and supplier fields
+productSchema.index({ productId: 1, supplier: 1 }, { unique: true });
+
+const ProductModel = model<IProduct>('Product', productSchema);
+
+export { ProductModel, IProduct };

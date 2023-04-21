@@ -39,20 +39,20 @@ export const createAdmin = catchAsync(async (req, res, next) => {
 });
 
 // Admin login
-export const loginAdmin = catchAsync(async (req, res) => {
+export const loginAdmin = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   // Find admin by email
   const admin = await AdminModel.findOne({ email }).lean().exec();
   if (!admin) {
-    throw new NotFoundError(`Admin with ${email} not found`);
+    throw next(new NotFoundError(`Admin with ${email} not found`));
   }
 
   // Verify password
   const validPassword = await bcrypt.compare(password, admin.passwordHash);
 
   if (!validPassword) {
-    throw new AuthFailureError(`Invalid password`);
+    throw next(new AuthFailureError(`Invalid password`));
   }
 
   // Create and send JWT token

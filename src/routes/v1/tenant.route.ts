@@ -31,7 +31,7 @@ tenantRouter.get('/:id', authMiddleware, getTenant);
 
 //*PATCH ROUTE
 tenantRouter.patch(
-  '/:id',
+  '/',
   authMiddleware,
   validate({ body: updateTenantSchema }),
   updateTenant,
