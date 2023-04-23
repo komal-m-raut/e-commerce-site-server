@@ -6,6 +6,6 @@ const router = Router();
 
 router.use('/admin', adminRouter);
 router.use('/tenant', tenantRouter);
-router.use('/otp', authRouter);
+router.use('/auth', authRouter);
 
 export default router;

@@ -1,29 +1,29 @@
-import authMiddleware from '@src/middleware/auth';
-import validate from '@src/middleware/validate';
-import { Router } from 'express';
+// import authMiddleware from '@src/middleware/auth';
+// import validate from '@src/middleware/validate';
+// import { Router } from 'express';
 
-const productRouter: Router = Router();
+// const productRouter: Router = Router();
 
-//*POST ROUTE
-productRouter.post(
-  '/create',
-  validate({ body: createProductSchema }),
-  createProduct,
-);
+// //*POST ROUTE
+// productRouter.post(
+//   '/create',
+//   validate({ body: createProductSchema }),
+//   createProduct,
+// );
 
-//*GET ROUTE
-productRouter.get('/', authMiddleware, getAllProducts);
-productRouter.get('/:id', authMiddleware, getProduct);
+// //*GET ROUTE
+// productRouter.get('/', authMiddleware, getAllProducts);
+// productRouter.get('/:id', authMiddleware, getProduct);
 
-//*PATCH ROUTE
-productRouter.patch(
-  '/',
-  authMiddleware,
-  validate({ body: updateProductSchema }),
-  updateProduct,
-);
+// //*PATCH ROUTE
+// productRouter.patch(
+//   '/',
+//   authMiddleware,
+//   validate({ body: updateProductSchema }),
+//   updateProduct,
+// );
 
-//*DELETE ROUTE
-productRouter.delete('/:id', authMiddleware, deleteProduct);
+// //*DELETE ROUTE
+// productRouter.delete('/:id', authMiddleware, deleteProduct);
 
-export default productRouter;
+// export default productRouter;
