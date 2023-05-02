@@ -1,124 +1,267 @@
-import mongoose, { Document, Schema } from 'mongoose';
+// import mongoose, { Document, Schema } from 'mongoose';
 
-interface IWarehouse extends Document {
-  warehousePincode: string;
-  WarehouseGstin: string;
-  WarehouseGstinVerified: boolean;
-  warehouseAddress: string;
-  warehouseCity: string;
-  warehouseState: string;
-  warehouseCountry: string;
-  warehouseEmail: string;
-  warehousePhone: string;
-  startTimings: string;
-  endTimings: string;
-  processingCapacity: string;
-}
+// interface IWarehouse extends Document {
+//   warehousePincode: string;
+//   WarehouseGstin: string;
+//   WarehouseGstinVerified: boolean;
+//   warehouseAddress: string;
+//   warehouseCity: string;
+//   warehouseState: string;
+//   warehouseCountry: string;
+//   warehouseEmail: string;
+//   warehousePhone: string;
+//   startTimings: string;
+//   endTimings: string;
+//   processingCapacity: string;
+// }
 
-interface IBrand extends Document {
-  name: string;
-  logo: string;
-  catalogue: string;
+// interface IBrand extends Document {
+//   name: string;
+//   logo: string;
+//   catalogue: string;
+//   natureOfBusiness: string;
+//   document: string;
+//   averageMrp: string;
+//   averageSp: string;
+//   averageTurnover: string;
+//   onlinePercentage: string;
+//   yearsOfOperation: string;
+//   tryyonForEarth: string;
+//   primaryCategory: string;
+//   secondaryCategory: string;
+// }
+
+// interface ITenant extends Document {
+//   phoneNo: number;
+//   countryCode: number;
+//   email: string;
+//   isVerified: boolean;
+//   password: string;
+//   gstin: string;
+//   gstinVerified: boolean;
+//   primaryName: string;
+//   ownersName: string;
+//   primaryEmail: string;
+//   ownersEmail: string;
+//   ownersPhone: string;
+//   primaryPhone: string;
+//   businessModel: string;
+//   osmType: string;
+//   accountHolder: string;
+//   accountNumber: string;
+//   accountType: string;
+//   ifsc: string;
+//   bank: string;
+//   cheque: string;
+//   totalWarehouse: number;
+//   warehouse: IWarehouse[];
+//   totalBrands: number;
+//   brand: IBrand[];
+//   declared: boolean;
+// }
+
+// const WarehouseSchema = new Schema<IWarehouse>({
+//   warehousePincode: String,
+//   WarehouseGstin: String,
+//   WarehouseGstinVerified: Boolean,
+//   warehouseAddress: String,
+//   warehouseCity: String,
+//   warehouseState: String,
+//   warehouseCountry: String,
+//   warehouseEmail: String,
+//   warehousePhone: String,
+//   startTimings: String,
+//   endTimings: String,
+//   processingCapacity: String,
+// });
+
+// const BrandSchema = new Schema<IBrand>({
+//   name: String,
+//   logo: String,
+//   catalogue: String,
+//   natureOfBusiness: String,
+//   document: String,
+//   averageMrp: String,
+//   averageSp: String,
+//   averageTurnover: String,
+//   onlinePercentage: String,
+//   yearsOfOperation: String,
+//   tryyonForEarth: String,
+//   primaryCategory: String,
+//   secondaryCategory: String,
+// });
+
+// const TenantSchema = new Schema<ITenant>({
+//   phoneNo: { type: Number, unique: true },
+//   countryCode: Number,
+//   email: { type: String, unique: true },
+//   isVerified: { type: Boolean, default: false },
+//   password: String,
+//   gstin: String,
+//   gstinVerified: Boolean,
+//   primaryName: String,
+//   ownersName: String,
+//   primaryEmail: String,
+//   ownersEmail: String,
+//   ownersPhone: String,
+//   primaryPhone: String,
+//   businessModel: String,
+//   osmType: String,
+//   accountHolder: String,
+//   accountNumber: String,
+//   accountType: String,
+//   ifsc: String,
+//   bank: String,
+//   cheque: String,
+//   totalWarehouse: Number,
+//   warehouse: [WarehouseSchema],
+//   totalBrands: Number,
+//   brand: [BrandSchema],
+//   declared: Boolean,
+// });
+
+// const TenantModel = mongoose.model<ITenant>('Tenant', TenantSchema);
+// export { ITenant, TenantModel };
+
+import { Schema, model, Document } from 'mongoose';
+
+interface BusinessInfo {
+  gstin: string;
+  pan: string;
+  businessName: string;
+  businessOwnerName: string;
+  businessModel: string;
   natureOfBusiness: string;
-  document: string;
-  averageMrp: string;
-  averageSp: string;
-  averageTurnover: string;
-  onlinePercentage: string;
-  yearsOfOperation: string;
-  tryyonForEarth: string;
-  primaryCategory: string;
-  secondaryCategory: string;
+  tryyonForPlanet: string;
+  yearsOfOperation: number;
+  avgMrp: number;
+  avgSellingPrice: number;
+  avgMonthlyTurnover: number;
+  percentageOfOnlineBusiness: number;
 }
+
+const businessInfoSchema = new Schema<BusinessInfo>({
+  gstin: String,
+  pan: String,
+  businessName: String,
+  businessOwnerName: String,
+  businessModel: String,
+  natureOfBusiness: String,
+  tryyonForPlanet: String,
+  yearsOfOperation: Number,
+  avgMrp: Number,
+  avgSellingPrice: Number,
+  avgMonthlyTurnover: Number,
+  percentageOfOnlineBusiness: Number,
+});
+
+interface ContactInfo {
+  businessOwnerEmail: string;
+  businessOwnerContact: string;
+  organizationEmail: string;
+  organizationContact: string;
+  primaryEmailId: string;
+  primaryContactName: string;
+  primaryContactNumber: string;
+}
+
+const contactInfoSchema = new Schema<ContactInfo>({
+  businessOwnerEmail: String,
+  businessOwnerContact: String,
+  organizationEmail: String,
+  organizationContact: String,
+  primaryEmailId: String,
+  primaryContactName: String,
+  primaryContactNumber: String,
+});
+
+interface WarehouseInfo {
+  warehousePinCode: string;
+  gsinDetails: string;
+  warehouseAddress: string;
+  city: string;
+  state: string;
+  country: string;
+  warehouseEmail: string;
+  warehouseContact: string;
+  operationStartTime: string;
+  operationEndTime: string;
+  perDayOrderCapacity: number;
+}
+
+const warehouseInfoSchema = new Schema<WarehouseInfo>({
+  warehousePinCode: String,
+  gsinDetails: String,
+  warehouseAddress: String,
+  city: String,
+  state: String,
+  country: String,
+  warehouseEmail: String,
+  warehouseContact: String,
+  operationStartTime: String,
+  operationEndTime: String,
+  perDayOrderCapacity: Number,
+});
+
+interface BankingInfo {
+  accountHolderName: string;
+  accountNumber: string;
+  ifscCode: string;
+  accountType: string;
+  bankName: string;
+  bankLocation: string;
+  cheque: string;
+}
+
+const bankingInfoSchema = new Schema<BankingInfo>({
+  accountHolderName: String,
+  accountNumber: String,
+  ifscCode: String,
+  accountType: String,
+  bankName: String,
+  bankLocation: String,
+  cheque: String,
+});
+
+interface BrandInfo {
+  brandName: string;
+  catalogueDetails: string;
+  brandLogo: string;
+  documentOfProof: string;
+  rootCategory: string;
+  mainCategory: string;
+}
+
+const brandInfoSchema = new Schema<BrandInfo>({
+  brandName: String,
+  catalogueDetails: String,
+  brandLogo: String,
+  documentOfProof: String,
+  rootCategory: String,
+  mainCategory: String,
+});
 
 interface ITenant extends Document {
-  phoneNo: number;
-  countryCode: number;
   email: string;
-  isVerified: boolean;
+  phoneNo: number;
   password: string;
-  gstin: string;
-  gstinVerified: boolean;
-  primaryName: string;
-  ownersName: string;
-  primaryEmail: string;
-  ownersEmail: string;
-  ownersPhone: string;
-  primaryPhone: string;
-  businessModel: string;
-  osmType: string;
-  accountHolder: string;
-  accountNumber: string;
-  accountType: string;
-  ifsc: string;
-  bank: string;
-  cheque: string;
-  totalWarehouse: number;
-  warehouse: IWarehouse[];
-  totalBrands: number;
-  brand: IBrand[];
-  declared: boolean;
+  businessInfo: BusinessInfo;
+  contactInfo: ContactInfo;
+  warehouseInfo: WarehouseInfo;
+  bankingInfo: BankingInfo;
+  brandInfo: BrandInfo;
 }
 
-const WarehouseSchema = new Schema<IWarehouse>({
-  warehousePincode: String,
-  WarehouseGstin: String,
-  WarehouseGstinVerified: Boolean,
-  warehouseAddress: String,
-  warehouseCity: String,
-  warehouseState: String,
-  warehouseCountry: String,
-  warehouseEmail: String,
-  warehousePhone: String,
-  startTimings: String,
-  endTimings: String,
-  processingCapacity: String,
-});
-
-const BrandSchema = new Schema<IBrand>({
-  name: String,
-  logo: String,
-  catalogue: String,
-  natureOfBusiness: String,
-  document: String,
-  averageMrp: String,
-  averageSp: String,
-  averageTurnover: String,
-  onlinePercentage: String,
-  yearsOfOperation: String,
-  tryyonForEarth: String,
-  primaryCategory: String,
-  secondaryCategory: String,
-});
-
 const TenantSchema = new Schema<ITenant>({
-  phoneNo: { type: Number, unique: true },
-  countryCode: Number,
   email: { type: String, unique: true },
-  isVerified: { type: Boolean, default: false },
-  password: String,
-  gstin: String,
-  gstinVerified: Boolean,
-  primaryName: String,
-  ownersName: String,
-  primaryEmail: String,
-  ownersEmail: String,
-  ownersPhone: String,
-  primaryPhone: String,
-  businessModel: String,
-  osmType: String,
-  accountHolder: String,
-  accountNumber: String,
-  accountType: String,
-  ifsc: String,
-  bank: String,
-  cheque: String,
-  totalWarehouse: Number,
-  warehouse: [WarehouseSchema],
-  totalBrands: Number,
-  brand: [BrandSchema],
-  declared: Boolean,
+  phoneNo: { type: Number, unique: true },
+  password: { type: String },
+  businessInfo: { type: businessInfoSchema, required: true },
+  contactInfo: { type: contactInfoSchema, required: true },
+  warehouseInfo: { type: warehouseInfoSchema, required: true },
+  bankingInfo: { type: bankingInfoSchema, required: true },
+  brandInfo: { type: brandInfoSchema, required: true },
 });
 
-const TenantModel = mongoose.model<ITenant>('Tenant', TenantSchema);
+const TenantModel = model<ITenant>('Tenant', TenantSchema);
 export { ITenant, TenantModel };

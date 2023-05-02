@@ -11,6 +11,7 @@ import validate from '@src/middleware/validate';
 import {
   createTenantSchema,
   loginTenantSchema,
+  tenantIdSchema,
   updateTenantSchema,
 } from '@src/validation/tenant.validation';
 import { Router } from 'express';
@@ -31,13 +32,18 @@ tenantRouter.get('/:id', authMiddleware, getTenant);
 
 //*PATCH ROUTE
 tenantRouter.patch(
-  '/',
+  '/:id',
   authMiddleware,
-  validate({ body: updateTenantSchema }),
+  validate({ body: updateTenantSchema, params: tenantIdSchema }),
   updateTenant,
 );
 
 //*DELETE ROUTE
-tenantRouter.delete('/:id', authMiddleware, deleteTenant);
+tenantRouter.delete(
+  '/:id',
+  authMiddleware,
+  validate({ params: tenantIdSchema }),
+  deleteTenant,
+);
 
 export default tenantRouter;

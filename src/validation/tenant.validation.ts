@@ -24,67 +24,65 @@ export const createTenantSchema = Joi.object({
     }),
 });
 
-// Joi validation schema for Tenant update
 export const updateTenantSchema = Joi.object({
-  phoneNo: Joi.number().optional(),
-  countryCode: Joi.number().optional(),
-  email: Joi.string().email().optional(),
-  isVerified: Joi.boolean().optional(),
-  password: Joi.string().optional(),
-  gstin: Joi.string().optional(),
-  gstinVerified: Joi.boolean().optional(),
-  primaryName: Joi.string().optional(),
-  ownersName: Joi.string().optional(),
-  primaryEmail: Joi.string().email().optional(),
-  ownersEmail: Joi.string().email().optional(),
-  ownersPhone: Joi.string().optional(),
-  primaryPhone: Joi.string().optional(),
-  businessModel: Joi.string().optional(),
-  osmType: Joi.string().optional(),
-  accountHolder: Joi.string().optional(),
-  accountNumber: Joi.string().optional(),
-  accountType: Joi.string().optional(),
-  ifsc: Joi.string().optional(),
-  bank: Joi.string().optional(),
-  cheque: Joi.string().optional(),
-  totalWarehouse: Joi.number().optional(),
-  warehouse: Joi.array()
-    .items(
-      Joi.object({
-        warehousePincode: Joi.string().optional(),
-        WarehouseGstin: Joi.string().optional(),
-        WarehouseGstinVerified: Joi.boolean().optional(),
-        warehouseAddress: Joi.string().optional(),
-        warehouseCity: Joi.string().optional(),
-        warehouseState: Joi.string().optional(),
-        warehouseCountry: Joi.string().optional(),
-        warehouseEmail: Joi.string().optional(),
-        warehousePhone: Joi.string().optional(),
-        startTimings: Joi.string().optional(),
-        endTimings: Joi.string().optional(),
-        processingCapacity: Joi.string().optional(),
-      }),
-    )
-    .optional(),
-  totalBrands: Joi.number().optional(),
-  brand: Joi.array()
-    .items(
-      Joi.object({
-        name: Joi.string().optional(),
-        logo: Joi.string().optional(),
-        catalogue: Joi.string().optional(),
-        natureOfBusiness: Joi.string().optional(),
-        document: Joi.string().optional(),
-        averageMrp: Joi.string().optional(),
-        averageSp: Joi.string().optional(),
-        averageTurnover: Joi.string().optional(),
-        onlinePercentage: Joi.string().optional(),
-        yearsOfOperation: Joi.string().optional(),
-        tryyonForEarth: Joi.string().optional(),
-        primaryCategory: Joi.string().optional(),
-        secondaryCategory: Joi.string().optional(),
-      }),
-    )
-    .optional(),
-  declared: Joi.boolean().optional(),
+  businessInfo: Joi.object({
+    gstin: Joi.string(),
+    pan: Joi.string(),
+    businessName: Joi.string(),
+    businessOwnerName: Joi.string(),
+    businessModel: Joi.string(),
+    natureOfBusiness: Joi.string(),
+    tryyonForPlannet: Joi.string(),
+    yearsOfOperation: Joi.number(),
+    avgMrp: Joi.number(),
+    avgSellingPrice: Joi.number(),
+    avgMonthlyTurnover: Joi.number(),
+    percentageOfOnlineBusiness: Joi.number(),
+  }),
+  contactInfo: Joi.object({
+    businessOwnerEmail: Joi.string().email(),
+    businessOwnerContact: Joi.string(),
+    organnizationEmail: Joi.string().email(),
+    organnizationContact: Joi.string(),
+    primaryEmailId: Joi.string().email(),
+    primaryContactName: Joi.string(),
+    primaryContactNumber: Joi.string(),
+  }),
+  warehouseInfo: Joi.object({
+    warehousePinCode: Joi.string(),
+    gsinDetails: Joi.string(),
+    warehouseAdderss: Joi.string(),
+    city: Joi.string(),
+    state: Joi.string(),
+    country: Joi.string(),
+    warehouseEmail: Joi.string().email(),
+    warehouseContact: Joi.string(),
+    operationstartTime: Joi.string(),
+    operationEndTime: Joi.string(),
+    perDayOrderCapacity: Joi.number(),
+  }),
+  bankingInfo: Joi.object({
+    accountHolderName: Joi.string(),
+    accountNumber: Joi.string(),
+    ifscCode: Joi.string(),
+    accountType: Joi.string(),
+    bankName: Joi.string(),
+    bankLocation: Joi.string(),
+    cheque: Joi.string(),
+  }),
+  brandInfo: Joi.object({
+    brandName: Joi.string(),
+    catlogueDetails: Joi.string(),
+    brandLogo: Joi.string(),
+    documentOfProof: Joi.string(),
+    rootCategory: Joi.string(),
+    mainCategory: Joi.string(),
+  }),
+});
+
+export const tenantIdSchema = Joi.object({
+  id: Joi.string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .required()
+    .label('Valid MongoDB ObjectID'),
 });

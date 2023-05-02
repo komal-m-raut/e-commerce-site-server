@@ -19,12 +19,13 @@ const userTypeModel: {
   user: UserModel,
 };
 
+type IModel = IAdmin | ITenant | IUser;
 export const createOtp = catchAsync(async (req, res, _next) => {
   const { phoneNo, email, userType } = req.body;
   const { type } = req.params;
-  const user = userTypeModel[userType as keyof typeof userTypeModel] as Model<
-    IAdmin | ITenant | IUser
-  >;
+  const user = userTypeModel[
+    userType as keyof typeof userTypeModel
+  ] as Model<IModel>;
   let currUser = await user
     .findOne({
       $or: [{ phoneNo }, { email }],
@@ -78,9 +79,9 @@ export const validateOtp = catchAsync(async (req, res) => {
   if (!isMatch) {
     return res.status(400).json({ message: 'Invalid OTP' });
   }
-  const user = userTypeModel[userType as keyof typeof userTypeModel] as Model<
-    IAdmin | ITenant | IUser
-  >;
+  const user = userTypeModel[
+    userType as keyof typeof userTypeModel
+  ] as Model<IModel>;
   await user
     .findByIdAndUpdate(userId, { [existingOtp.category]: existingOtp.otpFor })
     .lean()
@@ -93,9 +94,9 @@ export const validateOtp = catchAsync(async (req, res) => {
 
 export const createPasswordResetLink = catchAsync(async (req, res, next) => {
   const { email, userType } = req.body;
-  const user = userTypeModel[userType as keyof typeof userTypeModel] as Model<
-    IAdmin | ITenant | IUser
-  >;
+  const user = userTypeModel[
+    userType as keyof typeof userTypeModel
+  ] as Model<IModel>;
   // find user with the given email
   const currUser = await user.findOne({ email }, { _id: 1 }).exec();
 
@@ -127,7 +128,7 @@ export const verifyPasswordResetLink = catchAsync(async (req, res, next) => {
   const { decoded, newPassword } = req.body;
   const user = userTypeModel[
     decoded.userType as keyof typeof userTypeModel
-  ] as Model<IAdmin | ITenant | IUser>;
+  ] as Model<IModel>;
   const hashedPassword = await encrypt(newPassword);
   const updatedUser = await user
     .findByIdAndUpdate(
