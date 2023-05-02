@@ -8,7 +8,7 @@ import {
 import { SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import config from '@src/config/config';
 
 export const createAdmin = catchAsync(async (req, res, next) => {
