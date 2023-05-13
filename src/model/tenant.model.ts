@@ -124,6 +124,8 @@
 // export { ITenant, TenantModel };
 
 import { Schema, model, Document } from 'mongoose';
+import { IWarehouse, WarehouseModel } from './warehouse.model';
+import { BrandModel, IBrand } from './brand.model';
 
 interface BusinessInfo {
   gstin: string;
@@ -175,34 +177,6 @@ const contactInfoSchema = new Schema<ContactInfo>({
   primaryContactNumber: String,
 });
 
-interface WarehouseInfo {
-  warehousePinCode: string;
-  gsinDetails: string;
-  warehouseAddress: string;
-  city: string;
-  state: string;
-  country: string;
-  warehouseEmail: string;
-  warehouseContact: string;
-  operationStartTime: string;
-  operationEndTime: string;
-  perDayOrderCapacity: number;
-}
-
-const warehouseInfoSchema = new Schema<WarehouseInfo>({
-  warehousePinCode: String,
-  gsinDetails: String,
-  warehouseAddress: String,
-  city: String,
-  state: String,
-  country: String,
-  warehouseEmail: String,
-  warehouseContact: String,
-  operationStartTime: String,
-  operationEndTime: String,
-  perDayOrderCapacity: Number,
-});
-
 interface BankingInfo {
   accountHolderName: string;
   accountNumber: string;
@@ -223,33 +197,15 @@ const bankingInfoSchema = new Schema<BankingInfo>({
   cheque: String,
 });
 
-interface BrandInfo {
-  brandName: string;
-  catalogueDetails: string;
-  brandLogo: string;
-  documentOfProof: string;
-  rootCategory: string;
-  mainCategory: string;
-}
-
-const brandInfoSchema = new Schema<BrandInfo>({
-  brandName: String,
-  catalogueDetails: String,
-  brandLogo: String,
-  documentOfProof: String,
-  rootCategory: String,
-  mainCategory: String,
-});
-
 interface ITenant extends Document {
   email: string;
   phoneNo: number;
   password: string;
   businessInfo: BusinessInfo;
   contactInfo: ContactInfo;
-  warehouseInfo: WarehouseInfo;
+  warehouseInfo: IWarehouse;
   bankingInfo: BankingInfo;
-  brandInfo: BrandInfo;
+  brandInfo: IBrand;
 }
 
 const TenantSchema = new Schema<ITenant>({
@@ -258,9 +214,9 @@ const TenantSchema = new Schema<ITenant>({
   password: { type: String },
   businessInfo: { type: businessInfoSchema, required: true },
   contactInfo: { type: contactInfoSchema, required: true },
-  warehouseInfo: { type: warehouseInfoSchema, required: true },
+  warehouseInfo: { type: WarehouseModel, required: true },
   bankingInfo: { type: bankingInfoSchema, required: true },
-  brandInfo: { type: brandInfoSchema, required: true },
+  brandInfo: { type: BrandModel, required: true },
 });
 
 const TenantModel = model<ITenant>('Tenant', TenantSchema);

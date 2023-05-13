@@ -1,20 +1,24 @@
 import { Schema, model } from 'mongoose';
 
+// Attribute Model
 interface IAttribute extends Document {
   name: string;
-  description?: string;
+  value: string;
+  description: string;
   slug: string;
+  applicableTo: string[]; // To which categories does this attribute apply
+  attributeType: string; // Is it a color, size, material, etc.
 }
 
-const attributeSchema = new Schema<IAttribute>(
-  {
-    name: { type: String, required: true },
-    description: { type: String },
-    slug: { type: String, required: true },
-  },
-  { timestamps: true, versionKey: false },
-);
+const AttributeSchema: Schema<IAttribute> = new Schema({
+  name: String,
+  value: String,
+  description: String,
+  slug: String,
+  applicableTo: [String],
+  attributeType: String,
+});
 
-const AttributeModel = model<IAttribute>('Attribute', attributeSchema);
+const AttributeModel = model<IAttribute>('Attribute', AttributeSchema);
 
-export default AttributeModel;
+export { AttributeModel, IAttribute };
