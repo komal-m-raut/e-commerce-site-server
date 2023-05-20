@@ -8,7 +8,7 @@ interface IMainCategory extends Document {
   description?: string;
   slug: string;
   parentCategoryId: PopulatedDoc<Schema.Types.ObjectId & IRootCategory>;
-  children: PopulatedDoc<Schema.Types.ObjectId & IChildCategory>[];
+  children: IChildCategory[];
   variants: PopulatedDoc<Schema.Types.ObjectId & IVariant>[];
 }
 

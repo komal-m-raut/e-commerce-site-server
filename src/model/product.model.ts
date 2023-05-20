@@ -221,6 +221,6 @@ const ProductSchema: Schema<IProduct> = new Schema({
   sku: [SkuSchema],
 });
 
-const Product = model<IProduct>('Product', ProductSchema);
+const ProductModel = model<IProduct>('Product', ProductSchema);
 
-export {Product, IProduct}
+export {ProductModel, IProduct}
