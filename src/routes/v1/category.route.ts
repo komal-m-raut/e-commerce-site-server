@@ -5,12 +5,12 @@ import { addAttributeValidation, addChildCategoryValidation, addMainCategoryVali
 import express from 'express';
 
 
-const router = express.Router();
+const categoryRouter = express.Router();
 
-router.post('/root-category',authMiddleware, validate(addRootCategoryValidation), addRootCategory);
-router.post('/main-category',authMiddleware, validate(addMainCategoryValidation), addMainCategory);
-router.post('/child-category',authMiddleware, validate(addChildCategoryValidation), addChildCategory);
-router.post('/variant',authMiddleware, validate(addVariantValidation), addVariant);
-router.post('/attribute',authMiddleware, validate(addAttributeValidation), addAttribute);
+categoryRouter.post('/root-category',authMiddleware, validate(addRootCategoryValidation), addRootCategory);
+categoryRouter.post('/main-category',authMiddleware, validate(addMainCategoryValidation), addMainCategory);
+categoryRouter.post('/child-category',authMiddleware, validate(addChildCategoryValidation), addChildCategory);
+categoryRouter.post('/variant',authMiddleware, validate(addVariantValidation), addVariant);
+categoryRouter.post('/attribute',authMiddleware, validate(addAttributeValidation), addAttribute);
 
-export default router;
+export default categoryRouter;
