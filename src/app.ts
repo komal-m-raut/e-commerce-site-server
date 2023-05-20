@@ -4,7 +4,7 @@ import xss from 'xss-clean';
 import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
-import { ApiError, InternalError } from './utils/apiError';
+import { ApiError, NotFoundError, InternalError } from './utils/apiError';
 import { rateLimiter } from './utils/rateLimiter';
 import config from './config/config';
 import logger from './utils/logger';
@@ -48,15 +48,20 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 app.get('/images/icons/gear.png', (req, res) => res.status(204));
 
 // send back a 404 error for any unknown api request
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const error = new NotFoundError(`Not Found - ${req.originalUrl}`);
+  next(error);
+});
+
+// global error handler
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof ApiError) {
     ApiError.handle(err, res);
   } else {
     if (config.env === 'development') {
       logger.info(err);
     }
-    ApiError.handle(new InternalError('Route does not exist'), res);
+    ApiError.handle(new InternalError('An error occurred'), res);
   }
 });
 

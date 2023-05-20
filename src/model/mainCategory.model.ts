@@ -1,12 +1,15 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, PopulatedDoc } from 'mongoose';
 import { IChildCategory } from './childCategory.mode';
+import { IVariant } from './variant.model';
+import { IRootCategory } from './rootCategory.model';
 
 interface IMainCategory extends Document {
   name: string;
   description?: string;
   slug: string;
-  parentCategoryId: Schema.Types.ObjectId;
-  children: IChildCategory[];
+  parentCategoryId: PopulatedDoc<Schema.Types.ObjectId & IRootCategory>;
+  children: PopulatedDoc<Schema.Types.ObjectId & IChildCategory>[];
+  variants: PopulatedDoc<Schema.Types.ObjectId & IVariant>[];
 }
 
 const categorySchema = new Schema<IMainCategory>(
@@ -16,6 +19,7 @@ const categorySchema = new Schema<IMainCategory>(
     slug: { type: String, required: true },
     parentCategoryId: { type: Schema.Types.ObjectId, ref: 'RootCategory' },
     children: [{ type: Schema.Types.ObjectId, ref: 'ChildCategory' }],
+    variants: [{ type: Schema.Types.ObjectId, ref: 'Variant' }],
   },
   { timestamps: true, versionKey: false },
 );

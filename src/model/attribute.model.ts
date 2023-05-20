@@ -6,7 +6,7 @@ interface IAttribute extends Document {
   value: string;
   description: string;
   slug: string;
-  applicableTo: string[]; // To which categories does this attribute apply
+  applicableTo: string[]; // To which child categories does this attribute apply
   attributeType: string; // Is it a color, size, material, etc.
 }
 

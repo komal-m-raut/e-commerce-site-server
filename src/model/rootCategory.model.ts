@@ -18,10 +18,10 @@ const rootCategorySchema = new Schema<IRootCategory>(
   { timestamps: true, versionKey: false },
 );
 
-const MainCategoryModel = model<IRootCategory>(
+const RootCategoryModel = model<IRootCategory>(
   'RootCategory',
   rootCategorySchema,
   'RootCategory',
 );
 
-export { IRootCategory, MainCategoryModel };
+export { IRootCategory, RootCategoryModel };
