@@ -3,6 +3,7 @@ import { adminRouter } from './admin.route';
 import tenantRouter from './tenant.route';
 import authRouter from './auth.route';
 import categoryRouter from './category.route';
+
 const router = Router();
 
 router.use('/admin', adminRouter);

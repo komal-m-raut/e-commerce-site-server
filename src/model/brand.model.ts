@@ -6,7 +6,7 @@ interface IBrand extends Document {
   brandLogo: string;
   documentOfProof: string;
   categories: string[]; // Brands usually operate in multiple categories
-  originCountry: string; // Country of origin can be important for some customers
+  countryOrigin: string; // Country of origin can be important for some customers
   website: string; // Brand's official website
 }
 
@@ -16,7 +16,7 @@ const BrandSchema: Schema<IBrand> = new Schema({
   brandLogo: String,
   documentOfProof: String,
   categories: [String],
-  originCountry: String,
+  countryOrigin: String,
   website: String,
 });
 

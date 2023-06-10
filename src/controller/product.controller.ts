@@ -1,6 +1,6 @@
 import { ProductModel } from '@src/model/product.model';
-import { InternalError } from '@src/utils/apiError';
-import { NotFoundError } from '@src/utils/apiError';
+import { ISKU, SKUModel } from '@src/model/sku.model';
+import { InternalError, NotFoundError } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 
@@ -47,12 +47,45 @@ export const getProduct = catchAsync(async (req, res, next) => {
 //Create product
 
 export const createProduct = catchAsync(async (req, res, next) => {
-  const newProduct = await ProductModel.create(req.body);
-  if (!newProduct) {
-    throw next(
-      new InternalError('Failed to add new product with given details'),
-    );
-  }
+  const { decoded, SKUs } = req.body;
+
+  // Create SKUs
+  const createdSKUs = (await SKUModel.create(SKUs)) as unknown as ISKU[];
+  const skuIds: string[] = createdSKUs.map((sku) => sku._id);
+
+  // Create product
+  const supplierId = decoded.id;
+  const supplier = {
+    language: req.body.language,
+    manufacturer: req.body.manufacturer,
+    supplier: supplierId,
+    countryOfOrigin: req.body.countryOfOrigin,
+    location: req.body.location,
+  };
+  const basicDetails = {
+    productId: req.body.productId,
+    productName: req.body.productName,
+    marketplace: req.body.marketplace,
+    urlKey: req.body.urlKey,
+    shortDescription: req.body.shortDescription,
+    longDescription: req.body.longDescription,
+    rootCategory: req.body.rootCategory,
+    mainCategory: req.body.mainCategory,
+    childCategory: req.body.childCategory,
+    attributes: req.body.attributes,
+  };
+  const visibility = {
+    editorsChoice: req.body.editorsChoice,
+    guestCheckout: req.body.guestCheckout,
+  };
+  const newProduct = await ProductModel.create({
+    supplier,
+    basicDetails,
+    visibility,
+    sku: skuIds,
+  });
+
+  // Send response
   return new SuccessResponse('Product created', newProduct).send(res);
 });
 

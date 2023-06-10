@@ -1,0 +1,198 @@
+import Joi from 'joi';
+
+// export const createProductSchema = Joi.object({
+//   productStatus: Joi.boolean().required(),
+//   marketplaceStatus: Joi.string().valid('Approved', 'Rejected', 'On Hold').required(),
+//   id: Joi.string().required(),
+//   language: Joi.string().required(),
+//   brandDetails: Joi.object({
+//     manufacturer: Joi.string().required(),
+//     countryOfOrigin: Joi.string().required(),
+//     supplier: Joi.string().required(),
+//     location: Joi.string().required(),
+//   }),
+//   name: Joi.string().required(),
+//   slug: Joi.string().required(),
+//   barcode: Joi.string().required(),
+//   cost: Joi.number().required(),
+//   mrp: Joi.number().required(),
+//   sellingPrice: Joi.number().required(),
+//   wholesalePrice: Joi.number().required(),
+//   hsnNo: Joi.string().required(),
+//   taxPercent: Joi.number().required(),
+//   quantityInStock: Joi.number().required(),
+//   maxOrderQuantity: Joi.number().required(),
+//   minOrderQuantityForWholesale: Joi.number().required(),
+//   maxOrderQuantityForWholesale: Joi.number().required(),
+//   hasVariants: Joi.boolean().required(),
+//   specialPrice: Joi.object({
+//     isEnabled: Joi.boolean().required(),
+//     from: Joi.date().required(),
+//     to: Joi.date().required(),
+//     value: Joi.number().required(),
+//   }),
+//   specialB2BPrice: Joi.object({
+//     isEnabled: Joi.boolean().required(),
+//     from: Joi.date().required(),
+//     to: Joi.date().required(),
+//     value: Joi.number().required(),
+//   }),
+//   featuredProduct: Joi.object({
+//     isEnabled: Joi.boolean().required(),
+//     from: Joi.date().required(),
+//     to: Joi.date().required(),
+//   }),
+//   editorsChoice: Joi.object({
+//     isEnabled: Joi.boolean().required(),
+//     from: Joi.date().required(),
+//     to: Joi.date().required(),
+//   }),
+//   guestCheckout: Joi.boolean().required(),
+//   privateGroup: Joi.object({
+//     isEnabled: Joi.boolean().required(),
+//     group: Joi.string().required(),
+//   }),
+//   refundable: Joi.boolean().required(),
+//   exchangeable: Joi.boolean().required(),
+//   refundExchangeTime: Joi.number().required(),
+//   fragile: Joi.boolean().required(),
+//   essentialItem: Joi.boolean().required(),
+//   description: Joi.object({
+//     shortDescription: Joi.string().required(),
+//     longDescription: Joi.string().required(),
+//   }),
+//   metaData: Joi.object({
+//     metaTitle: Joi.string().required(),
+//     metaDescription: Joi.string().required(),
+//     metaTags: Joi.array().items(Joi.string()).required(),
+//   }),
+//   categoryAttributes: Joi.object({
+//     rootCategory: Joi.string().required(),
+//     mainCategory: Joi.string().required(),
+//     subCategory: Joi.string().required(),
+//     attributes: Joi.object().pattern(
+//       Joi.string(),
+//       Joi.array().items(Joi.string()).required()
+//     ).required(),
+//   }),
+//   variants: Joi.array().items(
+//     Joi.object({
+//       variant: Joi.string().required(),
+//       values: Joi.array().items(Joi.string()).required(),
+//       sku: Joi.string().required(),
+//       name: Joi.string().required(),
+//       barcode: Joi.string().required(),
+//       cost: Joi.number().required(),
+//       mrp: Joi.number().required(),
+//       sellingPrice: Joi.number().required(),
+//       wholesalePrice: Joi.number().required(),
+//       quantityInStock: Joi.number().required(),
+//       maxOrderQuantity: Joi.number().required(),
+//       minOrderQuantityForWholesale: Joi.number().required(),
+//       maxOrderQuantityForWholesale: Joi.number().required(),
+//       images: Joi.array().items(Joi.string()).required(),
+//       videos: Joi.array().items(Joi.string()).required(),
+//       specialPrice: Joi.object({
+//         isEnabled: Joi.boolean().required(),
+//         from: Joi.date().required(),
+//         to: Joi.date().required(),
+//         value: Joi.number().required(),
+//       }),
+//       specialB2BPrice: Joi.object({
+//         isEnabled: Joi.boolean().required(),
+//         from: Joi.date().required(),
+//         to: Joi.date().required(),
+//         value: Joi.number().required(),
+//       }),
+//       shippingDetails: Joi.object({
+//         length: Joi.number().required(),
+//         width: Joi.number().required(),
+//         height: Joi.number().required(),
+//         weight: Joi.number().required(),
+//       }),
+//     })
+//   ),
+//   groupBasedPricing: Joi.object({
+//     isEnabled: Joi.boolean().required(),
+//     diamond: Joi.number().required(),
+//     platinum: Joi.number().required(),
+//     gold: Joi.number().required(),
+//     silver: Joi.number().required(),
+//   }),
+//   reselling: Joi.object({
+//     isEnabled: Joi.boolean().required(),
+//     commission: Joi.number().required(),
+//   }),
+//   packingShippingDetails: Joi.object({
+//     cod: Joi.boolean().required(),
+//     codCharge: Joi.number().required(),
+//     codPartPayment: Joi.boolean().required(),
+//     shippingCharge: Joi.number().required(),
+//     packingCharge: Joi.number().required(),
+//     isGift: Joi.boolean().required(),
+//     giftPackingCharge: Joi.number().required(),
+//   }),
+// });
+
+export const createProductSchema = Joi.object({
+  SKUs: Joi.array().items(
+    Joi.object({
+      SKUs: Joi.array()
+        .items(
+          Joi.object({
+            cost: Joi.object({
+              currency: Joi.string().required(),
+              mrp: Joi.number().required(),
+              sellingPrice: Joi.number().required(),
+              specialPrice: Joi.object({
+                isEnabled: Joi.boolean().required(),
+                startDate: Joi.date().required(),
+                endDate: Joi.date().required(),
+                price: Joi.number().required(),
+              }),
+            }),
+            featuredFrom: Joi.date().required(),
+            featuredTo: Joi.date().required(),
+            trending: Joi.boolean().required(),
+            variant: Joi.array().items(Joi.string()).required(),
+            shipping: Joi.object({
+              quantity: Joi.number().required(),
+              weight: Joi.number().required(),
+              dimensions: Joi.object({
+                length: Joi.number().required(),
+                width: Joi.number().required(),
+                height: Joi.number().required(),
+              }),
+              packingDimensions: Joi.object({
+                length: Joi.number().required(),
+                width: Joi.number().required(),
+                height: Joi.number().required(),
+              }),
+              codAvailable: Joi.boolean().required(),
+              codCharge: Joi.number().required(),
+            }),
+            slug: Joi.string().required(),
+            quantity: Joi.number().required(),
+            published: Joi.boolean().required(),
+            gallery: Joi.array().items(Joi.string()).required(),
+          }),
+        )
+        .required(),
+    }),
+  ),
+  language: Joi.string().required(),
+  manufacturer: Joi.string().required(),
+  countryOfOrigin: Joi.string().required(),
+  location: Joi.string().required(),
+  productId: Joi.string().required(),
+  marketplace: Joi.boolean().required(),
+  urlKey: Joi.string().required(),
+  shortDescription: Joi.string().required(),
+  longDescription: Joi.string().required(),
+  rootCategory: Joi.string().required(),
+  mainCategory: Joi.string().required(),
+  childCategory: Joi.string().required(),
+  attributes: Joi.string().required(),
+  editorChoice: Joi.boolean().required(),
+  guestCheckout: Joi.boolean().required(),
+});

@@ -1257,6 +1257,581 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Add Root Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {token}",
+								"description": "Bearer Token",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic products\",\n  \"slug\": \"electronics\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}://category/root-category",
+							"protocol": "{{base_url}}",
+							"host": [
+								"category"
+							],
+							"path": [
+								"root-category"
+							]
+						},
+						"description": "Adds a new root category."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic products\",\n  \"slug\": \"electronics\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "200",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Root category created successfully\",\n  \"data\": {\n    \"name\": \"Electronics\",\n    \"description\": \"Electronic products\",\n    \"slug\": \"electronics\",\n    \"_id\": \"609b64c7823f3446d46bc37a\",\n    \"createdAt\": \"2021-05-13T12:30:32.000Z\",\n    \"updatedAt\": \"2021-05-13T12:30:32.000Z\"\n  }\n}"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic products\",\n  \"slug\": \"electronics\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "400",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": {\n    \"message\": \"Category with this name and slug already exists\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Main Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {token}",
+								"description": "Bearer Token",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Laptops\",\n  \"description\": \"Laptop computers\",\n  \"slug\": \"laptops\",\n  \"parentCategoryId\": \"609b64c7823f3446d46bc37a\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}://category/main-category",
+							"protocol": "{{base_url}}",
+							"host": [
+								"category"
+							],
+							"path": [
+								"main-category"
+							]
+						},
+						"description": "Adds a new main category."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Laptops\",\n  \"description\": \"Laptop computers\",\n  \"slug\": \"laptops\",\n  \"parentCategoryId\": \"609b64c7823f3446d46bc37a\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "200",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Main category created successfully\",\n  \"data\": {\n    \"name\": \"Laptops\",\n    \"description\": \"Laptop computers\",\n    \"slug\": \"laptops\",\n    \"parentCategoryId\": \"609b64c7823f3446d46bc37a\",\n    \"_id\": \"609b64c7823f3446d46bc37b\",\n    \"createdAt\": \"2021-05-13T12:30:32.000Z\",\n    \"updatedAt\": \"2021-05-13T12:30:32.000Z\"\n  }\n}"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Laptops\",\n  \"description\": \"Laptop computers\",\n  \"slug\": \"laptops\",\n  \"parentCategoryId\": \"609b64c7823f3446d46bc37a\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "400",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": {\n    \"message\": \"This main category already exists\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Child Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {token}",
+								"description": "Bearer Token",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Mobile Phones\",\n  \"description\": \"Smartphones\",\n  \"slug\": \"mobile-phones\",\n  \"parentCategoryId\": \"609b64c7823f3446d46bc37b\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}://category/child-category",
+							"protocol": "{{base_url}}",
+							"host": [
+								"category"
+							],
+							"path": [
+								"child-category"
+							]
+						},
+						"description": "Adds a new child category."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Mobile Phones\",\n  \"description\": \"Smartphones\",\n  \"slug\": \"mobile-phones\",\n  \"parentCategoryId\": \"609b64c7823f3446d46bc37b\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "200",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Child category created successfully\",\n  \"data\": {\n    \"name\": \"Mobile Phones\",\n    \"description\": \"Smartphones\",\n    \"slug\": \"mobile-phones\",\n    \"parentCategoryId\": \"609b64c7823f3446d46bc37b\",\n    \"_id\": \"609b64c7823f3446d46bc37c\",\n    \"createdAt\": \"2021-05-13T12:30:32.000Z\",\n    \"updatedAt\": \"2021-05-13T12:30:32.000Z\"\n  }\n}"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Mobile Phones\",\n  \"description\": \"Smartphones\",\n  \"slug\": \"mobile-phones\",\n  \"parentCategoryId\": \"609b64c7823f3446d46bc37b\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "400",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": {\n    \"message\": \"This child category already exists\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Variant",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {token}",
+								"description": "Bearer Token",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Color\",\n  \"value\": \"Red\",\n  \"description\": \"Red color variant\",\n  \"slug\": \"red\",\n  \"applicableTo\": [],\n  \"variantType\": \"color\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}://category/variant",
+							"protocol": "{{base_url}}",
+							"host": [
+								"category"
+							],
+							"path": [
+								"variant"
+							]
+						},
+						"description": "Adds a new variant."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Color\",\n  \"value\": \"Red\",\n  \"description\": \"Red color variant\",\n  \"slug\": \"red\",\n  \"applicableTo\": [],\n  \"variantType\": \"color\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "200",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Variant created successfully\",\n  \"data\": {\n    \"name\": \"Color\",\n    \"value\": \"Red\",\n    \"description\": \"Red color variant\",\n    \"slug\": \"red\",\n    \"applicableTo\": [],\n    \"variantType\": \"color\",\n    \"_id\": \"609b64c7823f3446d46bc37d\",\n    \"createdAt\": \"2021-05-13T12:30:32.000Z\",\n    \"updatedAt\": \"2021-05-13T12:30:32.000Z\"\n  }\n}"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Color\",\n  \"value\": \"Red\",\n  \"description\": \"Red color variant\",\n  \"slug\": \"red\",\n  \"applicableTo\": [],\n  \"variantType\": \"color\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "400",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": {\n    \"message\": \"Variant with this name and value already exists\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Attribute",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {token}",
+								"description": "Bearer Token",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Brand\",\n  \"value\": \"Apple\",\n  \"description\": \"Apple brand attribute\",\n  \"slug\": \"apple\",\n  \"applicableTo\": [],\n  \"attributeType\": \"brand\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}://category/attribute",
+							"protocol": "{{base_url}}",
+							"host": [
+								"category"
+							],
+							"path": [
+								"attribute"
+							]
+						},
+						"description": "Adds a new attribute."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Brand\",\n  \"value\": \"Apple\",\n  \"description\": \"Apple brand attribute\",\n  \"slug\": \"apple\",\n  \"applicableTo\": [],\n  \"attributeType\": \"brand\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "200",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Attribute created successfully\",\n  \"data\": {\n    \"name\": \"Brand\",\n    \"value\": \"Apple\",\n    \"description\": \"Apple brand attribute\",\n    \"slug\": \"apple\",\n    \"applicableTo\": [],\n    \"attributeType\": \"brand\",\n    \"_id\": \"609b64c7823f3446d46bc37e\",\n    \"createdAt\": \"2021-05-13T12:30:32.000Z\",\n    \"updatedAt\": \"2021-05-13T12:30:32.000Z\"\n  }\n}"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {token}",
+										"type": "text",
+										"name": "Authorization"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"name": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Brand\",\n  \"value\": \"Apple\",\n  \"description\": \"Apple brand attribute\",\n  \"slug\": \"apple\",\n  \"applicableTo\": [],\n  \"attributeType\": \"brand\"\n}"
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "400",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": {\n    \"message\": \"Attribute with this name and value already exists\"\n  }\n}"
+						}
+					]
+				}
+			]
 		}
 	]
 }

@@ -22,6 +22,7 @@ authRouter.post(
   validate({ body: createOtpSchema, params: createOtpTypeSchema }),
   createOtp,
 );
+
 authRouter.post(
   '/validate-otp',
   validate({ body: validateOtpSchema }),

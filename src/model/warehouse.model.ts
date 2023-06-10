@@ -4,7 +4,7 @@ import { Schema, model } from 'mongoose';
 interface IWarehouse extends Document {
   warehouseName: string; // Warehouses usually have a name or identifier
   warehousePinCode: string;
-  gsinDetails: string;
+  gstinDetails: string;
   warehouseAddress: string;
   city: string;
   state: string;
@@ -20,7 +20,7 @@ interface IWarehouse extends Document {
 const WarehouseSchema: Schema<IWarehouse> = new Schema({
   warehouseName: String,
   warehousePinCode: String,
-  gsinDetails: String,
+  gstinDetails: String,
   warehouseAddress: String,
   city: String,
   state: String,

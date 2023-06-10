@@ -4,9 +4,12 @@ import { TenantModel } from '@src/model/tenant.model';
 import {
   AuthFailureError,
   BadRequestError,
+  NoDataError,
   NotFoundError,
 } from '@src/utils/apiError';
 import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
+import { BrandModel, IBrand } from '@src/model/brand.model';
+import { WarehouseModel } from '@src/model/warehouse.model';
 
 // Get all tenants
 export const getAllTenants = catchAsync(async (req, res, next) => {
@@ -108,8 +111,45 @@ export const loginTenant = catchAsync(async (req, res, next) => {
 // Update a tenant
 export const updateTenant = catchAsync(async (req, res, next) => {
   const { decoded } = req.body;
+  const brandData = {
+    brandName: req.body.brandName,
+    catalogueDetails: req.body.catalogueDetails,
+    brandLogo: req.body.brandLogo,
+    documentOfProof: req.body.documentOfProof,
+    categories: req.body.categories,
+    countryOrigin: req.body.countryOrigin,
+    website: req.body.website,
+  }
+  const newBrand = await BrandModel.create(brandData)
+  if(!newBrand){
+    throw next(new NoDataError(`Failed to create brand`));
+  }
+  const warehouseData = {
+    warehouseName: req.body.warehouseName,
+    warehousePinCode: req.body.warehousePinCode,
+    gstinDetails: req.body.gstinDetails,
+    warehouseAddress: req.body.warehouseAddress,
+    city: req.body.city,
+    state: req.body.state,
+    country: req.body.country,
+    warehouseEmail: req.body.warehouseEmail,
+    warehouseContact: req.body.warehouseContact,
+    operationStartTime: req.body.operationStartTime,
+    operationEndTime: req.body.operationEndTime,
+    perDayOrderCapacity: req.body.perDayOrderCapacity,
+    warehouseManager: req.body.warehouseManager,
+  }
 
-  const tenant = await TenantModel.findByIdAndUpdate(decoded.id, req.body, {
+  const newWarehouse = await WarehouseModel.create(warehouseData)
+  if(!newBrand){
+    throw next(new NoDataError(`Failed to create warehouse`));
+  }
+
+  const tenant = await TenantModel.findByIdAndUpdate(decoded.id,{
+    ...req.body,
+    warehouseInfo: newWarehouse,
+    brandInfo: newBrand
+  }, {
     new: true,
   })
     .lean()
