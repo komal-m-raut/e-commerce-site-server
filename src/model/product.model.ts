@@ -6,7 +6,7 @@ import { ITenant } from './tenant.model';
 import { IBrand } from './brand.model';
 import { IWarehouse } from './warehouse.model';
 import { IAttribute } from './attribute.model';
-import { ISKU, SKUModel } from './sku.model';
+import { ISKU, skuSchema } from './sku.model';
 
 interface ISupplier {
   language: string;
@@ -71,7 +71,7 @@ const ProductSchema: Schema<IProduct> = new Schema({
   supplier: SupplierSchema,
   basicDetails: BasicDetailsSchema,
   visibility: VisibilitySchema,
-  sku: [SKUModel],
+  sku: [skuSchema],
 });
 
 const ProductModel = model<IProduct>('Product', ProductSchema);

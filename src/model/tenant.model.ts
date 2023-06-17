@@ -1,6 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
-import { IWarehouse, WarehouseModel } from './warehouse.model';
-import { BrandModel, IBrand } from './brand.model';
+import { IWarehouse, WarehouseSchema } from './warehouse.model';
+import { BrandSchema, IBrand } from './brand.model';
 
 interface BusinessInfo {
   gstin: string;
@@ -89,9 +89,9 @@ const TenantSchema = new Schema<ITenant>({
   password: { type: String },
   businessInfo: { type: businessInfoSchema, required: true },
   contactInfo: { type: contactInfoSchema, required: true },
-  warehouseInfo: { type: WarehouseModel, required: true },
+  warehouseInfo: { type: WarehouseSchema, required: true },
   bankingInfo: { type: bankingInfoSchema, required: true },
-  brandInfo: { type: BrandModel, required: true },
+  brandInfo: { type: BrandSchema, required: true },
 });
 
 const TenantModel = model<ITenant>('Tenant', TenantSchema);

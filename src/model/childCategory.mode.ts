@@ -33,4 +33,4 @@ const ChildCategoryModel = model<IChildCategory>(
   'ChildCategory',
 );
 
-export { IChildCategory, ChildCategoryModel };
+export { IChildCategory, ChildCategoryModel, childCategorySchema };

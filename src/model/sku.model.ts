@@ -1,5 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
-import { IVariant, VariantModel } from './variant.model';
+import { IVariant, VariantSchema } from './variant.model';
 
 interface IShippingDetails {
   quantity: number;
@@ -60,7 +60,7 @@ const skuSchema = new Schema<ISKU>(
     featuredFrom: { type: Date, required: true },
     featuredTo: { type: Date, required: true },
     trending: { type: Boolean, default: false },
-    variants: { type: [VariantModel], required: true },
+    variants: { type: [VariantSchema], required: true },
     shipping: { type: ShippingDetailsSchema, required: true },
     slug: { type: String, required: true },
     quantity: { type: Number, default: 0, required: true },
@@ -72,4 +72,4 @@ const skuSchema = new Schema<ISKU>(
 
 const SKUModel = model<ISKU>('SKU', skuSchema);
 
-export { SKUModel, ISKU };
+export { SKUModel, ISKU, skuSchema };

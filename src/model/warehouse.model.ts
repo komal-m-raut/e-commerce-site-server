@@ -35,4 +35,4 @@ const WarehouseSchema: Schema<IWarehouse> = new Schema({
 
 const WarehouseModel = model<IWarehouse>('Warehouse', WarehouseSchema);
 
-export { WarehouseModel, IWarehouse };
+export { WarehouseModel, IWarehouse, WarehouseSchema };

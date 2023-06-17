@@ -1,22 +1,19 @@
 import { Schema, model } from 'mongoose';
+import { childCategorySchema, IChildCategory } from './childCategory.mode';
 
 // Attribute Model
 interface IAttribute extends Document {
   name: string;
   value: string;
-  description: string;
   slug: string;
-  applicableTo: string[]; // To which child categories does this attribute apply
-  attributeType: string; // Is it a color, size, material, etc.
+  applicableTo: IChildCategory[]; // To which child categories does this attribute apply
 }
 
 const AttributeSchema: Schema<IAttribute> = new Schema({
   name: String,
   value: String,
-  description: String,
   slug: String,
-  applicableTo: [String],
-  attributeType: String,
+  applicableTo: [childCategorySchema],
 });
 
 const AttributeModel = model<IAttribute>('Attribute', AttributeSchema);

@@ -1,24 +1,21 @@
 import { Schema, model } from 'mongoose';
+import { childCategorySchema, IChildCategory } from './childCategory.mode';
 
 // Variant Model
 interface IVariant extends Document {
   name: string;
-  value: string;
-  description: string;
+  value: string[];
   slug: string;
-  applicableTo: string[]; // To which main categories does this variant apply
-  variantType: string; // Is it a color, size, material, etc.
+  applicableTo: IChildCategory[]; // To which child categories does this variant apply
 }
 
 const VariantSchema: Schema<IVariant> = new Schema({
   name: String,
-  value: String,
-  description: String,
+  value: [String],
   slug: String,
-  applicableTo: [String],
-  variantType: String,
+  applicableTo: [childCategorySchema],
 });
 
 const VariantModel = model<IVariant>('Variant', VariantSchema);
 
-export { VariantModel, IVariant };
+export { VariantModel, IVariant, VariantSchema };

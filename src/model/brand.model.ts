@@ -22,4 +22,4 @@ const BrandSchema: Schema<IBrand> = new Schema({
 
 const BrandModel = model<IBrand>('Brand', BrandSchema);
 
-export { BrandModel, IBrand };
+export { BrandModel, IBrand, BrandSchema };

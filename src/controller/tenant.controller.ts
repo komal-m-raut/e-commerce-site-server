@@ -8,7 +8,7 @@ import {
   NotFoundError,
 } from '@src/utils/apiError';
 import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
-import { BrandModel, IBrand } from '@src/model/brand.model';
+import { BrandModel } from '@src/model/brand.model';
 import { WarehouseModel } from '@src/model/warehouse.model';
 
 // Get all tenants
@@ -119,9 +119,9 @@ export const updateTenant = catchAsync(async (req, res, next) => {
     categories: req.body.categories,
     countryOrigin: req.body.countryOrigin,
     website: req.body.website,
-  }
-  const newBrand = await BrandModel.create(brandData)
-  if(!newBrand){
+  };
+  const newBrand = await BrandModel.create(brandData);
+  if (!newBrand) {
     throw next(new NoDataError(`Failed to create brand`));
   }
   const warehouseData = {
@@ -138,20 +138,24 @@ export const updateTenant = catchAsync(async (req, res, next) => {
     operationEndTime: req.body.operationEndTime,
     perDayOrderCapacity: req.body.perDayOrderCapacity,
     warehouseManager: req.body.warehouseManager,
-  }
+  };
 
-  const newWarehouse = await WarehouseModel.create(warehouseData)
-  if(!newBrand){
+  const newWarehouse = await WarehouseModel.create(warehouseData);
+  if (!newBrand) {
     throw next(new NoDataError(`Failed to create warehouse`));
   }
 
-  const tenant = await TenantModel.findByIdAndUpdate(decoded.id,{
-    ...req.body,
-    warehouseInfo: newWarehouse,
-    brandInfo: newBrand
-  }, {
-    new: true,
-  })
+  const tenant = await TenantModel.findByIdAndUpdate(
+    decoded.id,
+    {
+      ...req.body,
+      warehouseInfo: newWarehouse,
+      brandInfo: newBrand,
+    },
+    {
+      new: true,
+    },
+  )
     .lean()
     .exec();
 

@@ -1,6 +1,9 @@
-
 import catchAsync from '@src/utils/catchAsync';
-import { BadRequestError } from '@src/utils/apiError';
+import {
+  BadRequestError,
+  NoDataError,
+  NotFoundError,
+} from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
 import { RootCategoryModel } from '@src/model/rootCategory.model';
 import { MainCategoryModel } from '@src/model/mainCategory.model';
@@ -9,11 +12,15 @@ import { VariantModel } from '@src/model/variant.model';
 import { AttributeModel } from '@src/model/attribute.model';
 
 export const addRootCategory = catchAsync(async (req, res, next) => {
-  const { name,  slug } = req.body;
+  const { name, slug } = req.body;
 
-  const existingCategory = await RootCategoryModel.findOne({ name, slug }).lean().exec();
+  const existingCategory = await RootCategoryModel.findOne({ name, slug })
+    .lean()
+    .exec();
   if (existingCategory) {
-    throw next(new BadRequestError('Category with this name and slug already exists'));
+    throw next(
+      new BadRequestError('Category with this name and slug already exists'),
+    );
   }
 
   const category = new RootCategoryModel(req.body);
@@ -25,9 +32,15 @@ export const addRootCategory = catchAsync(async (req, res, next) => {
 });
 
 export const addMainCategory = catchAsync(async (req, res, next) => {
-  const { name,  slug, parentCategoryId } = req.body;
+  const { name, slug, parentCategoryId } = req.body;
 
-  const existingCategory = await MainCategoryModel.findOne({ name, slug, parentCategoryId }).lean().exec();
+  const existingCategory = await MainCategoryModel.findOne({
+    name,
+    slug,
+    parentCategoryId,
+  })
+    .lean()
+    .exec();
   if (existingCategory) {
     throw next(new BadRequestError('This main category already exists'));
   }
@@ -43,7 +56,13 @@ export const addMainCategory = catchAsync(async (req, res, next) => {
 export const addChildCategory = catchAsync(async (req, res, next) => {
   const { name, slug, parentCategoryId } = req.body;
 
-  const existingCategory = await ChildCategoryModel.findOne({ name, slug, parentCategoryId }).lean().exec();
+  const existingCategory = await ChildCategoryModel.findOne({
+    name,
+    slug,
+    parentCategoryId,
+  })
+    .lean()
+    .exec();
   if (existingCategory) {
     throw next(new BadRequestError('This child category already exists'));
   }
@@ -57,11 +76,15 @@ export const addChildCategory = catchAsync(async (req, res, next) => {
 });
 
 export const addVariant = catchAsync(async (req, res, next) => {
-  const { name, value} = req.body;
+  const { name, value } = req.body;
 
-  const existingVariant = await VariantModel.findOne({ name, value }).lean().exec();
+  const existingVariant = await VariantModel.findOne({ name, value })
+    .lean()
+    .exec();
   if (existingVariant) {
-    throw next(new BadRequestError('Variant with this name and value already exists'));
+    throw next(
+      new BadRequestError('Variant with this name and value already exists'),
+    );
   }
 
   const variant = new VariantModel(req.body);
@@ -75,9 +98,13 @@ export const addVariant = catchAsync(async (req, res, next) => {
 export const addAttribute = catchAsync(async (req, res, next) => {
   const { name, value } = req.body;
 
-  const existingAttribute = await AttributeModel.findOne({ name, value }).lean().exec();
+  const existingAttribute = await AttributeModel.findOne({ name, value })
+    .lean()
+    .exec();
   if (existingAttribute) {
-    throw next(new BadRequestError('Attribute with this name and value already exists'));
+    throw next(
+      new BadRequestError('Attribute with this name and value already exists'),
+    );
   }
 
   const attribute = new AttributeModel(req.body);
@@ -86,4 +113,96 @@ export const addAttribute = catchAsync(async (req, res, next) => {
   return new SuccessResponse('Attribute created successfully', {
     data: attribute,
   }).send(res);
+});
+
+export const getRootCategories = catchAsync(async (req, res, next) => {
+  const rootCategories = await RootCategoryModel.find().lean().exec();
+  if (!rootCategories) {
+    throw next(new NoDataError('Unable to get root categories'));
+  }
+  return new SuccessResponse('success', rootCategories).send(res);
+});
+
+export const getMainCategories = catchAsync(async (req, res, next) => {
+  const { rootId } = req.params;
+  const query: { [key: string]: string } = {};
+  if (rootId) {
+    query.parentCategoryId = rootId;
+  }
+  const mainCategory = await MainCategoryModel.find(query).lean().exec();
+
+  if (rootId && !mainCategory) {
+    throw next(
+      new NotFoundError(`No main category for ${rootId} as root category`),
+    );
+  }
+
+  if (!mainCategory) {
+    throw next(new NoDataError('Unable to get main categories'));
+  }
+
+  return new SuccessResponse('success', mainCategory).send(res);
+});
+
+export const getChildCategories = catchAsync(async (req, res, next) => {
+  const { mainId } = req.params;
+  const query: { [key: string]: string } = {};
+  if (mainId) {
+    query.parentCategoryId = mainId;
+  }
+  const childCategory = await ChildCategoryModel.find(query).lean().exec();
+
+  if (mainId && !childCategory) {
+    throw next(
+      new NotFoundError(`No child category for ${mainId} as main category`),
+    );
+  }
+
+  if (!childCategory) {
+    throw next(new NoDataError('Unable to get child categories'));
+  }
+
+  return new SuccessResponse('success', childCategory).send(res);
+});
+
+export const getVariants = catchAsync(async (req, res, next) => {
+  const { childId } = req.params;
+  const query: { [key: string]: string } = {};
+  if (childId) {
+    query.applicableTo = childId;
+  }
+  const variants = await VariantModel.find(query).lean().exec();
+
+  if (childId && !variants) {
+    throw next(
+      new NotFoundError(`No variant for ${childId} as child category`),
+    );
+  }
+
+  if (!variants) {
+    throw next(new NoDataError('Unable to get variants'));
+  }
+
+  return new SuccessResponse('success', variants).send(res);
+});
+
+export const getAttributes = catchAsync(async (req, res, next) => {
+  const { childId } = req.params;
+  const query: { [key: string]: string } = {};
+  if (childId) {
+    query.applicableTo = childId;
+  }
+  const attributes = await AttributeModel.find(query).lean().exec();
+
+  if (childId && !attributes) {
+    throw next(
+      new NotFoundError(`No attribute for ${childId} as child category`),
+    );
+  }
+
+  if (!attributes) {
+    throw next(new NoDataError('Unable to get attributes'));
+  }
+
+  return new SuccessResponse('success', attributes).send(res);
 });

@@ -1,6 +1,6 @@
 import { ProductModel } from '@src/model/product.model';
 import { ISKU, SKUModel } from '@src/model/sku.model';
-import { InternalError, NotFoundError } from '@src/utils/apiError';
+import { NotFoundError } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 

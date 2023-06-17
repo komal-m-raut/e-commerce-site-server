@@ -1,4 +1,8 @@
-import { createProduct, getAllProducts, getProduct } from '@src/controller/product.controller';
+import {
+  createProduct,
+  getAllProducts,
+  getProduct,
+} from '@src/controller/product.controller';
 import authMiddleware from '@src/middleware/auth';
 import validate from '@src/middleware/validate';
 import { createProductSchema } from '@src/validation/product.validation';
