@@ -86,3 +86,61 @@ export const tenantIdSchema = Joi.object({
     .required()
     .label('Valid MongoDB ObjectID'),
 });
+
+export const homeSectionSchema = Joi.object({
+  preset: Joi.string().required(),
+  headerTemplate: Joi.string().required(),
+  navTemplate: Joi.string().required(),
+  sections: Joi.array()
+    .items(
+      Joi.object({
+        cardTemplate: Joi.string().required(),
+        heading: Joi.string().required(),
+        cards: Joi.array()
+          .items(
+            Joi.object({
+              cssProperties: Joi.object().required(),
+            }),
+          )
+          .required(),
+      }),
+    )
+    .required(),
+});
+
+export const marketingPageSchema = Joi.object({
+  title: Joi.string().required(),
+  slug: Joi.string().required(),
+  html: Joi.string().required(),
+  status: Joi.string().valid('active', 'inactive').required(),
+  seo: Joi.object({
+    title: Joi.string().required(),
+    keywords: Joi.array().items(Joi.string()).required(),
+    description: Joi.string().required(),
+  }).required(),
+});
+
+export const marketingPageUpdateSchema = Joi.object({
+  marketingPageId: Joi.string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .required()
+    .label('Valid MongoDB ObjectID'),
+  updatedData: Joi.object({
+    title: Joi.string(),
+    slug: Joi.string(),
+    html: Joi.string(),
+    status: Joi.string().valid('active', 'inactive'),
+    seo: Joi.object({
+      title: Joi.string(),
+      keywords: Joi.array().items(Joi.string()),
+      description: Joi.string(),
+    }),
+  }),
+});
+
+export const marketingPageIdSchema = Joi.object({
+  marketingPageId: Joi.string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .required()
+    .label('Valid MongoDB ObjectID'),
+});

@@ -180,3 +180,86 @@ export const deleteTenant = catchAsync(async (req, res, next) => {
     message: 'Tenant deleted successfully',
   }).send(res);
 });
+
+//*Miscellaneous
+
+export const homeSection = catchAsync(async (req, res, next) => {
+  const { id } = req.body.params;
+  const homeSection = {
+    preset: req.body.preset,
+    headerTemplate: req.body.headerTemplate,
+    navTemplate: req.body.navTemplate,
+    sections: req.body.sections,
+  };
+  const updatedTenant = await TenantModel.findByIdAndUpdate(
+    id,
+    { customHomeSection: homeSection },
+    { new: true },
+  ).exec();
+  if (!updatedTenant) {
+    throw next(new NotFoundError(`Tenant with id ${id} not found`));
+  }
+  return new SuccessResponse('success', {
+    message: 'Home section created successfully',
+    updatedTenant,
+  }).send(res);
+});
+
+export const createMarketingPage = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const newMarketingPage = await TenantModel.findByIdAndUpdate(
+    id,
+    { marketingPages: [req.body] },
+    { new: true },
+  ).exec();
+  if (!newMarketingPage) {
+    throw next(new NotFoundError(`Tenant with id ${id} not found`));
+  }
+  return new SuccessResponse('success', {
+    message: 'Marketing page created successfully',
+    newMarketingPage,
+  }).send(res);
+});
+
+export const updateMarketingPage = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { marketingPageId, updatedData } = req.body;
+  const tenant = await TenantModel.findById(id).exec();
+  if (!tenant) {
+    throw next(new NotFoundError(`Tenant with id ${id} not found`));
+  }
+  const marketingPageIndex = tenant.marketingPages.findIndex(
+    (page) => page._id === marketingPageId,
+  );
+  if (marketingPageIndex === -1) {
+    throw next(
+      new NotFoundError(`Marketing page with id ${marketingPageId} not found`),
+    );
+  }
+  tenant.marketingPages[marketingPageIndex] = {
+    ...tenant.marketingPages[marketingPageIndex],
+    ...updatedData,
+  };
+  await tenant.save();
+  return new SuccessResponse('success', {
+    message: 'Marketing page updated successfully',
+    tenant,
+  }).send(res);
+});
+
+export const deleteMarketingPage = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { marketingPageId } = req.body;
+  const deletedMarketingPage = await TenantModel.findByIdAndUpdate(
+    id,
+    { $pull: { marketingPages: { _id: marketingPageId } } },
+    { new: true },
+  ).exec();
+  if (!deletedMarketingPage) {
+    throw next(new NotFoundError(`Tenant with id ${id} not found`));
+  }
+  return new SuccessResponse('success', {
+    message: 'Marketing page deleted successfully',
+    deletedMarketingPage,
+  }).send(res);
+});
