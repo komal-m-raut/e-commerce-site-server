@@ -1,46 +1,75 @@
-import { Document, Schema, Model, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
 interface IUser extends Document {
-  username: string;
   firstName: string;
   lastName: string;
-  phoneNo: number;
   email: string;
-  passwordHash: string;
-  token?: string;
-  email_verified: boolean;
-  verificationCode?: string;
-  verificationExpiry?: Date;
-  associations?: any; // Define the Associations type here
-  company?: any; // Define the Company type here
-  role?: Schema.Types.ObjectId;
-  roleId?: Schema.Types.ObjectId;
+  password: string;
+  shippingAddresses: Array<{
+    streetAddress: string;
+    landMark?: string;
+    pinCode: string;
+    city: string;
+    state: string;
+    country: string;
+    addressType: 'Home' | 'Word';
+  }>;
+  phoneNumber: string;
+  billingAddress?: string;
+  paymentMethods: Array<{
+    cardholderName: string;
+    cardNumber: string;
+    cardExpiryDate: string;
+    cardCVV: string;
+  }>;
+  wishlistProducts: string[]; // Array of product IDs
+  cart: Array<{
+    productId: string; // Product ID
+    quantity: number;
+  }>;
 }
 
-const UserSchema: Schema = new Schema(
-  {
-    username: { type: String, unique: true },
-    firstName: { type: String },
-    lastName: { type: String },
-    phoneNo: { type: Number, unique: true },
-    email: { type: String, unique: true },
-    passwordHash: { type: String },
-    token: { type: String },
-    email_verified: { type: Boolean, default: false },
-    verificationCode: { type: String },
-    verificationExpiry: { type: Date },
-    associations: { type: Schema.Types.Mixed }, // Change 'any' to the type of Associations
-    company: { type: Schema.Types.Mixed }, // Change 'any' to the type of Company
-    role: { type: Schema.Types.ObjectId, ref: 'Role' },
-    roleId: { type: Schema.Types.ObjectId },
-  },
-  { timestamps: true, toJSON: { virtuals: true }, versionKey: false },
-);
-
-UserSchema.virtual('fullName').get(function (this: IUser) {
-  return `${this.firstName} ${this.lastName}`;
+// Define the User schema
+const userSchema = new Schema<IUser>({
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  shippingAddresses: [
+    {
+      streetAddress: { type: String, required: true },
+      landMark: { type: String },
+      pinCode: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      country: { type: String, required: true },
+      addressType: { type: String, required: true, enum: ['Home', 'Work'] },
+    },
+  ],
+  phoneNumber: { type: String, required: true },
+  billingAddress: { type: String },
+  paymentMethods: [
+    {
+      cardholderName: { type: String, required: true },
+      cardNumber: { type: String, required: true },
+      cardExpiryDate: { type: String, required: true },
+      cardCVV: { type: String, required: true },
+    },
+  ],
+  wishlistProducts: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+  cart: [
+    {
+      productId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
+      },
+      quantity: { type: Number, required: true, default: 1 },
+    },
+  ],
 });
 
-const UserModel: Model<IUser> = model<IUser>('User', UserSchema);
+// Create and export the User model
+const UserModel = model<IUser>('User', userSchema);
 
 export { UserModel, IUser };
