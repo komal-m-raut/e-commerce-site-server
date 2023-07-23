@@ -67,3 +67,62 @@ export const loginUser = catchAsync(async (req, res, next) => {
   const token = generateToken({ id: user._id });
   return new SuccessResponse('success', { token, user }).send(res);
 });
+
+export const updateUser = catchAsync(async (req, res, next) => {
+  const { userId } = req.params;
+
+  const updatedUser = await UserModel.findByIdAndUpdate(userId, req.body, {
+    new: true,
+    lean: true,
+  }).exec();
+  if (!updatedUser) {
+    throw next(new NotFoundError(`User with Id: ${userId} not found`));
+  }
+  return new SuccessResponse('User updated successfully', { updatedUser }).send(
+    res,
+  );
+});
+
+export const updateWishlist = catchAsync(async (req, res, next) => {
+  const { userId } = req.params;
+  const { productId } = req.body;
+  const user = await UserModel.findById(userId).exec();
+  if (!user) {
+    throw next(new NotFoundError(`User with Id: ${userId} not found`));
+  }
+  const productIndex = user.wishlistProducts.indexOf(productId);
+  if (productIndex !== -1) {
+    // Product found in wishlist, remove it
+    user.wishlistProducts.splice(productIndex, 1);
+  } else {
+    // Product not found in wishlist, add it
+    user.wishlistProducts.push(productId);
+  }
+
+  // Save the updated user document
+  await user.save();
+  return new SuccessResponse('Wishlist updated successfully', user).send(res);
+});
+
+export const updateCart = catchAsync(async (req, res, next) => {
+  const { userId } = req.params;
+  const { productId, quantity = 1 } = req.body;
+  const user = await UserModel.findById(userId).exec();
+  if (!user) {
+    throw next(new NotFoundError(`User with Id: ${userId} not found`));
+  }
+  // Find the product in the cart
+  const cartItem = user.cart.find(
+    (item) => item.productId.toString() === productId,
+  );
+  if (cartItem) {
+    // Product found in cart, update the quantity
+    cartItem.quantity = quantity;
+  } else {
+    // Product not found in cart, add it
+    user.cart.push({ productId, quantity });
+  }
+  // Save the updated user document
+  await user.save();
+  return new SuccessResponse('Cart  updated successfully', user).send(res);
+});

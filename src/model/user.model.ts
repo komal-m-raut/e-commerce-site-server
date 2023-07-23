@@ -69,7 +69,6 @@ const userSchema = new Schema<IUser>({
   ],
 });
 
-// Create and export the User model
 const UserModel = model<IUser>('User', userSchema);
 
 export { UserModel, IUser };

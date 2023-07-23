@@ -1,11 +1,19 @@
 import {
   createProduct,
+  filteredProducts,
   getAllProducts,
   getProduct,
+  searchAndFilterProducts,
+  searchProduct,
 } from '@src/controller/product.controller';
 import authMiddleware from '@src/middleware/auth';
 import validate from '@src/middleware/validate';
-import { createProductSchema } from '@src/validation/product.validation';
+import {
+  createProductSchema,
+  filterProductSchema,
+  searchAndFilterSchema,
+  searchProductSchema,
+} from '@src/validation/product.validation';
 import { Router } from 'express';
 
 const productRouter: Router = Router();
@@ -31,5 +39,25 @@ productRouter.get('/:id', authMiddleware, getProduct);
 
 // //*DELETE ROUTE
 // productRouter.delete('/:id', authMiddleware, deleteProduct);
+
+//? Marketplace routes
+
+productRouter.get(
+  '/marketplace/search',
+  validate({ query: searchProductSchema }),
+  searchProduct,
+);
+
+productRouter.get(
+  '/marketplace/filter',
+  validate({ query: filterProductSchema }),
+  filteredProducts,
+);
+
+productRouter.get(
+  '/marketplace/search-filter',
+  validate({ query: searchAndFilterSchema }),
+  searchAndFilterProducts,
+);
 
 export default productRouter;

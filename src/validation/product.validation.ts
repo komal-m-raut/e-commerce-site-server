@@ -62,3 +62,26 @@ export const createProductSchema = Joi.object({
   editorChoice: Joi.boolean().required(),
   guestCheckout: Joi.boolean().required(),
 });
+
+export const searchProductSchema = Joi.object({
+  search: Joi.string().required().label('Search query'),
+});
+
+export const filterProductSchema = Joi.object({
+  category: Joi.string(),
+  manufacturer: Joi.string(),
+  minPrice: Joi.number().min(0),
+  maxPrice: Joi.number().min(Joi.ref('minPrice')),
+  variants: Joi.array().items(Joi.string()),
+  attributes: Joi.array().items(Joi.string()),
+});
+
+export const searchAndFilterSchema = Joi.object({
+  search: Joi.string().required(),
+  category: Joi.string(),
+  manufacturer: Joi.string(),
+  minPrice: Joi.number().min(0),
+  maxPrice: Joi.number().min(Joi.ref('minPrice')),
+  variants: Joi.array().items(Joi.string()),
+  attributes: Joi.array().items(Joi.string()),
+});

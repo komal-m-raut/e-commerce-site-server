@@ -1,8 +1,9 @@
-import { ProductModel } from '@src/model/product.model';
+import { IProduct, ProductModel } from '@src/model/product.model';
 import { ISKU, SKUModel } from '@src/model/sku.model';
 import { NotFoundError } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
+import { FilterQuery } from 'mongoose';
 
 // Get all products
 export const getAllProducts = catchAsync(async (req, res, next) => {
@@ -113,4 +114,127 @@ export const updateTenant = catchAsync(async (req, res, next) => {
   }
 
   return new SuccessResponse('success', updateProduct).send(res);
+});
+
+//* Marketplace controller
+
+export const searchProduct = catchAsync(async (req, res, next) => {
+  const { search } = req.query;
+  const products = await ProductModel.find({
+    $or: [
+      { productName: { $regex: search, $options: 'i' } },
+      { shortDescription: { $regex: search, $options: 'i' } },
+      { longDescription: { $regex: search, $options: 'i' } },
+    ],
+  })
+    .lean()
+    .exec();
+  if (!products) {
+    throw next(
+      new NotFoundError(
+        `Products with ${search} name / description is not available`,
+      ),
+    );
+  }
+  return new SuccessResponse('Products found', products).send(res);
+});
+
+export const filteredProducts = catchAsync(async (req, res, next) => {
+  const { category, manufacturer, minPrice, maxPrice, variants, attributes } =
+    req.query;
+  const query: FilterQuery<IProduct> = {};
+
+  if (category) {
+    query['basicDetails.childCategory'] = category as string;
+  }
+
+  if (manufacturer) {
+    query['supplier.manufacturer'] = manufacturer as string;
+  }
+
+  if (minPrice || maxPrice) {
+    query['sku.price'] = {};
+
+    if (minPrice) {
+      query['sku.price'].$gte = parseFloat(minPrice as string);
+    }
+
+    if (maxPrice) {
+      query['sku.price'].$lte = parseFloat(maxPrice as string);
+    }
+  }
+
+  if (variants) {
+    query['sku.variant'] = { $in: variants as string[] };
+  }
+
+  if (attributes) {
+    query['basicDetails.attributes'] = { $in: attributes as string[] };
+  }
+
+  const products = await ProductModel.find(query).lean().exec();
+  if (!products) {
+    throw next(new NotFoundError(`Failed while fetching products`));
+  }
+  return new SuccessResponse('Products found', products).send(res);
+});
+
+export const searchAndFilterProducts = catchAsync(async (req, res, next) => {
+  const {
+    search,
+    category,
+    manufacturer,
+    minPrice,
+    maxPrice,
+    variants,
+    attributes,
+  } = req.query;
+
+  const query: FilterQuery<IProduct> = {
+    $or: [
+      { productName: { $regex: search, $options: 'i' } },
+      { shortDescription: { $regex: search, $options: 'i' } },
+      { longDescription: { $regex: search, $options: 'i' } },
+    ],
+  };
+
+  if (category) {
+    query['basicDetails.childCategory'] = category as string;
+  }
+
+  if (manufacturer) {
+    query['supplier.manufacturer'] = manufacturer as string;
+  }
+
+  if (minPrice || maxPrice) {
+    query['sku.price'] = {};
+
+    if (minPrice) {
+      query['sku.price'].$gte = parseFloat(minPrice as string);
+    }
+
+    if (maxPrice) {
+      query['sku.price'].$lte = parseFloat(maxPrice as string);
+    }
+  }
+
+  if (variants) {
+    query['sku.variant'] = { $in: variants as string[] };
+  }
+
+  if (attributes) {
+    query['basicDetails.attributes'] = { $in: attributes as string[] };
+  }
+
+  const products = await ProductModel.find(query).lean().exec();
+
+  if (!products.length) {
+    throw next(
+      new NotFoundError(
+        `No products found for the given search and filter criteria`,
+      ),
+    );
+  }
+
+  return new SuccessResponse('Products found', products).send(res);
 });
