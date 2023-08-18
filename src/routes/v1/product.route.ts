@@ -26,7 +26,7 @@ productRouter.post(
 );
 
 //*GET ROUTE
-productRouter.get('/', authMiddleware, getAllProducts);
+productRouter.get('/:itemsPerPage/:pageCount', authMiddleware, getAllProducts);
 productRouter.get('/:id', authMiddleware, getProduct);
 
 // //*PATCH ROUTE
