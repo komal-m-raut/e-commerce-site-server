@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { childCategorySchema, IChildCategory } from './childCategory.mode';
+import { ChildCategorySchema, IChildCategory } from './childCategory.mode';
 
 // Attribute Model
 interface IAttribute extends Document {
@@ -13,9 +13,9 @@ const AttributeSchema: Schema<IAttribute> = new Schema({
   name: String,
   value: String,
   slug: String,
-  applicableTo: [childCategorySchema],
+  applicableTo: [ChildCategorySchema],
 });
 
 const AttributeModel = model<IAttribute>('Attribute', AttributeSchema);
 
-export { AttributeModel, IAttribute };
+export { AttributeModel, IAttribute, AttributeSchema };

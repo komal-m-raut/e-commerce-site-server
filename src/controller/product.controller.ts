@@ -1,6 +1,5 @@
 import { IProduct, ProductModel } from '@src/model/product.model';
-import { ISKU, SKUModel } from '@src/model/sku.model';
-import { NotFoundError } from '@src/utils/apiError';
+import { InternalError, NotFoundError } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 import { FilterQuery } from 'mongoose';
@@ -48,50 +47,23 @@ export const getProduct = catchAsync(async (req, res, next) => {
 //Create product
 
 export const createProduct = catchAsync(async (req, res, next) => {
-  const { decoded, SKUs } = req.body;
-
-  // Create SKUs
-  const createdSKUs = (await SKUModel.create(SKUs)) as unknown as ISKU[];
-  const skuIds: string[] = createdSKUs.map((sku) => sku._id);
+  const { decoded } = req.body;
 
   // Create product
   const supplierId = decoded.id;
-  const supplier = {
-    language: req.body.language,
-    manufacturer: req.body.manufacturer,
-    supplier: supplierId,
-    countryOfOrigin: req.body.countryOfOrigin,
-    location: req.body.location,
-  };
-  const basicDetails = {
-    productId: req.body.productId,
-    productName: req.body.productName,
-    marketplace: req.body.marketplace,
-    urlKey: req.body.urlKey,
-    shortDescription: req.body.shortDescription,
-    longDescription: req.body.longDescription,
-    rootCategory: req.body.rootCategory,
-    mainCategory: req.body.mainCategory,
-    childCategory: req.body.childCategory,
-    attributes: req.body.attributes,
-  };
-  const visibility = {
-    editorsChoice: req.body.editorsChoice,
-    guestCheckout: req.body.guestCheckout,
-  };
   const newProduct = await ProductModel.create({
-    supplier,
-    basicDetails,
-    visibility,
-    sku: skuIds,
+    generalDetails: { ...req.body.generalDetails, supplier: supplierId },
   });
 
+  if (!newProduct) {
+    throw next(new InternalError('Failed to create product'));
+  }
   // Send response
   return new SuccessResponse('Product created', newProduct).send(res);
 });
 
 // Update product
-export const updateTenant = catchAsync(async (req, res, next) => {
+export const updateProduct = catchAsync(async (req, res, next) => {
   const { decoded } = req.body;
   const { productId } = req.params;
   const supplier = decoded.id;
@@ -122,9 +94,9 @@ export const searchProduct = catchAsync(async (req, res, next) => {
   const { search } = req.query;
   const products = await ProductModel.find({
     $or: [
-      { productName: { $regex: search, $options: 'i' } },
-      { shortDescription: { $regex: search, $options: 'i' } },
-      { longDescription: { $regex: search, $options: 'i' } },
+      { 'generalDetails.productName': { $regex: search, $options: 'i' } },
+      { 'description.short': { $regex: search, $options: 'i' } },
+      { 'description.long': { $regex: search, $options: 'i' } },
     ],
   })
     .lean()
@@ -139,13 +111,14 @@ export const searchProduct = catchAsync(async (req, res, next) => {
   return new SuccessResponse('Products found', products).send(res);
 });
 
+//test filtered products api once
 export const filteredProducts = catchAsync(async (req, res, next) => {
   const { category, manufacturer, minPrice, maxPrice, variants, attributes } =
     req.query;
   const query: FilterQuery<IProduct> = {};
 
   if (category) {
-    query['basicDetails.childCategory'] = category as string;
+    query['category.childCategory'] = category as string;
   }
 
   if (manufacturer) {
@@ -153,19 +126,21 @@ export const filteredProducts = catchAsync(async (req, res, next) => {
   }
 
   if (minPrice || maxPrice) {
-    query['sku.price'] = {};
+    query['productIdentifiers.sku.price'] = {};
 
     if (minPrice) {
-      query['sku.price'].$gte = parseFloat(minPrice as string);
+      query['productIdentifiers.skuId.RetailPricingSchema.sellingPrice'].$gte =
+        parseFloat(minPrice as string);
     }
 
     if (maxPrice) {
-      query['sku.price'].$lte = parseFloat(maxPrice as string);
+      query['productIdentifiers.skuId.RetailPricingSchema.sellingPrice'].$lte =
+        parseFloat(maxPrice as string);
     }
   }
 
   if (variants) {
-    query['sku.variant'] = { $in: variants as string[] };
+    query['productIdentifiers.skuId.variant'] = { $in: variants as string[] };
   }
 
   if (attributes) {
@@ -192,14 +167,14 @@ export const searchAndFilterProducts = catchAsync(async (req, res, next) => {
 
   const query: FilterQuery<IProduct> = {
     $or: [
-      { productName: { $regex: search, $options: 'i' } },
-      { shortDescription: { $regex: search, $options: 'i' } },
-      { longDescription: { $regex: search, $options: 'i' } },
+      { 'generalDetails.productName': { $regex: search, $options: 'i' } },
+      { 'description.short': { $regex: search, $options: 'i' } },
+      { 'description.long': { $regex: search, $options: 'i' } },
     ],
   };
 
   if (category) {
-    query['basicDetails.childCategory'] = category as string;
+    query['category.childCategory'] = category as string;
   }
 
   if (manufacturer) {
@@ -207,19 +182,21 @@ export const searchAndFilterProducts = catchAsync(async (req, res, next) => {
   }
 
   if (minPrice || maxPrice) {
-    query['sku.price'] = {};
+    query['productIdentifiers.sku.price'] = {};
 
     if (minPrice) {
-      query['sku.price'].$gte = parseFloat(minPrice as string);
+      query['productIdentifiers.skuId.RetailPricingSchema.sellingPrice'].$gte =
+        parseFloat(minPrice as string);
     }
 
     if (maxPrice) {
-      query['sku.price'].$lte = parseFloat(maxPrice as string);
+      query['productIdentifiers.skuId.RetailPricingSchema.sellingPrice'].$lte =
+        parseFloat(maxPrice as string);
     }
   }
 
   if (variants) {
-    query['sku.variant'] = { $in: variants as string[] };
+    query['productIdentifiers.skuId.variant'] = { $in: variants as string[] };
   }
 
   if (attributes) {

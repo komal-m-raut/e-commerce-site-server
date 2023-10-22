@@ -10,7 +10,7 @@ interface IMainCategory extends Document {
   children: IChildCategory[];
 }
 
-const categorySchema = new Schema<IMainCategory>(
+const MainCategorySchema = new Schema<IMainCategory>(
   {
     name: { type: String, required: true },
     description: { type: String },
@@ -23,8 +23,8 @@ const categorySchema = new Schema<IMainCategory>(
 
 const MainCategoryModel = model<IMainCategory>(
   'MainCategory',
-  categorySchema,
+  MainCategorySchema,
   'MainCategory',
 );
 
-export { IMainCategory, MainCategoryModel };
+export { IMainCategory, MainCategoryModel, MainCategorySchema };

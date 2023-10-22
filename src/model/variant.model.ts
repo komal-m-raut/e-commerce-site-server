@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { childCategorySchema, IChildCategory } from './childCategory.mode';
+import { ChildCategorySchema, IChildCategory } from './childCategory.mode';
 
 // Variant Model
 interface IVariant extends Document {
@@ -13,7 +13,7 @@ const VariantSchema: Schema<IVariant> = new Schema({
   name: String,
   value: [String],
   slug: String,
-  applicableTo: [childCategorySchema],
+  applicableTo: [ChildCategorySchema],
 });
 
 const VariantModel = model<IVariant>('Variant', VariantSchema);

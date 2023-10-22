@@ -158,4 +158,4 @@ const TenantSchema = new Schema<ITenant>({
 });
 
 const TenantModel = model<ITenant>('Tenant', TenantSchema);
-export { ITenant, TenantModel };
+export { ITenant, TenantModel, TenantSchema };

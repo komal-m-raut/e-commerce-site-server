@@ -15,7 +15,7 @@ interface IChildCategory extends Document {
   variants: PopulatedDoc<Schema.Types.ObjectId & IVariant>[];
 }
 
-const childCategorySchema = new Schema<IChildCategory>(
+const ChildCategorySchema = new Schema<IChildCategory>(
   {
     name: { type: String, required: true },
     description: { type: String },
@@ -31,8 +31,8 @@ const childCategorySchema = new Schema<IChildCategory>(
 
 const ChildCategoryModel = model<IChildCategory>(
   'ChildCategory',
-  childCategorySchema,
+  ChildCategorySchema,
   'ChildCategory',
 );
 
-export { IChildCategory, ChildCategoryModel, childCategorySchema };
+export { IChildCategory, ChildCategoryModel, ChildCategorySchema };

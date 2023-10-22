@@ -1,66 +1,124 @@
 import Joi from 'joi';
 
 export const createProductSchema = Joi.object({
-  SKUs: Joi.array().items(
+  generalDetails: Joi.object({
+    status: Joi.string().required(),
+    productId: Joi.string().required(),
+    language: Joi.string().required(),
+    manufacturer: Joi.string().required(),
+    countryOfOrigin: Joi.string().required(),
+    importerName: Joi.string().required(),
+    location: Joi.string().required(),
+    productName: Joi.string().required(),
+    urlKey: Joi.string().required(),
+    isMarketplace: Joi.boolean().required(),
+  }).required(),
+});
+
+export const updateProductSchema = Joi.object({
+  generalDetails: Joi.object({
+    status: Joi.string(),
+    productId: Joi.string(),
+    language: Joi.string(),
+    manufacturer: Joi.string(),
+    supplier: Joi.string(),
+    countryOfOrigin: Joi.string(),
+    importerName: Joi.string(),
+    location: Joi.string(),
+    productName: Joi.string(),
+    urlKey: Joi.string(),
+    isMarketplace: Joi.boolean(),
+  }),
+  productIdentifiers: Joi.object({
+    skuId: Joi.string(),
+    barcode: Joi.string(),
+    hsnNo: Joi.string(),
+    manufacturerPartNumber: Joi.string(),
+    binPickingNumber: Joi.string(),
+    globalTradeItemNumber: Joi.string(),
+    searchKeywords: Joi.array().items(Joi.string()),
+  }),
+  reselling: Joi.object({
+    isReselling: Joi.boolean(),
+    commissionType: Joi.string().valid('Flat', 'Percentage'),
+    flatCommission: Joi.number(),
+    percentageCommission: Joi.number(),
+    commissionReceivedByReseller: Joi.number(),
+  }),
+  linkedProducts: Joi.object({
+    upSelling: Joi.array().items(Joi.string()),
+    crossSelling: Joi.array().items(Joi.string()),
+    bundledProducts: Joi.array().items(
+      Joi.object({
+        product: Joi.string(),
+        bundledCost: Joi.number(),
+      }),
+    ),
+  }),
+  includes: Joi.object({
+    includes: Joi.array().items(Joi.string()),
+  }),
+  category: Joi.object({
+    rootCategory: Joi.string(),
+    mainCategory: Joi.string(),
+    childCategory: Joi.string(),
+  }),
+  giftWrapping: Joi.object({
+    isGiftWrapping: Joi.boolean(),
+    giftWrapping: Joi.string(),
+  }),
+  description: Joi.object({
+    short: Joi.string(),
+    long: Joi.string(),
+  }),
+  seo: Joi.object({
+    metaTitle: Joi.string(),
+    metaDescription: Joi.string(),
+    metaKeywords: Joi.array().items(Joi.string()),
+  }),
+  instruction: Joi.object({
+    careInstructions: Joi.array().items(Joi.string()),
+    sizeChart: Joi.string(),
+    condition: Joi.string(),
+    warranty: Joi.string(),
+    isEssential: Joi.boolean(),
+    isFragile: Joi.boolean(),
+    isAvailableOnline: Joi.boolean(),
+    returnAvailable: Joi.boolean(),
+    returnDuration: Joi.string(),
+    questionAndAnswers: Joi.array().items(
+      Joi.object({
+        question: Joi.string(),
+        answer: Joi.string(),
+      }),
+    ),
+  }),
+  groups: Joi.object({
+    retailGroups: Joi.array().items(Joi.string()),
+    wholesaleGroups: Joi.array().items(Joi.string()),
+  }),
+  customization: Joi.array().items(
     Joi.object({
-      SKUs: Joi.array()
-        .items(
-          Joi.object({
-            cost: Joi.object({
-              currency: Joi.string().required(),
-              mrp: Joi.number().required(),
-              sellingPrice: Joi.number().required(),
-              specialPrice: Joi.object({
-                isEnabled: Joi.boolean().required(),
-                startDate: Joi.date().required(),
-                endDate: Joi.date().required(),
-                price: Joi.number().required(),
-              }),
-            }),
-            featuredFrom: Joi.date().required(),
-            featuredTo: Joi.date().required(),
-            trending: Joi.boolean().required(),
-            variant: Joi.array().items(Joi.string()).required(),
-            shipping: Joi.object({
-              quantity: Joi.number().required(),
-              weight: Joi.number().required(),
-              dimensions: Joi.object({
-                length: Joi.number().required(),
-                width: Joi.number().required(),
-                height: Joi.number().required(),
-              }),
-              packingDimensions: Joi.object({
-                length: Joi.number().required(),
-                width: Joi.number().required(),
-                height: Joi.number().required(),
-              }),
-              codAvailable: Joi.boolean().required(),
-              codCharge: Joi.number().required(),
-            }),
-            slug: Joi.string().required(),
-            quantity: Joi.number().required(),
-            published: Joi.boolean().required(),
-            gallery: Joi.array().items(Joi.string()).required(),
-          }),
-        )
-        .required(),
+      fieldName: Joi.string(),
+      value: Joi.string(),
     }),
   ),
-  language: Joi.string().required(),
-  manufacturer: Joi.string().required(),
-  countryOfOrigin: Joi.string().required(),
-  location: Joi.string().required(),
-  productId: Joi.string().required(),
-  marketplace: Joi.boolean().required(),
-  urlKey: Joi.string().required(),
-  shortDescription: Joi.string().required(),
-  longDescription: Joi.string().required(),
-  rootCategory: Joi.string().required(),
-  mainCategory: Joi.string().required(),
-  childCategory: Joi.string().required(),
-  attributes: Joi.string().required(),
-  editorChoice: Joi.boolean().required(),
-  guestCheckout: Joi.boolean().required(),
+  cod: Joi.object({
+    totalCodCharge: Joi.number(),
+    partialAdvanceCodCharge: Joi.number(),
+    isCodAvailable: Joi.boolean(),
+  }),
+  shipping: Joi.object({
+    freeShippingAbove: Joi.number(),
+    isIntegratedShipping: Joi.boolean(),
+    isPickupFromStore: Joi.boolean(),
+    packageDetails: Joi.object({
+      lengthInCm: Joi.number(),
+      widthInCm: Joi.number(),
+      heightInCm: Joi.number(),
+      weightInGm: Joi.number(),
+    }),
+  }),
 });
 
 export const searchProductSchema = Joi.object({

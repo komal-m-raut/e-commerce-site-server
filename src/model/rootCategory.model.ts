@@ -24,4 +24,4 @@ const RootCategoryModel = model<IRootCategory>(
   'RootCategory',
 );
 
-export { IRootCategory, RootCategoryModel };
+export { IRootCategory, RootCategoryModel, rootCategorySchema };
