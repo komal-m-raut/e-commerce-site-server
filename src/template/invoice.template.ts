@@ -1,4 +1,4 @@
-interface IInvoice {
+export interface IInvoice {
   soldBy: string;
   shipFrom: string;
   gstin: string;
