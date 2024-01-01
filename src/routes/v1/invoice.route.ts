@@ -7,7 +7,7 @@ import {
 } from '@src/validation/invoice.validation';
 import { Router } from 'express';
 
-export const invoiceRouter: Router = Router();
+const invoiceRouter: Router = Router();
 
 //* POST ROUTE
 invoiceRouter.post(
@@ -16,3 +16,5 @@ invoiceRouter.post(
   validate({ body: createInvoiceSchema, params: idSchema }),
   generateAndSendInvoice,
 );
+
+export default invoiceRouter;

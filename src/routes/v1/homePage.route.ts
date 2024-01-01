@@ -13,7 +13,7 @@ import {
 } from '@src/controller/homePage.controller';
 import authMiddleware from '@src/middleware/auth';
 
-export const homePageRouter: Router = Router();
+const homePageRouter: Router = Router();
 
 //*POST ROUTE
 homePageRouter.post(
@@ -45,3 +45,5 @@ homePageRouter.delete(
   validate({ params: idSchema }),
   deleteHomePageById,
 );
+
+export default homePageRouter;
