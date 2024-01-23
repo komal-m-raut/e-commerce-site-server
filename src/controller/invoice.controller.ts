@@ -3,7 +3,6 @@ import { TransactionModel } from '@src/model/transaction.model';
 import catchAsync from '@src/utils/catchAsync';
 import { NotFoundError } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
-//@ts-ignore: next-line
 import { generatePdf } from 'html-pdf-node';
 import { sendMail } from '@src/utils/sendMail';
 import generateInvoice, { IInvoice } from '@src/template/invoice.template';
@@ -69,23 +68,25 @@ export const generateAndSendInvoice = catchAsync(
     const invoiceHtml = generateInvoice(invoiceData);
 
     // Convert HTML to PDF
-    const pdfBuffer = await generatePdf({ content: invoiceHtml });
-
-    // Send email with PDF attachment
-    await sendMail({
-      to: email,
-      subject: `Invoice for order: ${orderId}}`,
-      html: '<p>Attached is your invoice.</p>',
-      text: 'Attached is your invoice.',
-      attachments: [
-        {
-          content: pdfBuffer.toString('base64'),
-          filename: 'invoice.pdf',
-          type: 'application/pdf',
-        },
-      ],
+    return generatePdf({ content: invoiceHtml }, {}, async (err, pdfBuffer) => {
+      if (err) {
+        return next(err);
+      }
+      await sendMail({
+        to: email,
+        subject: `Invoice for order: ${orderId}}`,
+        html: '<p>Attached is your invoice.</p>',
+        text: 'Attached is your invoice.',
+        attachments: [
+          {
+            content: pdfBuffer.toString('base64'),
+            filename: 'invoice.pdf',
+            type: 'application/pdf',
+          },
+        ],
+      });
+      // Send email with PDF attachment
+      return new SuccessResponse('Invoice sent successfully', {}).send(res);
     });
-
-    return new SuccessResponse('Invoice sent successfully', {}).send(res);
   },
 );
