@@ -34,14 +34,13 @@ const envVarsSchema = Joi.object()
     ),
     SENDGRID_API_KEY: Joi.string().required().description('SendGrid API key'),
     MONGOOSE_STRICT_MODE: Joi.boolean(),
-    MSG_AUTH_KEY: Joi.string().required().description('MSG91 auth key'),
-    MSG_SENDER_ID: Joi.string().required().description('MSG91 sender id'),
-    MSG_ROUTE: Joi.number().required().description('MSG91 route'),
-    MSG_COUNTRY: Joi.number().required().description('MSG91 country'),
-    RAZORPAY_KEY_ID: Joi.string().required().description('Razorpay key id'),
+    MSG_AUTH_KEY: Joi.string().description('MSG91 auth key'),
+    MSG_SENDER_ID: Joi.string().description('MSG91 sender id'),
+    MSG_ROUTE: Joi.number().description('MSG91 route'),
+    MSG_COUNTRY: Joi.number().description('MSG91 country'),
+    RAZORPAY_KEY_ID: Joi.string().description('Razorpay key id'),
     RAZORPAY_KEY_SECRET: Joi.string()
-      .required()
-      .description('Razorpay key secret'),
+    .description('Razorpay key secret'),
   })
   .unknown();
 
