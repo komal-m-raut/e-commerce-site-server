@@ -387,6 +387,7 @@ interface IProduct extends Document {
   shipping: Shipping;
   giftWrapping: GiftWrapping;
   linkedProducts: LinkedProducts;
+  isDraft: boolean;
 }
 
 // Create the Product Schema
@@ -414,9 +415,9 @@ const productSchema = new Schema<IProduct>({
     },
   },
   customization: [{ type: CustomizationSchema }],
-
   cod: { type: CODSchema },
   shipping: { type: ShippingSchema },
+  isDraft: { type: Boolean, default: true },
 });
 
 // Create the Product model

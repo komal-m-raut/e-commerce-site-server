@@ -10,11 +10,10 @@ import catchAsync from '@src/utils/catchAsync';
 
 // User sign up
 export const createUser = catchAsync(async (req, res, next) => {
-  const { email, phoneNo, password } = req.body;
-
+  const { firstName, lastName, email, phoneNumber, password } = req.body;
   // Check if email or phone number is already registered
   const existingUser = await UserModel.findOne({
-    $or: [{ email }, { phoneNo }],
+    $or: [{ email }, { phoneNumber }],
     isVerified: true,
   })
     .lean()
@@ -29,20 +28,16 @@ export const createUser = catchAsync(async (req, res, next) => {
 
   // Hash password
   const hashedPassword = await encrypt(password);
-  const user = await UserModel.findOneAndUpdate(
-    {
-      email,
-      phoneNo,
-    },
-    {
-      password: hashedPassword,
-      isVerified: true,
-    },
-    { new: true },
-  )
-    .lean()
-    .exec();
-
+  const user = await UserModel.create({
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    password: hashedPassword,
+  });
+  if (!user) {
+    throw next(new NotFoundError('Failed to create user'));
+  }
   return new SuccessResponse('success', user).send(res);
 });
 

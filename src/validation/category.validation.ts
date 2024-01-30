@@ -5,6 +5,12 @@ export const addRootCategoryValidation = {
     name: Joi.string().required(),
     description: Joi.string(),
     slug: Joi.string().required(),
+    categoryImage: Joi.string().required(),
+    seo: Joi.object({
+      title: Joi.string(),
+      description: Joi.string(),
+      keywords: Joi.array().items(Joi.string()),
+    }),
   }),
 };
 
