@@ -1,22 +1,32 @@
 import { Document, Schema, model } from 'mongoose';
 
 interface IRole extends Document {
-  title: string;
-  adminRoles: any[];
-  tenantRoles: any[];
-  admins: Schema.Types.ObjectId[]; // Array of ObjectId references to Admin documents
-  users: Schema.Types.ObjectId[]; // Array of ObjectId references to User documents
+  roleId: number;
+  name: string; // Add enum based on the roles
+  subscription: string; // Add enum based on the subscription
+  canManageProducts: boolean; // Sample permissions
+  canProcessOrders: boolean;
+  canEditUsers: boolean;
+  expiryDate: Date;
+  dateOfJoining: Date;
+  description: string;
 }
 
 const RoleSchema = new Schema(
   {
-    title: { type: String, unique: true },
-    adminRoles: [{ type: Schema.Types.Mixed }],
-    tenantRoles: [{ type: Schema.Types.Mixed }],
-    admins: [{ type: Schema.Types.ObjectId, ref: 'Admin' }],
-    users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    roleId: { type: Number, unique: true },
+    name: { type: String, unique: true },
+    subscription: { type: String },
+    canManageProducts: { type: Boolean, default: false },
+    canProcessOrders: { type: Boolean, default: false },
+    canEditUsers: { type: Boolean, default: false },
+    expiryDate: { type: Date },
+    dateOfJoining: { type: Date, default: Date.now },
+    description: { type: String },
   },
   { versionKey: false },
 );
 
-export default model<IRole>('Role', RoleSchema);
+const RoleModel = model<IRole>('Role', RoleSchema);
+
+export { IRole, RoleModel };
