@@ -7,6 +7,7 @@ import productRouter from './product.route';
 import userRouter from './user.route';
 import invoiceRouter from './invoice.route';
 import homePageRouter from './homePage.route';
+import { roleRouter } from './role.route';
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.use('/category', categoryRouter);
 router.use('/product', productRouter);
 router.use('/user', userRouter);
 router.use('/home-page', homePageRouter);
+router.use('/role', roleRouter);
 
 router.use('/invoice', invoiceRouter);
 

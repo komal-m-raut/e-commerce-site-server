@@ -24,18 +24,13 @@ export const createAdmin = catchAsync(async (req, res, next) => {
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
   // Create new admin document
-  const admin = new AdminModel({
+  const admin = await AdminModel.create({
     ...req.body,
     password: passwordHash,
   });
 
-  // Save admin document to database
-  await admin.save();
-
   // Return success response
-  return new SuccessResponse('Admin created successfully', {
-    data: admin,
-  }).send(res);
+  return new SuccessResponse('Admin created successfully', admin).send(res);
 });
 
 // Admin login

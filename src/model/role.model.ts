@@ -7,7 +7,6 @@ interface IRole extends Document {
   canManageProducts: boolean; // Sample permissions
   canProcessOrders: boolean;
   canEditUsers: boolean;
-  expiryDate: Date;
   dateOfJoining: Date;
   description: string;
 }
@@ -20,7 +19,6 @@ const RoleSchema = new Schema(
     canManageProducts: { type: Boolean, default: false },
     canProcessOrders: { type: Boolean, default: false },
     canEditUsers: { type: Boolean, default: false },
-    expiryDate: { type: Date },
     dateOfJoining: { type: Date, default: Date.now },
     description: { type: String },
   },

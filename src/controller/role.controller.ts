@@ -25,12 +25,10 @@ export const createRole = catchAsync(async (req, res, next) => {
   }
 
   // Create new role document
-  const newRole = RoleModel.create(req.body);
+  const newRole = await RoleModel.create(req.body);
 
   // Return success response
-  return new SuccessResponse('Role created successfully', {
-    data: newRole,
-  }).send(res);
+  return new SuccessResponse('Role created successfully', newRole).send(res);
 });
 
 export const getAllRoles = catchAsync(async (_req, res, next) => {
