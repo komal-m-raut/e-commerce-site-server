@@ -7,9 +7,8 @@ import {
 } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import config from '@src/config/config';
+import { generateToken } from '@src/services/auth.service';
 
 export const createAdmin = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -38,7 +37,10 @@ export const loginAdmin = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   // Find admin by email
-  const admin = await AdminModel.findOne({ email }).lean().exec();
+  const admin = await AdminModel.findOne({ email })
+    .populate('role', 'roleId')
+    .lean()
+    .exec();
   if (!admin) {
     throw next(new NotFoundError(`Admin with ${email} not found`));
   }
@@ -51,9 +53,7 @@ export const loginAdmin = catchAsync(async (req, res, next) => {
   }
 
   // Create and send JWT token
-  const token = jwt.sign({ _id: admin._id }, config.jwt.secret, {
-    expiresIn: config.jwt.accessExpirationMinutes,
-  });
+  const token = generateToken({ id: admin._id, roleId: admin.role?.roleId });
   return new SuccessResponse('success', { token, admin }).send(res);
 });
 

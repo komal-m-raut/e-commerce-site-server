@@ -1,4 +1,5 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, PopulatedDoc, Schema, model } from 'mongoose';
+import { IRole } from './role.model';
 
 interface IAdmin extends Document {
   username: string;
@@ -9,7 +10,7 @@ interface IAdmin extends Document {
   passwordHash: string;
   approved: boolean;
   emailVerified: boolean;
-  role?: Schema.Types.ObjectId;
+  role?: PopulatedDoc<Schema.Types.ObjectId & IRole>;
 }
 
 const AdminSchema = new Schema<IAdmin>(

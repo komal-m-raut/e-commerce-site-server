@@ -98,14 +98,21 @@ export const createPasswordResetLink = catchAsync(async (req, res, next) => {
     userType as keyof typeof userTypeModel
   ] as Model<IModel>;
   // find user with the given email
-  const currUser = await user.findOne({ email }, { _id: 1 }).exec();
+  const currUser = await user
+    .findOne({ email }, { _id: 1, role: 1 })
+    .populate('role', 'roleId')
+    .exec();
 
   if (!currUser) {
     throw next(new NotFoundError(`${userType} with email ${email} not found`));
   }
 
   // generate a new reset token
-  const resetToken = generateToken({ userId: currUser._id, userType });
+  const resetToken = generateToken({
+    userId: currUser._id,
+    userType,
+    roleId: currUser?.role.roleId,
+  });
 
   // send the reset link to the user's email address
   const resetLink = `${process.env.FRONTEND_URL}/reset-password?resetToken=${resetToken}`;

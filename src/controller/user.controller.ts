@@ -46,7 +46,10 @@ export const loginUser = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   // Find user by email
-  const user = await UserModel.findOne({ email }).lean().exec();
+  const user = await UserModel.findOne({ email })
+    .populate('role', 'roleId')
+    .lean()
+    .exec();
   if (!user) {
     throw next(new NotFoundError(`User with ${email} not found`));
   }
@@ -59,7 +62,7 @@ export const loginUser = catchAsync(async (req, res, next) => {
   }
 
   // Create and send JWT token
-  const token = generateToken({ id: user._id });
+  const token = generateToken({ id: user._id, roleId: user.role?.roleId });
   return new SuccessResponse('success', { token, user }).send(res);
 });
 

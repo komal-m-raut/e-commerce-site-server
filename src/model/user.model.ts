@@ -1,4 +1,5 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, PopulatedDoc } from 'mongoose';
+import { IRole } from './role.model';
 
 interface IUser extends Document {
   firstName: string;
@@ -27,6 +28,7 @@ interface IUser extends Document {
     productId: string; // Product ID
     quantity: number;
   }>;
+  role?: PopulatedDoc<Schema.Types.ObjectId & IRole>;
 }
 
 // Define the User schema
@@ -66,6 +68,7 @@ const userSchema = new Schema<IUser>({
       quantity: { type: Number, default: 1 },
     },
   ],
+  role: { type: Schema.Types.ObjectId, ref: 'Role' },
 });
 
 const UserModel = model<IUser>('User', userSchema);

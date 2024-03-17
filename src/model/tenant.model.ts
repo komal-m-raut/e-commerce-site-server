@@ -1,6 +1,7 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, PopulatedDoc } from 'mongoose';
 import { IWarehouse, WarehouseSchema } from './warehouse.model';
 import { BrandSchema, IBrand } from './brand.model';
+import { IRole } from './role.model';
 
 interface BusinessInfo {
   gstin: string;
@@ -142,6 +143,7 @@ interface ITenant extends Document {
   brandInfo: IBrand;
   customHomeSection: HomeSection;
   marketingPages: MarketingPage[];
+  role?: PopulatedDoc<Schema.Types.ObjectId & IRole>;
 }
 
 const TenantSchema = new Schema<ITenant>({
@@ -155,6 +157,7 @@ const TenantSchema = new Schema<ITenant>({
   brandInfo: { type: BrandSchema, required: true },
   customHomeSection: { type: homeSectionSchema, required: true },
   marketingPages: [marketingPageSchema],
+  role: { type: Schema.Types.ObjectId, ref: 'Role' },
 });
 
 const TenantModel = model<ITenant>('Tenant', TenantSchema);

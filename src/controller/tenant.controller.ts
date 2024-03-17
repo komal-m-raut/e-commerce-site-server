@@ -91,7 +91,10 @@ export const loginTenant = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   // Find tenant by email
-  const tenant = await TenantModel.findOne({ email }).lean().exec();
+  const tenant = await TenantModel.findOne({ email })
+    .populate('role', 'roleId')
+    .lean()
+    .exec();
   if (!tenant) {
     throw next(new NotFoundError(`Tenant with ${email} not found`));
   }
@@ -104,7 +107,7 @@ export const loginTenant = catchAsync(async (req, res, next) => {
   }
 
   // Create and send JWT token
-  const token = generateToken({ id: tenant._id });
+  const token = generateToken({ id: tenant._id, roleId: tenant.role?.roleId });
   return new SuccessResponse('success', { token, tenant }).send(res);
 });
 
