@@ -1,12 +1,21 @@
 import { Document, Schema, model, PopulatedDoc } from 'mongoose';
-import { IRootCategory, rootCategorySchema } from './rootCategory.model';
-import { IMainCategory, MainCategorySchema } from './mainCategory.model';
-import { ChildCategorySchema, IChildCategory } from './childCategory.mode';
+import {
+  IRootCategory,
+  rootCategorySchema,
+} from './sub-product/rootCategory.model';
+import {
+  IMainCategory,
+  MainCategorySchema,
+} from './sub-product/mainCategory.model';
+import {
+  ChildCategorySchema,
+  IChildCategory,
+} from './sub-product/childCategory.mode';
 import { ITenant, TenantSchema } from './tenant.model';
-import { BrandSchema, IBrand } from './brand.model';
-import { IWarehouse, WarehouseSchema } from './warehouse.model';
-import { AttributeSchema, IAttribute } from './attribute.model';
-import { ISKU, skuSchema } from './sku.model';
+import { BrandSchema, IBrand } from './sub-business/brand.model';
+import { IWarehouse, WarehouseSchema } from './sub-business/warehouse.model';
+import { AttributeSchema, IAttribute } from './sub-product/attribute.model';
+import { ISKU, skuSchema } from './sub-product/sku.model';
 import { GroupSchema, IGroup } from './sub-product/group.model';
 import { ISizeChart, SizeChartSchema } from './sub-product/sizeChart.model';
 import {

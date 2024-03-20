@@ -5,21 +5,22 @@ import config from '@src/config/config';
 // Generate a JWT token
 export const generateToken = (data: Record<string, unknown>): string => {
   const secret = config.jwt.secret || 'default_secret'; // Replace with your own JWT secret
-  const expiresIn = config.jwt.accessExpirationMinutes; // Token expiration time
+  const expiresIn = config.jwt.accessExpirationMinutes ?? '8h'; // Token expiration time (8 hours)
   const payload = data; // Token payload
   return jwt.sign(payload, secret, { expiresIn });
 };
 
 // Validate a JWT token
-export const validateToken = (
-  token: string,
-): Record<string, unknown> | null => {
+export const validateToken = (token: string): Record<string, unknown> => {
   try {
     const secret = config.jwt.secret || 'default_secret'; // Replace with your own JWT secret
     const decoded = jwt.verify(token, secret) as Record<string, unknown>;
-    return decoded;
+    return { isValid: true, data: decoded };
   } catch (err) {
-    return null;
+    if (err instanceof jwt.TokenExpiredError) {
+      return { isValid: false, message: 'TokenExpiredError' };
+    }
+    return { isValid: false, message: 'Invalid token' };
   }
 };
 

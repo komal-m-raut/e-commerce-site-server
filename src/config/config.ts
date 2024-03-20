@@ -13,17 +13,17 @@ const envVarsSchema = Joi.object()
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
-    JWT_ACCESS_EXPIRATION_MINUTES: Joi.number()
-      .default(30)
+    JWT_ACCESS_EXPIRATION: Joi.number()
+      .default('8h')
       .description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number()
-      .default(30)
+      .default('30d')
       .description('days after which refresh tokens expire'),
-    JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number()
-      .default(10)
+    JWT_RESET_PASSWORD_EXPIRATION: Joi.number()
+      .default('30m')
       .description('minutes after which reset password token expires'),
-    JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: Joi.number()
-      .default(10)
+    JWT_VERIFY_EMAIL_EXPIRATION: Joi.number()
+      .default('30m')
       .description('minutes after which verify email token expires'),
     SMTP_HOST: Joi.string().description('server that will send the emails'),
     SMTP_PORT: Joi.number().description('port to connect to the email server'),
@@ -39,8 +39,7 @@ const envVarsSchema = Joi.object()
     MSG_ROUTE: Joi.number().description('MSG91 route'),
     MSG_COUNTRY: Joi.number().description('MSG91 country'),
     RAZORPAY_KEY_ID: Joi.string().description('Razorpay key id'),
-    RAZORPAY_KEY_SECRET: Joi.string()
-    .description('Razorpay key secret'),
+    RAZORPAY_KEY_SECRET: Joi.string().description('Razorpay key secret'),
   })
   .unknown();
 
@@ -67,11 +66,10 @@ const config = {
   },
   jwt: {
     secret: envVars.JWT_SECRET,
-    accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
+    accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION,
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS,
-    resetPasswordExpirationMinutes:
-      envVars.JWT_RESET_PASSWORD_EXPIRATION_MINUTES,
-    verifyEmailExpirationMinutes: envVars.JWT_VERIFY_EMAIL_EXPIRATION_MINUTES,
+    resetPasswordExpirationMinutes: envVars.JWT_RESET_PASSWORD_EXPIRATION,
+    verifyEmailExpirationMinutes: envVars.JWT_VERIFY_EMAIL_EXPIRATION,
   },
   email: {
     smtp: {

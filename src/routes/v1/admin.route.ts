@@ -14,6 +14,7 @@ import {
   loginAdmin,
   updateAdmin,
 } from '@src/controller/admin.controller';
+import authMiddleware from '@src/middleware/auth';
 
 export const adminRouter: Router = Router();
 
@@ -22,7 +23,7 @@ adminRouter.post('/create', validate({ body: createAdminSchema }), createAdmin);
 adminRouter.post('/login', validate({ body: loginSchema }), loginAdmin);
 
 //*GET ROUTE
-adminRouter.get('/', getAllAdmins);
+adminRouter.get('/', authMiddleware(2), getAllAdmins); //This is paginated route pass itemsPerPage & pageNo from query params
 adminRouter.get('/:id', validate({ params: idSchema }), getAdminById);
 
 //*PATCH ROUTE

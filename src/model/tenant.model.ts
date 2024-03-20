@@ -1,6 +1,6 @@
 import { Schema, model, Document, PopulatedDoc } from 'mongoose';
-import { IWarehouse, WarehouseSchema } from './warehouse.model';
-import { BrandSchema, IBrand } from './brand.model';
+import { IWarehouse, WarehouseSchema } from './sub-business/warehouse.model';
+import { BrandSchema, IBrand } from './sub-business/brand.model';
 import { IRole } from './role.model';
 
 interface BusinessInfo {

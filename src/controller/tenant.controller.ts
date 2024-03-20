@@ -8,8 +8,8 @@ import {
   NotFoundError,
 } from '@src/utils/apiError';
 import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
-import { BrandModel } from '@src/model/brand.model';
-import { WarehouseModel } from '@src/model/warehouse.model';
+import { BrandModel } from '@src/model/sub-business/brand.model';
+import { WarehouseModel } from '@src/model/sub-business/warehouse.model';
 
 // Get all tenants
 export const getAllTenants = catchAsync(async (req, res, next) => {

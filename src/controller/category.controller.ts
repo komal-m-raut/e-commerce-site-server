@@ -5,11 +5,11 @@ import {
   NotFoundError,
 } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
-import { RootCategoryModel } from '@src/model/rootCategory.model';
-import { MainCategoryModel } from '@src/model/mainCategory.model';
-import { ChildCategoryModel } from '@src/model/childCategory.mode';
-import { VariantModel } from '@src/model/variant.model';
-import { AttributeModel } from '@src/model/attribute.model';
+import { RootCategoryModel } from '@src/model/sub-product/rootCategory.model';
+import { MainCategoryModel } from '@src/model/sub-product/mainCategory.model';
+import { ChildCategoryModel } from '@src/model/sub-product/childCategory.mode';
+import { VariantModel } from '@src/model/sub-product/variant.model';
+import { AttributeModel } from '@src/model/sub-product/attribute.model';
 
 export const addRootCategory = catchAsync(async (req, res, next) => {
   const { name, slug } = req.body;

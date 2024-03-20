@@ -25,7 +25,7 @@ export const createAdmin = catchAsync(async (req, res, next) => {
   // Create new admin document
   const admin = await AdminModel.create({
     ...req.body,
-    password: passwordHash,
+    passwordHash,
   });
 
   // Return success response
@@ -53,19 +53,31 @@ export const loginAdmin = catchAsync(async (req, res, next) => {
   }
 
   // Create and send JWT token
-  const token = generateToken({ id: admin._id, roleId: admin.role?.roleId });
+  const token = generateToken({
+    id: admin._id,
+    roleId: admin.role?.roleId,
+    type: 'admin',
+  });
   return new SuccessResponse('success', { token, admin }).send(res);
 });
 
-export const getAllAdmins = catchAsync(async (_req, res, next) => {
-  const admins = await AdminModel.find().lean().exec();
+export const getAllAdmins = catchAsync(async (req, res, next) => {
+  const itemsPerPage = parseInt(req.query.itemsPerPage as string) || 10; // default to 10 items per page
+  const pageNo = parseInt(req.query.pageNo as string) || 1; // default to first page
+  if (itemsPerPage < 1 || pageNo < 1)
+    throw next(new BadRequestError('Invalid query params'));
+
+  const admins = await AdminModel.find()
+    .skip((pageNo - 1) * itemsPerPage)
+    .limit(itemsPerPage)
+    .lean()
+    .exec();
 
   if (!admins) {
     throw next(new InternalError('No admins found'));
   }
   return new SuccessResponse('success', { data: admins }).send(res);
 });
-
 export const getAdminById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 

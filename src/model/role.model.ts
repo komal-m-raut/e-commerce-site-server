@@ -1,7 +1,6 @@
 import { Document, Schema, model } from 'mongoose';
 
-interface IPackage {
-  desktopVersion: boolean;
+interface IPermissions {
   canCreateProducts: boolean;
   ownDomain: number;
   staffAccounts: boolean;
@@ -44,64 +43,55 @@ interface IPackage {
 interface IRole extends Document {
   roleId: number;
   name: string; // Add enum based on the roles
-  subscription: string; // Add enum based on the subscription
-  canManageProducts: boolean; // Sample permissions
-  canProcessOrders: boolean;
-  canEditUsers: boolean;
   dateOfJoining: Date;
   description: string;
-  packages: IPackage;
+  permissions: IPermissions;
 }
 
 const RoleSchema = new Schema(
   {
-    roleId: { type: Number, unique: true },
+    roleId: { type: Number },
     name: { type: String, unique: true },
-    subscription: { type: String },
-    canManageProducts: { type: Boolean, default: false },
-    canProcessOrders: { type: Boolean, default: false },
-    canEditUsers: { type: Boolean, default: false },
     dateOfJoining: { type: Date, default: Date.now },
     description: { type: String },
-    packages: {
-      desktopVersion: { type: Boolean },
-      canCreateProducts: { type: Boolean },
+    permissions: {
+      canCreateProducts: { type: Boolean, default: false },
       ownDomain: { type: Number },
-      staffAccounts: { type: Boolean },
+      staffAccounts: { type: Boolean, default: false },
       themes: { type: Number },
-      canEditTheme: { type: Boolean },
+      canEditTheme: { type: Boolean, default: false },
       transactionCharge: { type: Number },
-      sessionTracking: { type: Boolean },
-      b2cPrice: { type: Boolean },
-      b2bPrice: { type: Boolean },
-      reselling: { type: Boolean },
-      canSellOnMarketplace: { type: Boolean },
-      unlimitedProduct: { type: Boolean },
-      bulkUpload: { type: Boolean },
-      abandonedCart: { type: Boolean },
+      sessionTracking: { type: Boolean, default: false },
+      b2cPrice: { type: Boolean, default: false },
+      b2bPrice: { type: Boolean, default: false },
+      reselling: { type: Boolean, default: false },
+      canSellOnMarketplace: { type: Boolean, default: false },
+      unlimitedProduct: { type: Boolean, default: false },
+      bulkUpload: { type: Boolean, default: false },
+      abandonedCart: { type: Boolean, default: false },
       unlimitedUploadProductsOnMarketplace: { type: Number },
       privateCatalogue: { type: Number },
-      dropshipping: { type: Boolean },
-      saleOfDropshipping: { type: Boolean },
-      promotionalProducts: { type: Boolean },
-      customizationOfProducts: { type: Boolean },
-      customFields: { type: Boolean },
-      coupons: { type: Boolean },
-      storePickup: { type: Boolean },
-      cod: { type: Boolean },
-      upi: { type: Boolean },
-      pinode: { type: Boolean },
-      shippingIntegration: { type: Boolean },
-      customPaymentGateway: { type: Boolean },
-      report: { type: Boolean },
-      facebookPixel: { type: Boolean },
-      googleAnalytics: { type: Boolean },
-      customCheckoutForm: { type: Boolean },
-      googleMerchantCenter: { type: Boolean },
-      erpIntegration: { type: Boolean },
-      callSupport: { type: Boolean },
-      emailSupport: { type: Boolean },
-      conciergeOnboarding: { type: Boolean },
+      dropshipping: { type: Boolean, default: false },
+      saleOfDropshipping: { type: Boolean, default: false },
+      promotionalProducts: { type: Boolean, default: false },
+      customizationOfProducts: { type: Boolean, default: false },
+      customFields: { type: Boolean, default: false },
+      coupons: { type: Boolean, default: false },
+      storePickup: { type: Boolean, default: false },
+      cod: { type: Boolean, default: false },
+      upi: { type: Boolean, default: false },
+      pinode: { type: Boolean, default: false },
+      shippingIntegration: { type: Boolean, default: false },
+      customPaymentGateway: { type: Boolean, default: false },
+      report: { type: Boolean, default: false },
+      facebookPixel: { type: Boolean, default: false },
+      googleAnalytics: { type: Boolean, default: false },
+      customCheckoutForm: { type: Boolean, default: false },
+      googleMerchantCenter: { type: Boolean, default: false },
+      erpIntegration: { type: Boolean, default: false },
+      callSupport: { type: Boolean, default: false },
+      emailSupport: { type: Boolean, default: false },
+      conciergeOnboarding: { type: Boolean, default: false },
     },
   },
   { versionKey: false },

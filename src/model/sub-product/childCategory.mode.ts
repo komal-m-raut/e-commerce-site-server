@@ -1,7 +1,7 @@
 import { Schema, model, Document, PopulatedDoc } from 'mongoose';
 import { IAttribute } from './attribute.model';
 import { IMainCategory } from './mainCategory.model';
-import { IProduct } from './product.model';
+import { IProduct } from '../product.model';
 import { IVariant } from './variant.model';
 
 interface IChildCategory extends Document {
