@@ -34,7 +34,7 @@ homePageRouter.get(
 homePageRouter.patch(
   '/',
   authMiddleware,
-  validate({ body: updateHomePageSchema, params: idSchema }),
+  validate({ body: updateHomePageSchema }),
   updateHomePage,
 );
 

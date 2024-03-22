@@ -13,7 +13,7 @@ interface ISeo {
 }
 
 interface IHomePage extends Document {
-  tenantId: string;
+  tenantId: Schema.Types.ObjectId;
   sections: ISection[];
   seoDetails: ISeo;
 }
@@ -36,7 +36,7 @@ const SeoSchema = new Schema<ISeo>({
 
 const HomePageSchema = new Schema<IHomePage>(
   {
-    tenantId: { type: String, unique: true, required: true },
+    tenantId: { type: Schema.Types.ObjectId, unique: true, required: true },
     sections: { type: [SectionSchema] },
     seoDetails: { type: SeoSchema },
   },
