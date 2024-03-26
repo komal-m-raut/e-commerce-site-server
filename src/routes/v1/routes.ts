@@ -8,6 +8,7 @@ import userRouter from './user.route';
 import invoiceRouter from './invoice.route';
 import homePageRouter from './homePage.route';
 import { roleRouter } from './role.route';
+import { settingsRouter } from './settings.route';
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.use('/product', productRouter);
 router.use('/user', userRouter);
 router.use('/home-page', homePageRouter);
 router.use('/role', roleRouter);
+router.use('/settings', settingsRouter);
 
 router.use('/invoice', invoiceRouter);
 
