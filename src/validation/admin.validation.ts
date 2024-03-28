@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import { isValidObjectId } from 'mongoose';
 
 export const createAdminSchema = Joi.object({
   username: Joi.string().required(),
@@ -24,15 +23,4 @@ export const updateAdminSchema = Joi.object({
   email: Joi.string().email(),
   password: Joi.string().min(6),
   role: Joi.string(),
-});
-
-export const idSchema = Joi.object({
-  id: Joi.string()
-    .custom((value, helpers) => {
-      if (!isValidObjectId(value)) {
-        return helpers.error('any.invalid');
-      }
-      return value;
-    })
-    .required(),
 });

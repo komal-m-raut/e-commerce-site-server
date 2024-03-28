@@ -24,12 +24,12 @@ import {
   createExchangeRefundSchema,
   createFaqSchema,
   createProductIncludesSchema,
-  idSchema,
   updateCareInstructionsSchema,
   updateExchangeRefundSchema,
   updateFaqSchema,
   updateProductIncludesSchema,
 } from '@src/validation/settings.validation';
+import { idSchema } from '@src/validation/common.validation';
 
 export const settingsRouter: Router = Router();
 

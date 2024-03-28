@@ -80,13 +80,6 @@ export const updateTenantSchema = Joi.object({
   }),
 });
 
-export const tenantIdSchema = Joi.object({
-  id: Joi.string()
-    .regex(/^[0-9a-fA-F]{24}$/)
-    .required()
-    .label('Valid MongoDB ObjectID'),
-});
-
 export const homeSectionSchema = Joi.object({
   preset: Joi.string().required(),
   headerTemplate: Joi.string().required(),
@@ -136,11 +129,4 @@ export const marketingPageUpdateSchema = Joi.object({
       description: Joi.string(),
     }),
   }),
-});
-
-export const marketingPageIdSchema = Joi.object({
-  marketingPageId: Joi.string()
-    .regex(/^[0-9a-fA-F]{24}$/)
-    .required()
-    .label('Valid MongoDB ObjectID'),
 });

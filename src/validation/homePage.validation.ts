@@ -40,14 +40,3 @@ export const updateHomePageSchema = Joi.object({
     keywords: Joi.array().items(Joi.string()),
   }),
 });
-
-export const idSchema = Joi.object({
-  tenantId: Joi.string()
-    .custom((value, helpers) => {
-      if (!isValidObjectId(value)) {
-        return helpers.error('any.invalid');
-      }
-      return value;
-    })
-    .required(),
-});

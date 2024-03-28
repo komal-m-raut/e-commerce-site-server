@@ -6,12 +6,12 @@ import {
   updateWishlist,
 } from '@src/controller/user.controller';
 import validate from '@src/middleware/validate';
+import { userIdSchema } from '@src/validation/common.validation';
 import {
   cartSchema,
   loginUserSchema,
   registerUserSchema,
   updateUserSchema,
-  userIdSchema,
   wishlistSchema,
 } from '@src/validation/user.validation';
 import { Router } from 'express';

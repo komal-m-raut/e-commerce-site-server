@@ -51,13 +51,6 @@ export const updateUserSchema = Joi.object({
   ),
 });
 
-export const userIdSchema = Joi.object({
-  id: Joi.string()
-    .regex(/^[0-9a-fA-F]{24}$/)
-    .required()
-    .label('Valid MongoDB ObjectID'),
-});
-
 export const wishlistSchema = Joi.object({
   productId: Joi.string().required(),
 });

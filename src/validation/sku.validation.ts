@@ -47,7 +47,7 @@ const visibilityOptionsSchema = Joi.object({
   isYourWardrobeMustHave: Joi.boolean(),
 });
 
-const visibilitySchema = Joi.object({
+export const visibilitySchema = Joi.object({
   guestCheckout: visibilityOptionsSchema,
   privateGroup: visibilityOptionsSchema,
 });

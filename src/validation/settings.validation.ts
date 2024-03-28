@@ -1,16 +1,4 @@
 import Joi from 'joi';
-import { isValidObjectId } from 'mongoose';
-
-export const idSchema = Joi.object({
-  id: Joi.string()
-    .custom((value, helpers) => {
-      if (!isValidObjectId(value)) {
-        return helpers.error('any.invalid');
-      }
-      return value;
-    })
-    .required(),
-});
 
 export const createCareInstructionsSchema = Joi.object({
   name: Joi.string().required(),

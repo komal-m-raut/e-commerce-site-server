@@ -1,7 +1,6 @@
 import {
   createMarketingPage,
   createTenant,
-  deleteMarketingPage,
   deleteTenant,
   getAllTenants,
   getTenant,
@@ -12,14 +11,13 @@ import {
 } from '@src/controller/tenant.controller';
 import authMiddleware from '@src/middleware/auth';
 import validate from '@src/middleware/validate';
+import { idSchema } from '@src/validation/common.validation';
 import {
   createTenantSchema,
   homeSectionSchema,
   loginTenantSchema,
-  marketingPageIdSchema,
   marketingPageSchema,
   marketingPageUpdateSchema,
-  tenantIdSchema,
   updateTenantSchema,
 } from '@src/validation/tenant.validation';
 import { Router } from 'express';
@@ -35,12 +33,12 @@ tenantRouter.post(
 tenantRouter.post('/login', validate({ body: loginTenantSchema }), loginTenant);
 tenantRouter.post(
   '/home-section/:id',
-  validate({ body: homeSectionSchema, params: tenantIdSchema }),
+  validate({ body: homeSectionSchema, params: idSchema }),
   homeSection,
 );
 tenantRouter.post(
   '/marketing-page/:id',
-  validate({ body: marketingPageSchema, params: tenantIdSchema }),
+  validate({ body: marketingPageSchema, params: idSchema }),
   createMarketingPage,
 );
 //*GET ROUTE
@@ -51,19 +49,19 @@ tenantRouter.get('/:id', authMiddleware, getTenant);
 tenantRouter.patch(
   '/:id',
   authMiddleware,
-  validate({ body: updateTenantSchema, params: tenantIdSchema }),
+  validate({ body: updateTenantSchema, params: idSchema }),
   updateTenant,
 );
 
 tenantRouter.patch(
   '/home-section/:id',
-  validate({ body: homeSectionSchema, params: tenantIdSchema }),
+  validate({ body: homeSectionSchema, params: idSchema }),
   homeSection,
 );
 
 tenantRouter.patch(
   '/marketing-page/:id',
-  validate({ body: marketingPageUpdateSchema, params: tenantIdSchema }),
+  validate({ body: marketingPageUpdateSchema, params: idSchema }),
   updateMarketingPage,
 );
 
@@ -71,14 +69,14 @@ tenantRouter.patch(
 tenantRouter.delete(
   '/:id',
   authMiddleware,
-  validate({ params: tenantIdSchema }),
+  validate({ params: idSchema }),
   deleteTenant,
 );
 
-tenantRouter.delete(
-  '/marketing-page/:id',
-  validate({ body: marketingPageIdSchema, params: tenantIdSchema }),
-  deleteMarketingPage,
-);
+// tenantRouter.delete(
+//   '/marketing-page/:id',
+//   validate({ body: marketingPageIdSchema, params: idSchema }),
+//   deleteMarketingPage,
+// );
 
 export default tenantRouter;

@@ -2,7 +2,6 @@ import { Router } from 'express';
 import validate from '@src/middleware/validate';
 import {
   createHomePageSchema,
-  idSchema,
   updateHomePageSchema,
 } from '@src/validation/homePage.validation';
 import {
@@ -18,32 +17,23 @@ const homePageRouter: Router = Router();
 //*POST ROUTE
 homePageRouter.post(
   '/create',
-  authMiddleware,
+  authMiddleware(2),
   validate({ body: createHomePageSchema }),
   createHomePage,
 );
 
 //*GET ROUTE
-homePageRouter.get(
-  '/:tenantId',
-  validate({ params: idSchema }),
-  getHomePageById,
-);
+homePageRouter.get('/', authMiddleware(2), getHomePageById);
 
 //*PATCH ROUTE
 homePageRouter.patch(
   '/',
-  authMiddleware,
+  authMiddleware(2),
   validate({ body: updateHomePageSchema }),
   updateHomePage,
 );
 
 //*DELETE ROUTE
-homePageRouter.delete(
-  '/',
-  authMiddleware,
-  validate({ params: idSchema }),
-  deleteHomePageById,
-);
+homePageRouter.delete('/', authMiddleware(2), deleteHomePageById);
 
 export default homePageRouter;

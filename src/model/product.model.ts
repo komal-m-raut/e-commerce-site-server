@@ -382,7 +382,7 @@ const ShippingSchema = new Schema<Shipping>({
 // Define the Product Document
 interface IProduct extends Document {
   generalDetails: GeneralDetails;
-  productIdentifiers: ProductIdentifiers;
+  productIdentifiers: ProductIdentifiers[];
   reselling: Reselling;
   includes: Includes;
   category: Category;
@@ -402,7 +402,7 @@ interface IProduct extends Document {
 // Create the Product Schema
 const productSchema = new Schema<IProduct>({
   generalDetails: { type: GeneralDetailsSchema },
-  productIdentifiers: { type: ProductIdentifiersSchema },
+  productIdentifiers: [{ type: ProductIdentifiersSchema }],
   reselling: { type: ResellingSchema },
   linkedProducts: { type: LinkedProductsSchema },
   includes: { type: IncludesSchema },

@@ -118,6 +118,8 @@ interface VisibilityOptions {
   isSpecialOffer: boolean;
   isBudgetPicks: boolean;
   isYourWardrobeMustHave: boolean;
+  isPrivateGroup: boolean;
+  isPriceVisible: boolean;
 }
 
 interface Visibility {

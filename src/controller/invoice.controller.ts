@@ -9,18 +9,18 @@ import generateInvoice, { IInvoice } from '@src/template/invoice.template';
 
 export const generateAndSendInvoice = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { orderId } = req.params;
+    const { id } = req.params;
     const { email } = req.body.decoded;
 
     // Fetch transaction data
-    const transaction = await TransactionModel.findOne({ orderId })
+    const transaction = await TransactionModel.findOne({ orderId: id })
       .populate('tenantId', 'businessInfo warehouseInfo')
       .populate('productId', 'productName')
       .populate('invoiceId', 'invoiceNumber')
       .exec();
     if (!transaction) {
       return next(
-        new NotFoundError(`Transaction with orderId ${orderId} not found`),
+        new NotFoundError(`Transaction with orderId ${id} not found`),
       );
     }
 
@@ -30,7 +30,7 @@ export const generateAndSendInvoice = catchAsync(
       shipFrom: transaction.tenantId.warehouseInfo.address,
       gstin: transaction.tenantId.businessInfo.gstin,
       invoiceNumber: transaction.invoiceId.invoiceNumber,
-      orderId: req.params.orderId,
+      orderId: req.params.id,
       orderDate: transaction.createdAt.toLocaleDateString(),
       invoiceDate: transaction.createdAt.toLocaleDateString(),
       companyPan: transaction.tenantId.businessInfo.pan,
@@ -74,7 +74,7 @@ export const generateAndSendInvoice = catchAsync(
       }
       await sendMail({
         to: email,
-        subject: `Invoice for order: ${orderId}}`,
+        subject: `Invoice for order: ${id}}`,
         html: '<p>Attached is your invoice.</p>',
         text: 'Attached is your invoice.',
         attachments: [
