@@ -12,8 +12,8 @@ import {
   IChildCategory,
 } from './sub-product/childCategory.mode';
 import { ITenant, TenantSchema } from './tenant.model';
-import { BrandSchema, IBrand } from './sub-business/brand.model';
-import { IWarehouse, WarehouseSchema } from './sub-business/warehouse.model';
+import { BrandSchema, IBrand } from './sub-company/brand.model';
+import { IWarehouse, WarehouseSchema } from './sub-company/warehouse.model';
 import { AttributeSchema, IAttribute } from './sub-product/attribute.model';
 import { ISKU, skuSchema } from './sub-product/sku.model';
 import { GroupSchema, IGroup } from './sub-product/group.model';
