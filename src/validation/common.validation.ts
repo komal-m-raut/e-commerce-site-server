@@ -20,3 +20,9 @@ export const idSchema = Joi.object({
     .required()
     .label('Valid MongoDB ObjectID'),
 });
+
+export const validateObjectId = (): Joi.StringSchema =>
+  Joi.string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .required()
+    .label('Valid MongoDB ObjectID');

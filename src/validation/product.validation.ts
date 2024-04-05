@@ -1,14 +1,15 @@
 import Joi from 'joi';
+import { validateObjectId } from './common.validation';
 
 export const createProductSchema = Joi.object({
   generalDetails: Joi.object({
     status: Joi.string().required(),
     productId: Joi.string().required(),
     language: Joi.string().required(),
-    manufacturer: Joi.string().required(),
+    manufacturer: validateObjectId().required(),
     countryOfOrigin: Joi.string().required(),
     importerName: Joi.string().required(),
-    location: Joi.string().required(),
+    location: validateObjectId().required(),
     productName: Joi.string().required(),
     urlKey: Joi.string().required(),
     isMarketplace: Joi.boolean().required(),

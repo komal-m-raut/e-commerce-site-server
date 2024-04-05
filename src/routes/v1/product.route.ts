@@ -21,6 +21,7 @@ const productRouter: Router = Router();
 //*POST ROUTE
 productRouter.post(
   '/create',
+  authMiddleware(2),
   validate({ body: createProductSchema }),
   createProduct,
 );
