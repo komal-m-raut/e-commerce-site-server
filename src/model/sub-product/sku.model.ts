@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 import { IVariant, VariantSchema } from './variant.model';
 
-interface RetailPricing {
+export interface RetailPricing {
   mrp: number;
   sellingPrice: number;
   cost: number;
@@ -52,7 +52,7 @@ const RetailPricingSchema = new Schema<RetailPricing>({
 });
 
 // 4. B2B Pricing
-interface B2BPricing {
+export interface B2BPricing {
   mrp: number;
   wholesalePrice: number;
   specialPriceFrom: string;
@@ -186,7 +186,7 @@ interface ISKU extends Document {
   b2bPricing: B2BPricing;
   images: Images;
   visibility: Visibility;
-  variants: IVariant[];
+  variant: IVariant;
 }
 
 const skuSchema = new Schema<ISKU>(
@@ -197,7 +197,7 @@ const skuSchema = new Schema<ISKU>(
     visibility: {
       type: VisibilitySchema,
     },
-    variants: { type: [VariantSchema], required: true },
+    variant: { type: VariantSchema, required: true },
   },
   { timestamps: true, versionKey: false },
 );

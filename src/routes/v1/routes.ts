@@ -9,6 +9,7 @@ import invoiceRouter from './invoice.route';
 import homePageRouter from './homePage.route';
 import { roleRouter } from './role.route';
 import { settingsRouter } from './settings.route';
+import skuRouter from './sku.route';
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.use('/user', userRouter);
 router.use('/home-page', homePageRouter);
 router.use('/role', roleRouter);
 router.use('/settings', settingsRouter);
+router.use('/sku', skuRouter);
 
 router.use('/invoice', invoiceRouter);
 

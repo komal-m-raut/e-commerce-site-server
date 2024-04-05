@@ -1,3 +1,4 @@
+import app from '@src/app';
 import Joi from 'joi';
 
 const retailPricingSchema = Joi.object({
@@ -53,11 +54,29 @@ export const visibilitySchema = Joi.object({
 });
 
 export const createSkuSchema = Joi.object({
-  images: imagesSchema.required(),
-  retailPricing: retailPricingSchema.required(),
-  b2bPricing: b2bPricingSchema.required(),
-  visibility: visibilitySchema,
-  variants: Joi.array().items(Joi.object()).required(),
+  variants: Joi.array()
+    .items(
+      Joi.object({
+        images: imagesSchema.required(),
+        retailPricing: retailPricingSchema.required(),
+        b2bPricing: b2bPricingSchema.required(),
+        visibility: visibilitySchema,
+        variant: Joi.object({
+          name: Joi.string().required(),
+          value: Joi.array().items(Joi.string()).required(),
+          applicableTo: Joi.array().items(Joi.string()).required(),
+        }).required(),
+        productIdentifier: Joi.object({
+          barcode: Joi.string().required(),
+          hsnNo: Joi.string().required(),
+          manufacturerPartNumber: Joi.string().required(),
+          binPickingNumber: Joi.string().required(),
+          globalTradeItemNumber: Joi.string().required(),
+          searchKeywords: Joi.array().items(Joi.string()).required(),
+        }).required(),
+      }),
+    )
+    .required(),
 });
 
 export const updateSkuSchema = Joi.object({
