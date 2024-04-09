@@ -301,7 +301,7 @@ const InstructionSchema = new Schema<Instruction>({
 });
 
 // 11. Groups
-interface Groups {
+export interface Groups {
   retailGroups: PopulatedDoc<Schema.Types.ObjectId & IGroup>[];
   wholesaleGroups: PopulatedDoc<Schema.Types.ObjectId & IGroup>[];
 }

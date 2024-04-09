@@ -122,7 +122,7 @@ interface VisibilityOptions {
   isPriceVisible: boolean;
 }
 
-interface Visibility {
+export interface Visibility {
   guestCheckout: VisibilityOptions;
   privateGroup: VisibilityOptions;
 }
