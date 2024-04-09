@@ -10,6 +10,8 @@ import config from './config/config';
 import logger from './utils/logger';
 import { errorHandler, successHandler } from './config/morgan';
 import router from './routes/v1/routes';
+import { swaggerDocument } from './utils/swagger';
+import swaggerUi from 'swagger-ui-express';
 
 const app = express();
 
@@ -46,6 +48,8 @@ if (config.env === 'production') {
 app.use('/v1', router);
 app.get('/favicon.ico', (req, res) => res.status(204));
 app.get('/images/icons/gear.png', (req, res) => res.status(204));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // send back a 404 error for any unknown api request
 app.use((req: Request, res: Response, next: NextFunction) => {
