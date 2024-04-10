@@ -60,39 +60,126 @@ interface ProductPermissions {
 }
 
 interface UserPermissions {
-  // Admin permissions
-  globalSupplierCommission: number;
-  separateSupplierCommission: number;
+  //Super-admin permissions
+  globalSupplierCommision: number;
+  separateSupplierCommision: number;
   transactionCharge: number;
-  commissionOnSaleOfDropshippingProductOnTenantWebsite: number;
+  commisionOnDropshippingSale: number;
   ownDomain: number;
-  canAccessAdminPanel: boolean;
-  canAccessAdminPanelOfTenantOnPermissionOfTenant: boolean;
-  canSellOnMarketplace: boolean;
-  canCreateGroup: boolean;
-  canAssignCustomerOrUserToAGroup: boolean;
+  superAdminCanAccessAdminPanel: boolean;
+  superAdminCanAccessTenantAdminPanelIfPermitted: boolean; //if tenant has given permission
+  superAdminCanSellOnMarketplace: boolean;
+  superAdminCanCreateGroup: boolean;
+  superAdminCanAssignCustomerToGroup: boolean;
+  superAdminCanApproveSupplierProducts: boolean;
+  superAdminCanDeleteSupplierProducts: boolean;
+  superAdminCanEditSupplierProducts: boolean;
+  superAdminCanBlockTenant: boolean;
+  superAdminCanDeleteTenant: boolean;
+  superAdminCanApproveSupplierOnMarketplace: boolean;
+  superAdminCanDeleteSupplierOnMarketplace: boolean;
+  superAdminCanBlockSupplierOnMarketplace: boolean;
+  superAdminCanApproveInfluencerOnMarketplace: boolean;
+  superAdminCanDeleteInfluencerOnMarketplace: boolean;
+  superAdminCanBlockInfluencerOnMarketplace: boolean;
+  superAdminCanApproveResellerOnMarketplace: boolean;
+  superAdminCanDeleteResellerOnMarketplace: boolean;
+  superAdminCanBlockResellerOnMarketplace: boolean;
+  superAdminCanApproveUserOnMarketplace: boolean;
+  superAdminCanDeleteUserOnMarketplace: boolean;
+  superAdminCanBlockUserOnMarketplace: boolean;
 
-  // Influencer permissions
-  influencerWillHaveAllHisSharedCollectionsOnAHisCollectionPage: boolean;
-  influencerWillHaveBannerAndProfilePicture: boolean;
+  //Supplier permissions
+  supplierCanApproveTenantForDropshipping: boolean;
+  supplierCanApproveInfluencersForSharing: boolean;
+  supplierCanApproveResellerForSharing: boolean;
+  supplierCanBlockTenantFromDropshipping: boolean;
+  supplierCanBlockInfluencerFromSharing: boolean;
+  supplierCanBlockResellerFromSharing: boolean;
+
+  //Tenant permissions
+  tenantCanRequestApprovalForDropshippingFromSupplier: boolean;
+  tenantOwnInfluencerCanRequestApprovalForSharing: boolean;
+  tenantOwnResellerCanRequestApprovalForSharing: boolean;
+  tenantCanApproveInfluencerOnHisOwnWebsite: boolean;
+  tenantCanBlockInfluencerOnHisOwnWebsite: boolean;
+  tenantCanDeleteInfluencerOnHisOwnWebsite: boolean;
+  tenantCanApproveResellerOnHisOwnWebsite: boolean;
+  tenantCanBlockResellerOnHisOwnWebsite: boolean;
+  tenantCanDeleteResellerOnHisOwnWebsite: boolean;
+
+  onPageSharingOptions: boolean;
+  deletionPermissions: boolean;
+  manageSocialMediaAccounts: boolean;
+  managePayouts: boolean;
+  manageSupplierPayment: boolean;
+  manageInfluencerCommission: boolean;
+  manageResellerPayment: boolean;
+  supplierDetails: boolean;
+  tenantDetails: boolean;
+  influencerDetails: boolean;
+  resellersDetails: boolean;
+  customerDetails: boolean;
+  supplierListReport: boolean;
+  tenantListReport: boolean;
+  customerListReport: boolean;
+  influencerListReport: boolean;
+  resellersListReport: boolean;
+
+  //Influencer permissions
+  influencerCanRequestApprovalForSharingFromSupplier: boolean;
+  influencerCanHaveSharedCollectionsPage: boolean;
+  influencerCanHaveBannerAndProfile: boolean;
   influencerCanEditProfile: boolean;
   influencerCanUploadPictures: boolean;
   influencerCanHaveFollowers: boolean;
+  influencerCanAddSocialMediaLinks: boolean;
+  influencerCanReplyToMessages: boolean;
+  influencerCanViewProducts: boolean;
+  influencerCanAddProductsToCart: boolean;
+  influencerCanAddProductsToWishlist: boolean;
+  influencerCanLikeProduct: boolean;
+  influencerCanShareProduct: boolean;
+  influencerCanCheckHisCommission: boolean;
+  influencerCanCheckHisPaymentStatus: boolean;
+  influencerCanCheckHisPaymentDetails: boolean;
+  influencerCanAddBankAccount: boolean;
+  influencerCanHaveWallet: boolean;
+  influencerCanEditBankDetails: boolean;
 
-  // Reseller permissions
-  resellerWillHaveAllHisSharedCollectionsOnAHisCollectionPage: boolean;
-  resellerWillHaveBannerAndProfilePicture: boolean;
+  //Reseller Permissions
+  resellerCanRequestApprovalForSharingFromSupplier: boolean;
+  resellerCanHaveSharedCollectionsPage: boolean;
+  resellerCanBannerAndProfile: boolean;
   resellerCanEditProfile: boolean;
   resellerCanUploadPictures: boolean;
-  resellerCanAddSocialMediaLinkOnTheirCollectionPage: boolean;
+  resellerCanAddSocialMediaLinks: boolean;
+  resellerCanReplyToMessages: boolean;
+  resellerCanViewProducts: boolean;
+  resellerCanAddProductsToCart: boolean;
+  resellerCanAddProductsToWishlist: boolean;
+  resellerCanLikeProduct: boolean;
+  resellerCanShareProduct: boolean;
+  resellerCanCheckHisCommission: boolean;
+  resellerCanCheckHisPaymentStatus: boolean;
+  resellerCanCheckHisPaymentDetails: boolean;
+  resellerCanAddBankAccount: boolean;
+  resellerCanHaveWallet: boolean;
+  resellerCanEditBankDetails: boolean;
 
-  // End user permissions
+  //Customer permissions
   customersCanViewProducts: boolean;
   customersCanAddProductsToCart: boolean;
   customersCanAddProductsToWishlist: boolean;
   customersCanLikeProduct: boolean;
   customersCanShareProduct: boolean;
-  customersCanMakeAnReturnRequest: boolean;
+  customersCanMakeReturnRequest: boolean;
+  customersCanFollowSupplierInfluencer: boolean;
+  customerCanRateProduct: boolean;
+  customerCanRateSupplier: boolean;
+  customerCanLikeInfluencer: boolean;
+  customerCanRateReseller: boolean;
+  customerCanUploadProfilePicture: boolean;
 }
 
 interface IRoleCapacities {
@@ -127,50 +214,177 @@ const RoleSchema = new Schema(
     dateOfJoining: { type: Date, default: Date.now },
     description: { type: String },
     userPermissions: {
-      globalSupplierCommission: { type: Number },
-      separateSupplierCommission: { type: Number },
+      globalSupplierCommision: { type: Number },
+      separateSupplierCommision: { type: Number },
       transactionCharge: { type: Number },
-      commissionOnSaleOfDropshippingProductOnTenantWebsite: { type: Number },
+      commisionOnDropshippingSale: { type: Number },
       ownDomain: { type: Number },
-      canAccessAdminPanel: { type: Boolean, default: false },
-      canAccessAdminPanelOfTenantOnPermissionOfTenant: {
+      superAdminCanAccessAdminPanel: { type: Boolean, default: false },
+      superAdminCanAccessTenantAdminPanelIfPermitted: {
         type: Boolean,
         default: false,
       },
-      canSellOnMarketplace: { type: Boolean, default: false },
-      canCreateGroup: { type: Boolean, default: false },
-      canAssignCustomerOrUserToAGroup: { type: Boolean, default: false },
-      influencerWillHaveAllHisSharedCollectionsOnAHisCollectionPage: {
+      superAdminCanSellOnMarketplace: { type: Boolean, default: false },
+      superAdminCanCreateGroup: { type: Boolean, default: false },
+      superAdminCanAssignCustomerToGroup: { type: Boolean, default: false },
+      superAdminCanApproveSupplierProducts: { type: Boolean, default: false },
+      superAdminCanDeleteSupplierProducts: { type: Boolean, default: false },
+      superAdminCanEditSupplierProducts: { type: Boolean, default: false },
+      superAdminCanBlockTenant: { type: Boolean, default: false },
+      superAdminCanDeleteTenant: { type: Boolean, default: false },
+      superAdminCanApproveSupplierOnMarketplace: {
         type: Boolean,
         default: false,
       },
-      influencerWillHaveBannerAndProfilePicture: {
+      superAdminCanDeleteSupplierOnMarketplace: {
         type: Boolean,
         default: false,
       },
+      superAdminCanBlockSupplierOnMarketplace: {
+        type: Boolean,
+        default: false,
+      },
+      superAdminCanApproveInfluencerOnMarketplace: {
+        type: Boolean,
+        default: false,
+      },
+      superAdminCanDeleteInfluencerOnMarketplace: {
+        type: Boolean,
+        default: false,
+      },
+      superAdminCanBlockInfluencerOnMarketplace: {
+        type: Boolean,
+        default: false,
+      },
+      superAdminCanApproveResellerOnMarketplace: {
+        type: Boolean,
+        default: false,
+      },
+      superAdminCanDeleteResellerOnMarketplace: {
+        type: Boolean,
+        default: false,
+      },
+      superAdminCanBlockResellerOnMarketplace: {
+        type: Boolean,
+        default: false,
+      },
+      superAdminCanApproveUserOnMarketplace: { type: Boolean, default: false },
+      superAdminCanDeleteUserOnMarketplace: { type: Boolean, default: false },
+      superAdminCanBlockUserOnMarketplace: { type: Boolean, default: false },
+      supplierCanApproveTenantForDropshipping: {
+        type: Boolean,
+        default: false,
+      },
+      supplierCanApproveInfluencersForSharing: {
+        type: Boolean,
+        default: false,
+      },
+      supplierCanApproveResellerForSharing: { type: Boolean, default: false },
+      supplierCanBlockTenantFromDropshipping: { type: Boolean, default: false },
+      supplierCanBlockInfluencerFromSharing: { type: Boolean, default: false },
+      supplierCanBlockResellerFromSharing: { type: Boolean, default: false },
+      tenantCanRequestApprovalForDropshippingFromSupplier: {
+        type: Boolean,
+        default: false,
+      },
+      tenantOwnInfluencerCanRequestApprovalForSharing: {
+        type: Boolean,
+        default: false,
+      },
+      tenantOwnResellerCanRequestApprovalForSharing: {
+        type: Boolean,
+        default: false,
+      },
+      tenantCanApproveInfluencerOnHisOwnWebsite: {
+        type: Boolean,
+        default: false,
+      },
+      tenantCanBlockInfluencerOnHisOwnWebsite: {
+        type: Boolean,
+        default: false,
+      },
+      tenantCanDeleteInfluencerOnHisOwnWebsite: {
+        type: Boolean,
+        default: false,
+      },
+      tenantCanApproveResellerOnHisOwnWebsite: {
+        type: Boolean,
+        default: false,
+      },
+      tenantCanBlockResellerOnHisOwnWebsite: { type: Boolean, default: false },
+      tenantCanDeleteResellerOnHisOwnWebsite: { type: Boolean, default: false },
+      onPageSharingOptions: { type: Boolean, default: false },
+      deletionPermissions: { type: Boolean, default: false },
+      manageSocialMediaAccounts: { type: Boolean, default: false },
+      managePayouts: { type: Boolean, default: false },
+      manageSupplierPayment: { type: Boolean, default: false },
+      manageInfluencerCommission: { type: Boolean, default: false },
+      manageResellerPayment: { type: Boolean, default: false },
+      supplierDetails: { type: Boolean, default: false },
+      tenantDetails: { type: Boolean, default: false },
+      influencerDetails: { type: Boolean, default: false },
+      resellersDetails: { type: Boolean, default: false },
+      customerDetails: { type: Boolean, default: false },
+      supplierListReport: { type: Boolean, default: false },
+      tenantListReport: { type: Boolean, default: false },
+      customerListReport: { type: Boolean, default: false },
+      influencerListReport: { type: Boolean, default: false },
+      resellersListReport: { type: Boolean, default: false },
+      influencerCanRequestApprovalForSharingFromSupplier: {
+        type: Boolean,
+        default: false,
+      },
+      influencerCanHaveSharedCollectionsPage: { type: Boolean, default: false },
+      influencerCanHaveBannerAndProfile: { type: Boolean, default: false },
       influencerCanEditProfile: { type: Boolean, default: false },
       influencerCanUploadPictures: { type: Boolean, default: false },
       influencerCanHaveFollowers: { type: Boolean, default: false },
-      resellerWillHaveAllHisSharedCollectionsOnAHisCollectionPage: {
+      influencerCanAddSocialMediaLinks: { type: Boolean, default: false },
+      influencerCanReplyToMessages: { type: Boolean, default: false },
+      influencerCanViewProducts: { type: Boolean, default: false },
+      influencerCanAddProductsToCart: { type: Boolean, default: false },
+      influencerCanAddProductsToWishlist: { type: Boolean, default: false },
+      influencerCanLikeProduct: { type: Boolean, default: false },
+      influencerCanShareProduct: { type: Boolean, default: false },
+      influencerCanCheckHisCommission: { type: Boolean, default: false },
+      influencerCanCheckHisPaymentStatus: { type: Boolean, default: false },
+      influencerCanCheckHisPaymentDetails: { type: Boolean, default: false },
+      influencerCanAddBankAccount: { type: Boolean, default: false },
+      influencerCanHaveWallet: { type: Boolean, default: false },
+      influencerCanEditBankDetails: { type: Boolean, default: false },
+      resellerCanRequestApprovalForSharingFromSupplier: {
         type: Boolean,
         default: false,
       },
-      resellerWillHaveBannerAndProfilePicture: {
-        type: Boolean,
-        default: false,
-      },
+      resellerCanHaveSharedCollectionsPage: { type: Boolean, default: false },
+      resellerCanBannerAndProfile: { type: Boolean, default: false },
       resellerCanEditProfile: { type: Boolean, default: false },
       resellerCanUploadPictures: { type: Boolean, default: false },
-      resellerCanAddSocialMediaLinkOnTheirCollectionPage: {
-        type: Boolean,
-        default: false,
-      },
+      resellerCanAddSocialMediaLinks: { type: Boolean, default: false },
+      resellerCanReplyToMessages: { type: Boolean, default: false },
+      resellerCanViewProducts: { type: Boolean, default: false },
+      resellerCanAddProductsToCart: { type: Boolean, default: false },
+      resellerCanAddProductsToWishlist: { type: Boolean, default: false },
+      resellerCanLikeProduct: { type: Boolean, default: false },
+      resellerCanShareProduct: { type: Boolean, default: false },
+      resellerCanCheckHisCommission: { type: Boolean, default: false },
+      resellerCanCheckHisPaymentStatus: { type: Boolean, default: false },
+      resellerCanCheckHisPaymentDetails: { type: Boolean, default: false },
+      resellerCanAddBankAccount: { type: Boolean, default: false },
+      resellerCanHaveWallet: { type: Boolean, default: false },
+      resellerCanEditBankDetails: { type: Boolean, default: false },
       customersCanViewProducts: { type: Boolean, default: false },
       customersCanAddProductsToCart: { type: Boolean, default: false },
       customersCanAddProductsToWishlist: { type: Boolean, default: false },
       customersCanLikeProduct: { type: Boolean, default: false },
       customersCanShareProduct: { type: Boolean, default: false },
-      customersCanMakeAnReturnRequest: { type: Boolean, default: false },
+      customersCanMakeReturnRequest: { type: Boolean, default: false },
+      customersCanFollowSupplierInfluencer: { type: Boolean, default: false },
+      customerCanRateProduct: { type: Boolean, default: false },
+      customerCanRateSupplier: { type: Boolean, default: false },
+      customerCanLikeInfluencer: { type: Boolean, default: false },
+      customerCanRateReseller: { type: Boolean, default: false },
+      customerCanUploadProfilePicture: { type: Boolean, default: false },
     },
     productPermissions: {
       managePromotionalProducts: { type: Boolean, default: false },
