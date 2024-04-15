@@ -380,7 +380,7 @@ const ShippingSchema = new Schema<Shipping>({
 });
 
 // Define the Product Document
-interface IProduct extends Document {
+interface ITenantProduct extends Document {
   generalDetails: GeneralDetails;
   productIdentifiers: ProductIdentifiers[];
   reselling: Reselling;
@@ -400,7 +400,7 @@ interface IProduct extends Document {
 }
 
 // Create the Product Schema
-const productSchema = new Schema<IProduct>({
+const productSchema = new Schema<ITenantProduct>({
   generalDetails: { type: GeneralDetailsSchema },
   productIdentifiers: [{ type: ProductIdentifiersSchema }],
   reselling: { type: ResellingSchema },
@@ -430,6 +430,6 @@ const productSchema = new Schema<IProduct>({
 });
 
 // Create the Product model
-const ProductModel = model<IProduct>('Product', productSchema);
+const TenantProductModel = model<ITenantProduct>('TenantProducts', productSchema);
 
-export { ProductModel, IProduct };
+export { TenantProductModel, ITenantProduct };

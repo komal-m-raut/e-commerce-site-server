@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { validateObjectId } from './common.validation';
 
-export const createProductSchema = Joi.object({
+export const createMarketplaceProductSchema = Joi.object({
   generalDetails: Joi.object({
     status: Joi.string().required(),
     productId: Joi.string().required(),
@@ -16,7 +16,7 @@ export const createProductSchema = Joi.object({
   }).required(),
 });
 
-export const updateProductSchema = Joi.object({
+export const updateMarketplaceProductSchema = Joi.object({
   generalDetails: Joi.object({
     status: Joi.string(),
     productId: Joi.string(),
@@ -122,11 +122,11 @@ export const updateProductSchema = Joi.object({
   }),
 });
 
-export const searchProductSchema = Joi.object({
+export const searchMarketplaceProductSchema = Joi.object({
   search: Joi.string().required().label('Search query'),
 });
 
-export const filterProductSchema = Joi.object({
+export const filterMarketplaceProductSchema = Joi.object({
   category: Joi.string(),
   manufacturer: Joi.string(),
   minPrice: Joi.number().min(0),
@@ -135,7 +135,7 @@ export const filterProductSchema = Joi.object({
   attributes: Joi.array().items(Joi.string()),
 });
 
-export const searchAndFilterSchema = Joi.object({
+export const searchAndFilterMarketplaceProductSchema = Joi.object({
   search: Joi.string().required(),
   category: Joi.string(),
   manufacturer: Joi.string(),

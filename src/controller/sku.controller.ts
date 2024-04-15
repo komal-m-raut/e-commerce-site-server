@@ -1,4 +1,4 @@
-import { ProductModel } from '@src/model/product.model';
+import { MarketplaceProductModel } from '@src/model/marketplaceProduct.model';
 import {
   B2BPricing,
   RetailPricing,
@@ -14,7 +14,7 @@ export const createSku = catchAsync(async (req, res, next) => {
   const { decoded } = req.body;
   const { productId } = req.params;
   const supplier = decoded.id;
-  const product = await ProductModel.exists({
+  const product = await MarketplaceProductModel.exists({
     _id: productId,
     'generalDetails.supplier': supplier,
   });
@@ -89,7 +89,7 @@ export const createSku = catchAsync(async (req, res, next) => {
     throw next(new NotFoundError('Failed to create SKUs'));
   }
 
-  await ProductModel.findByIdAndUpdate(productId, {
+  await MarketplaceProductModel.findByIdAndUpdate(productId, {
     $push: {
       productIdentifiers: {
         $each: newSKUs,
@@ -105,7 +105,7 @@ export const updateProductVisibility = catchAsync(async (req, res, next) => {
   const { decoded } = req.body;
   const { productId } = req.params;
   const supplier = decoded.id;
-  const product = await ProductModel.findOne(
+  const product = await MarketplaceProductModel.findOne(
     {
       _id: productId,
       'generalDetails.supplier': supplier,

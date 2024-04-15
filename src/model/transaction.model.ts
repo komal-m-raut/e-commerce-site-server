@@ -1,6 +1,6 @@
 import { Document, PopulatedDoc, Schema, model } from 'mongoose';
 import { ITenant } from './tenant.model';
-import { IProduct } from './product.model';
+import { IMarketplaceProduct } from './marketplaceProduct.model';
 import { IInvoice } from './invoice.model';
 
 interface ITransaction extends Document {
@@ -8,7 +8,7 @@ interface ITransaction extends Document {
   userId: Schema.Types.ObjectId;
   tenantId: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
   products: {
-    productId: PopulatedDoc<Schema.Types.ObjectId & IProduct>;
+    productId: PopulatedDoc<Schema.Types.ObjectId & IMarketplaceProduct>;
     quantity: number;
   }[];
   quantity: number;

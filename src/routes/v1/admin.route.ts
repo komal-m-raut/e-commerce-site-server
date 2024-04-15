@@ -170,7 +170,12 @@ adminRouter.get('/', authMiddleware(2), getAllAdmins); //This is paginated route
  *         description: Failed to fetch admin
  */
 
-adminRouter.get('/:id',authMiddleware(2), validate({ params: idSchema }), getAdminById);
+adminRouter.get(
+  '/:id',
+  authMiddleware(2),
+  validate({ params: idSchema }),
+  getAdminById,
+);
 
 //*PATCH ROUTE
 

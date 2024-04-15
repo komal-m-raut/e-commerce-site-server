@@ -1,8 +1,8 @@
 import { Schema, model, Document, PopulatedDoc } from 'mongoose';
 import { IAttribute } from './attribute.model';
 import { IMainCategory } from './mainCategory.model';
-import { IProduct } from '../product.model';
 import { IVariant } from './variant.model';
+import { IMarketplaceProduct } from '../marketplaceProduct.model';
 
 interface IChildCategory extends Document {
   name: string;
@@ -10,7 +10,7 @@ interface IChildCategory extends Document {
   slug: string;
   parentCategoryIds?: PopulatedDoc<Schema.Types.ObjectId & IMainCategory>[];
   parentCategoryId: string[];
-  productIds: PopulatedDoc<Schema.Types.ObjectId & IProduct>[];
+  productIds: PopulatedDoc<Schema.Types.ObjectId & IMarketplaceProduct>[];
   attributes: PopulatedDoc<Schema.Types.ObjectId & IAttribute>[];
   variants: PopulatedDoc<Schema.Types.ObjectId & IVariant>[];
 }

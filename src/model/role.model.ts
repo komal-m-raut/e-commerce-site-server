@@ -1,18 +1,27 @@
 import { Document, Schema, model } from 'mongoose';
-import { Visibility } from './sub-product/sku.model';
-import { Groups } from './product.model';
 
 interface ProductPermissions {
-  managePromotionalProducts: boolean;
-  manageCatalog: boolean;
-  manageAbandonedCarts: boolean;
+  accessToPremiumSupplierProducts: boolean;
+  manageCatalog: string;
+  abandonedCart: boolean;
+  addDropshippingProduct: string;
   createProduct: boolean;
-  addDropshippingProduct: boolean;
   editProduct: boolean;
   deleteProduct: boolean;
   productDetailReport: boolean;
-  salesReports: boolean;
-  report: boolean;
+  bulkUpload: boolean;
+  productLimit: number;
+  unlimitedProduct: boolean;
+  unlimitedUploadProductsOnMarketplace: boolean;
+  b2cPrice: boolean;
+  b2bPrice: boolean;
+  influencerPrice: boolean;
+  resellerPrice: boolean;
+  customizationOfProducts: boolean;
+  customFields: boolean;
+  giftWrapping: boolean;
+  linkedProducts: boolean;
+  promotionalProducts: boolean;
   createCoupons: boolean;
   editCoupons: boolean;
   deleteCoupons: boolean;
@@ -21,32 +30,20 @@ interface ProductPermissions {
   createManualOrders: boolean;
   editOrders: boolean;
   cancelOrder: boolean;
-  managePackingOfProducts: boolean;
-  manageDispatchOfProducts: boolean;
   viewReturnRequest: boolean;
   approveReturnRequest: boolean;
   disapproveReturnRequest: boolean;
   manageReturnProducts: boolean;
-  abandonedCart: boolean;
-  bulkUpload: boolean;
-  productLimit: number;
-  unlimitedProduct: boolean;
-  unlimitedUploadProductsOnMarketplace: number;
-  customizationOfProducts: boolean;
-  customFields: boolean;
-  giftWrapping: boolean;
-  linkedProducts: boolean;
-  privateCatalogue: number;
-  promotionalProducts: boolean;
+  warehouse: number;
+  rackShelfBoxNumber: boolean;
   storePickup: boolean;
   pincodeBasedShipping: boolean;
   flatRateShipping: boolean;
   manageFreeShippingLimitAboveOrderValue: boolean;
   createBoxPacking: boolean;
-  cod: boolean;
-  upi: boolean;
   shippingIntegration: boolean;
-  customPaymentGateway: boolean;
+  managePackingOfProducts: boolean;
+  manageDispatchOfProducts: boolean;
   sessionTracking: boolean;
   seoSettings: boolean;
   facebookPixel: boolean;
@@ -60,12 +57,47 @@ interface ProductPermissions {
 }
 
 interface UserPermissions {
-  //Super-admin permissions
-  globalSupplierCommision: number;
-  separateSupplierCommision: number;
+  staffAccounts: number;
+  themes: number;
+  accessToPremiumThemes: boolean;
+  editTheme: boolean;
+  customTheme: boolean;
+  ownDomain: boolean;
+  onPageSharingOptions: boolean;
+  deletionPermissions: boolean;
+  manageSocialMediaAccounts: boolean;
+  managePayouts: boolean;
+  manageSupplierPayment: boolean;
+  manageInfluencerCommission: boolean;
+  manageResellerPayment: boolean;
+
+  //details-reports
+  supplierDetails: boolean;
+  tenantDetails: boolean;
+  influencerDetails: boolean;
+  resellersDetails: boolean;
+  customerDetails: boolean;
+  supplierListReport: boolean;
+  tenantListReport: boolean;
+  customerListReport: boolean;
+  influencerListReport: boolean;
+  resellersListReport: boolean;
+  salesReports: boolean;
+  report: boolean;
+
+  //Transactions
+  globalSupplierCommissionB2b: number;
+  globalSupplierCommissionB2c: number;
+  globalSupplierCommissionInfluencer: number;
+  globalSupplierCommissionReseller: number;
+  separateSupplierCommission: string;
   transactionCharge: number;
-  commisionOnDropshippingSale: number;
-  ownDomain: number;
+  platformFeeOnDropshippingSale: number;
+  cod: boolean;
+  upi: boolean;
+  customPaymentGateway: boolean;
+
+  //Super-admin permissions
   superAdminCanAccessAdminPanel: boolean;
   superAdminCanAccessTenantAdminPanelIfPermitted: boolean; //if tenant has given permission
   superAdminCanSellOnMarketplace: boolean;
@@ -91,7 +123,7 @@ interface UserPermissions {
 
   //Supplier permissions
   supplierCanApproveTenantForDropshipping: boolean;
-  supplierCanApproveInfluencersForSharing: boolean;
+  supplierCanApproveInfluencerForSharing: boolean;
   supplierCanApproveResellerForSharing: boolean;
   supplierCanBlockTenantFromDropshipping: boolean;
   supplierCanBlockInfluencerFromSharing: boolean;
@@ -107,24 +139,6 @@ interface UserPermissions {
   tenantCanApproveResellerOnHisOwnWebsite: boolean;
   tenantCanBlockResellerOnHisOwnWebsite: boolean;
   tenantCanDeleteResellerOnHisOwnWebsite: boolean;
-
-  onPageSharingOptions: boolean;
-  deletionPermissions: boolean;
-  manageSocialMediaAccounts: boolean;
-  managePayouts: boolean;
-  manageSupplierPayment: boolean;
-  manageInfluencerCommission: boolean;
-  manageResellerPayment: boolean;
-  supplierDetails: boolean;
-  tenantDetails: boolean;
-  influencerDetails: boolean;
-  resellersDetails: boolean;
-  customerDetails: boolean;
-  supplierListReport: boolean;
-  tenantListReport: boolean;
-  customerListReport: boolean;
-  influencerListReport: boolean;
-  resellersListReport: boolean;
 
   //Influencer permissions
   influencerCanRequestApprovalForSharingFromSupplier: boolean;
@@ -182,43 +196,55 @@ interface UserPermissions {
   customerCanUploadProfilePicture: boolean;
 }
 
-interface IRoleCapacities {
-  staffAccounts: boolean;
-  themes: number;
-  accessToPremiumThemes: boolean;
-  editTheme: boolean;
-  customTheme: boolean;
-  b2cPrice: boolean;
-  b2bPrice: boolean;
-  influencerPrice: boolean;
-  resellerPrice: boolean;
-  instructions: unknown;
-  visibility: Visibility;
-  groups: Groups;
-}
-
 interface IRole extends Document {
   roleId: number;
   name: string; // Add enum based on the roles
-  dateOfJoining: Date;
   description: string;
   userPermissions: UserPermissions;
   productPermissions: ProductPermissions;
-  capacities: IRoleCapacities;
 }
 
 const RoleSchema = new Schema(
   {
-    roleId: { type: Number },
+    roleId: { type: Number, default: 0 },
     name: { type: String, unique: true },
-    dateOfJoining: { type: Date, default: Date.now },
     description: { type: String },
     userPermissions: {
-      globalSupplierCommision: { type: Number },
-      separateSupplierCommision: { type: Number },
-      transactionCharge: { type: Number },
-      commisionOnDropshippingSale: { type: Number },
-      ownDomain: { type: Number },
+      staffAccounts: { type: Number, default: 0},
+      themes: { type: Number, default: 0 },
+      accessToPremiumThemes: { type: Boolean, default: false },
+      editTheme: { type: Boolean, default: false },
+      customTheme: { type: Boolean, default: false },
+      ownDomain: { type: Boolean, default: false},
+      onPageSharingOptions: { type: Boolean, default: false },
+      deletionPermissions: { type: Boolean, default: false },
+      manageSocialMediaAccounts: { type: Boolean, default: false },
+      managePayouts: { type: Boolean, default: false },
+      manageSupplierPayment: { type: Boolean, default: false },
+      manageInfluencerCommission: { type: Boolean, default: false },
+      manageResellerPayment: { type: Boolean, default: false },
+      supplierDetails: { type: Boolean, default: false },
+      tenantDetails: { type: Boolean, default: false },
+      influencerDetails: { type: Boolean, default: false },
+      resellersDetails: { type: Boolean, default: false },
+      customerDetails: { type: Boolean, default: false },
+      supplierListReport: { type: Boolean, default: false },
+      tenantListReport: { type: Boolean, default: false },
+      customerListReport: { type: Boolean, default: false },
+      influencerListReport: { type: Boolean, default: false },
+      resellersListReport: { type: Boolean, default: false },
+      salesReports: { type: Boolean, default: false },
+      report: { type: Boolean, default: false },
+      globalSupplierCommissionB2b: { type: Number, default: 0 },
+      globalSupplierCommissionB2c: { type: Number, default: 0 },
+      globalSupplierCommissionInfluencer: { type: Number, default: 0 },
+      globalSupplierCommissionReseller: { type: Number, default: 0 },
+      separateSupplierCommission: { type: String },
+      transactionCharge: { type: Number, default: 0 },
+      platformFeeOnDropshippingSale: { type: Number, default: 0 },
+      cod: { type: Boolean, default: false },
+      upi: { type: Boolean, default: false },
+      customPaymentGateway: { type: Boolean, default: false },
       superAdminCanAccessAdminPanel: { type: Boolean, default: false },
       superAdminCanAccessTenantAdminPanelIfPermitted: {
         type: Boolean,
@@ -275,10 +301,7 @@ const RoleSchema = new Schema(
         type: Boolean,
         default: false,
       },
-      supplierCanApproveInfluencersForSharing: {
-        type: Boolean,
-        default: false,
-      },
+      supplierCanApproveInfluencerForSharing: { type: Boolean, default: false },
       supplierCanApproveResellerForSharing: { type: Boolean, default: false },
       supplierCanBlockTenantFromDropshipping: { type: Boolean, default: false },
       supplierCanBlockInfluencerFromSharing: { type: Boolean, default: false },
@@ -313,23 +336,6 @@ const RoleSchema = new Schema(
       },
       tenantCanBlockResellerOnHisOwnWebsite: { type: Boolean, default: false },
       tenantCanDeleteResellerOnHisOwnWebsite: { type: Boolean, default: false },
-      onPageSharingOptions: { type: Boolean, default: false },
-      deletionPermissions: { type: Boolean, default: false },
-      manageSocialMediaAccounts: { type: Boolean, default: false },
-      managePayouts: { type: Boolean, default: false },
-      manageSupplierPayment: { type: Boolean, default: false },
-      manageInfluencerCommission: { type: Boolean, default: false },
-      manageResellerPayment: { type: Boolean, default: false },
-      supplierDetails: { type: Boolean, default: false },
-      tenantDetails: { type: Boolean, default: false },
-      influencerDetails: { type: Boolean, default: false },
-      resellersDetails: { type: Boolean, default: false },
-      customerDetails: { type: Boolean, default: false },
-      supplierListReport: { type: Boolean, default: false },
-      tenantListReport: { type: Boolean, default: false },
-      customerListReport: { type: Boolean, default: false },
-      influencerListReport: { type: Boolean, default: false },
-      resellersListReport: { type: Boolean, default: false },
       influencerCanRequestApprovalForSharingFromSupplier: {
         type: Boolean,
         default: false,
@@ -387,16 +393,27 @@ const RoleSchema = new Schema(
       customerCanUploadProfilePicture: { type: Boolean, default: false },
     },
     productPermissions: {
-      managePromotionalProducts: { type: Boolean, default: false },
-      manageCatalog: { type: Boolean, default: false },
-      manageAbandonedCarts: { type: Boolean, default: false },
+      accessToPremiumSupplierProducts: { type: Boolean, default: false },
+      manageCatalog: { type: String},
+      abandonedCart: { type: Boolean, default: false },
+      addDropshippingProduct: { type: String },
       createProduct: { type: Boolean, default: false },
-      addDropshippingProduct: { type: Boolean, default: false },
       editProduct: { type: Boolean, default: false },
       deleteProduct: { type: Boolean, default: false },
       productDetailReport: { type: Boolean, default: false },
-      salesReports: { type: Boolean, default: false },
-      report: { type: Boolean, default: false },
+      bulkUpload: { type: Boolean, default: false },
+      productLimit: { type: Number, default: 0 },
+      unlimitedProduct: { type: Boolean, default: false },
+      unlimitedUploadProductsOnMarketplace: { type: Boolean, default: false },
+      b2cPrice: { type: Boolean, default: false },
+      b2bPrice: { type: Boolean, default: false },
+      influencerPrice: { type: Boolean, default: false },
+      resellerPrice: { type: Boolean, default: false },
+      customizationOfProducts: { type: Boolean, default: false },
+      customFields: { type: Boolean, default: false },
+      giftWrapping: { type: Boolean, default: false },
+      linkedProducts: { type: Boolean, default: false },
+      promotionalProducts: { type: Boolean, default: false },
       createCoupons: { type: Boolean, default: false },
       editCoupons: { type: Boolean, default: false },
       deleteCoupons: { type: Boolean, default: false },
@@ -405,35 +422,20 @@ const RoleSchema = new Schema(
       createManualOrders: { type: Boolean, default: false },
       editOrders: { type: Boolean, default: false },
       cancelOrder: { type: Boolean, default: false },
-      managePackingOfProducts: { type: Boolean, default: false },
-      manageDispatchOfProducts: { type: Boolean, default: false },
       viewReturnRequest: { type: Boolean, default: false },
       approveReturnRequest: { type: Boolean, default: false },
       disapproveReturnRequest: { type: Boolean, default: false },
       manageReturnProducts: { type: Boolean, default: false },
-      abandonedCart: { type: Boolean, default: false },
-      bulkUpload: { type: Boolean, default: false },
-      productLimit: { type: Number },
-      unlimitedProduct: { type: Boolean, default: false },
-      unlimitedUploadProductsOnMarketplace: { type: Number },
-      customizationOfProducts: { type: Boolean, default: false },
-      customFields: { type: Boolean, default: false },
-      giftWrapping: { type: Boolean, default: false },
-      linkedProducts: { type: Boolean, default: false },
-      privateCatalogue: { type: Number },
-      promotionalProducts: { type: Boolean, default: false },
+      warehouse: { type: Number, default: 0 },
+      rackShelfBoxNumber: { type: Boolean, default: false },
       storePickup: { type: Boolean, default: false },
       pincodeBasedShipping: { type: Boolean, default: false },
       flatRateShipping: { type: Boolean, default: false },
-      manageFreeShippingLimitAboveOrderValue: {
-        type: Boolean,
-        default: false,
-      },
+      manageFreeShippingLimitAboveOrderValue: { type: Boolean, default: false },
       createBoxPacking: { type: Boolean, default: false },
-      cod: { type: Boolean, default: false },
-      upi: { type: Boolean, default: false },
       shippingIntegration: { type: Boolean, default: false },
-      customPaymentGateway: { type: Boolean, default: false },
+      managePackingOfProducts: { type: Boolean, default: false },
+      manageDispatchOfProducts: { type: Boolean, default: false },
       sessionTracking: { type: Boolean, default: false },
       seoSettings: { type: Boolean, default: false },
       facebookPixel: { type: Boolean, default: false },
@@ -444,20 +446,6 @@ const RoleSchema = new Schema(
       callSupport: { type: Boolean, default: false },
       emailSupport: { type: Boolean, default: false },
       conciergeOnboarding: { type: Boolean, default: false },
-    },
-    capacities: {
-      staffAccounts: { type: Boolean, default: false },
-      themes: { type: Number },
-      accessToPremiumThemes: { type: Boolean, default: false },
-      editTheme: { type: Boolean, default: false },
-      customTheme: { type: Boolean, default: false },
-      b2cPrice: { type: Boolean, default: false },
-      b2bPrice: { type: Boolean, default: false },
-      influencerPrice: { type: Boolean, default: false },
-      resellerPrice: { type: Boolean, default: false },
-      instructions: { type: Schema.Types.Mixed },
-      visibility: { type: Schema.Types.Mixed },
-      groups: { type: Schema.Types.Mixed },
     },
   },
   { versionKey: false },

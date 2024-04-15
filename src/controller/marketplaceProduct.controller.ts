@@ -1,17 +1,17 @@
-import { IProduct, ProductModel } from '@src/model/product.model';
+import { IMarketplaceProduct, MarketplaceProductModel } from '@src/model/marketplaceProduct.model';
 import { InternalError, NotFoundError } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 import { FilterQuery } from 'mongoose';
 
 // Get all products
-export const getAllProducts = catchAsync(async (req, res, next) => {
+export const getAllMarketPlaceProducts = catchAsync(async (req, res, next) => {
   const itemsPerPage = Number(req.params.itemsPerPage) || 10;
   const pageCount = Number(req.params.pageCount) || 1;
   const skipCount = itemsPerPage * (pageCount - 1);
-  const totalProducts = await ProductModel.countDocuments().exec();
+  const totalProducts = await MarketplaceProductModel.countDocuments().exec();
 
-  const products = await ProductModel.find()
+  const products = await MarketplaceProductModel.find()
     .skip(skipCount)
     .limit(itemsPerPage)
     .lean()
@@ -32,10 +32,10 @@ export const getAllProducts = catchAsync(async (req, res, next) => {
 });
 
 //Get single product
-export const getProduct = catchAsync(async (req, res, next) => {
+export const getMarketPlaceProduct = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const product = await ProductModel.findById(id).lean().exec();
+  const product = await MarketplaceProductModel.findById(id).lean().exec();
 
   if (!product) {
     throw next(new NotFoundError(`Product with id ${id} not found`));
@@ -46,12 +46,12 @@ export const getProduct = catchAsync(async (req, res, next) => {
 
 //Create product
 
-export const createProduct = catchAsync(async (req, res, next) => {
+export const createMarketPlaceProduct = catchAsync(async (req, res, next) => {
   const { decoded } = req.body;
 
   // Create product
   const supplierId = decoded.id;
-  const newProduct = await ProductModel.create({
+  const newProduct = await MarketplaceProductModel.create({
     generalDetails: { ...req.body.generalDetails, supplier: supplierId },
   });
 
@@ -63,11 +63,11 @@ export const createProduct = catchAsync(async (req, res, next) => {
 });
 
 // Update product
-export const updateProduct = catchAsync(async (req, res, next) => {
+export const updateMarketPlaceProduct = catchAsync(async (req, res, next) => {
   const { decoded } = req.body;
   const { productId } = req.params;
   const supplier = decoded.id;
-  const updateProduct = await ProductModel.findOneAndUpdate(
+  const updateProduct = await MarketplaceProductModel.findOneAndUpdate(
     { supplier, productId },
     req.body,
     {
@@ -90,9 +90,9 @@ export const updateProduct = catchAsync(async (req, res, next) => {
 
 //* Marketplace controller
 
-export const searchProduct = catchAsync(async (req, res, next) => {
+export const searchMarketPlaceProduct = catchAsync(async (req, res, next) => {
   const { search } = req.query;
-  const products = await ProductModel.find({
+  const products = await MarketplaceProductModel.find({
     $or: [
       { 'generalDetails.productName': { $regex: search, $options: 'i' } },
       { 'description.short': { $regex: search, $options: 'i' } },
@@ -112,10 +112,10 @@ export const searchProduct = catchAsync(async (req, res, next) => {
 });
 
 //test filtered products api once
-export const filteredProducts = catchAsync(async (req, res, next) => {
+export const filteredMarketPlaceProducts = catchAsync(async (req, res, next) => {
   const { category, manufacturer, minPrice, maxPrice, variants, attributes } =
     req.query;
-  const query: FilterQuery<IProduct> = {};
+  const query: FilterQuery<IMarketplaceProduct> = {};
 
   if (category) {
     query['category.childCategory'] = category as string;
@@ -147,14 +147,14 @@ export const filteredProducts = catchAsync(async (req, res, next) => {
     query['basicDetails.attributes'] = { $in: attributes as string[] };
   }
 
-  const products = await ProductModel.find(query).lean().exec();
+  const products = await MarketplaceProductModel.find(query).lean().exec();
   if (!products) {
     throw next(new NotFoundError(`Failed while fetching products`));
   }
   return new SuccessResponse('Products found', products).send(res);
 });
 
-export const searchAndFilterProducts = catchAsync(async (req, res, next) => {
+export const searchAndFilterMarketPlaceProducts = catchAsync(async (req, res, next) => {
   const {
     search,
     category,
@@ -165,7 +165,7 @@ export const searchAndFilterProducts = catchAsync(async (req, res, next) => {
     attributes,
   } = req.query;
 
-  const query: FilterQuery<IProduct> = {
+  const query: FilterQuery<IMarketplaceProduct> = {
     $or: [
       { 'generalDetails.productName': { $regex: search, $options: 'i' } },
       { 'description.short': { $regex: search, $options: 'i' } },
@@ -203,7 +203,7 @@ export const searchAndFilterProducts = catchAsync(async (req, res, next) => {
     query['basicDetails.attributes'] = { $in: attributes as string[] };
   }
 
-  const products = await ProductModel.find(query).lean().exec();
+  const products = await MarketplaceProductModel.find(query).lean().exec();
 
   if (!products.length) {
     throw next(
