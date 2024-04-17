@@ -2,22 +2,34 @@ import { Schema, model } from 'mongoose';
 
 interface IBrand extends Document {
   brandName: string;
+  yearsOfOperation: number;
   catalogueDetails: string;
   brandLogo: string;
-  documentOfProof: string;
-  categories: string[]; // Brands usually operate in multiple categories
-  countryOrigin: string; // Country of origin can be important for some customers
-  website: string; // Brand's official website
+  tradeMark: string;
+  manufactureName: string;
+  manufactureAddress: string;
+  manufactureContact: string;
+  packerAddress: string;
+  packerContact: string;
+  earthFriendly: string;
+  rootCategoryClassification: string;
+  mainCategoryClassification: string;
 }
 
 const BrandSchema: Schema<IBrand> = new Schema({
   brandName: String,
+  yearsOfOperation: Number,
   catalogueDetails: String,
   brandLogo: String,
-  documentOfProof: String,
-  categories: [String],
-  countryOrigin: String,
-  website: String,
+  tradeMark: String,
+  manufactureName: String,
+  manufactureAddress: String,
+  manufactureContact: String,
+  packerAddress: String,
+  packerContact: String,
+  earthFriendly: String,
+  rootCategoryClassification: String,
+  mainCategoryClassification: String,
 });
 
 const BrandModel = model<IBrand>('Brand', BrandSchema);
