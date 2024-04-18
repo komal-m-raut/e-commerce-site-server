@@ -95,7 +95,6 @@ const skuRouter = Router();
 
 skuRouter.post(
   '/create/:productId',
-  authMiddleware(2),
   validate({ body: createSkuSchema, params: productIdSchema }),
   createSku,
 );
@@ -160,7 +159,6 @@ skuRouter.post(
 
 skuRouter.patch(
   '/update-product-visibility/:productId',
-  authMiddleware(2),
   validate({ body: visibilitySchema, params: productIdSchema }),
   updateProductVisibility,
 );

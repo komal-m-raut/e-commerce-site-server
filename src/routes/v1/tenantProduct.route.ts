@@ -81,7 +81,6 @@ const tenantProductRouter: Router = Router();
 
 tenantProductRouter.post(
   '/create',
-  authMiddleware(2),
   validate({ body: createTenantProductSchema }),
   createTenantProduct,
 );
@@ -123,7 +122,7 @@ tenantProductRouter.post(
 
 tenantProductRouter.get(
   '/:itemsPerPage/:pageCount',
-  authMiddleware,
+
   getAllTenantProducts,
 );
 
@@ -152,18 +151,18 @@ tenantProductRouter.get(
  *        description: "Failed to fetch product"
  */
 
-tenantProductRouter.get('/:id', authMiddleware, getTenantProduct);
+tenantProductRouter.get('/:id',  getTenantProduct);
 
 // //*PATCH ROUTE
 // tenantProductRouter.patch(
 //   '/',
-//   authMiddleware,
+//
 //   validate({ body: updateTenantProductSchema }),
 //   updateTenantProduct,
 // );
 
 // //*DELETE ROUTE
-// tenantProductRouter.delete('/:id', authMiddleware, deleteProduct);
+// tenantProductRouter.delete('/:id',  deleteProduct);
 
 //? Tenant routes
 

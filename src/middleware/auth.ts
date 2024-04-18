@@ -2,8 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import { validateToken } from '@src/services/auth.service';
 import { BadRequestError, AuthFailureError } from '@src/utils/apiError';
 
+interface Permission {
+  [key: string]: any;
+}
+
+interface PermissionObject {
+  userPermissions: Permission[];
+  productPermissions: Permission[];
+}
+
 const authMiddleware =
-  (roleId = 100) =>
+  (permissions: PermissionObject, capacities: number) =>
   (
     req: Request,
     _res: Response,
@@ -17,17 +26,39 @@ const authMiddleware =
     const decoded: {
       isValid: boolean;
       message: string;
-      data: { roleId: number };
+      data: {
+        userPermissions: Permission[];
+        productPermissions: Permission[];
+      };
     } = validateToken(token) as {
       isValid: boolean;
       message: string;
-      data: { roleId: number };
+      data: {
+        userPermissions: Permission[];
+        productPermissions: Permission[];
+      };
     };
     if (!decoded.isValid) {
       throw new AuthFailureError(decoded.message);
     }
-
-    if (decoded.data.roleId >= roleId) {
+    const hasRequiredUserPermissions = permissions.userPermissions.every(
+      ({ key, value }) =>
+        decoded.data.userPermissions.some(
+          (permission) => permission.key === key && permission.value === value,
+        ),
+    );
+    const hasRequiredProductPermissions = permissions.productPermissions.every(
+      ({ key, value }) =>
+        decoded.data.productPermissions.some(
+          (permission) => permission.key === key && permission.value === value,
+        ),
+    );
+    const hasRequiredCapacities = capacities >= 0;
+    if (
+      !hasRequiredUserPermissions ||
+      !hasRequiredProductPermissions ||
+      !hasRequiredCapacities
+    ) {
       throw new AuthFailureError(`Unauthorized`);
     }
     req.body.decoded = decoded.data;

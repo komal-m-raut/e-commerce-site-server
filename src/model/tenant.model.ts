@@ -61,21 +61,21 @@ const marketingPageSchema = new Schema<MarketingPage>({
 });
 
 interface ITenant extends Document {
+  name: string;
   email: string;
-  phoneNo: number;
   password: string;
   customHomeSection: HomeSection;
   marketingPages: MarketingPage[];
-  role?: PopulatedDoc<Schema.Types.ObjectId & IRole>;
+  role: PopulatedDoc<Schema.Types.ObjectId & IRole>;
 }
 
 const TenantSchema = new Schema<ITenant>({
+  name: { type: String },
   email: { type: String, unique: true },
-  phoneNo: { type: Number, unique: true },
   password: { type: String },
-  customHomeSection: { type: homeSectionSchema, required: true },
+  customHomeSection: { type: homeSectionSchema },
   marketingPages: [marketingPageSchema],
-  role: { type: Schema.Types.ObjectId, ref: 'Role' },
+  role: { type: Schema.Types.ObjectId, ref: 'Role',default:'661b923a035c08718a53f50c' },
 });
 
 const TenantModel = model<ITenant>('Tenant', TenantSchema);

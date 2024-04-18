@@ -37,7 +37,6 @@ authRouter.post(
 
 authRouter.post(
   '/verify-password-reset-link',
-  authMiddleware,
   validate({ body: verifyPasswordResetLinkSchema }),
   verifyPasswordResetLink,
 );

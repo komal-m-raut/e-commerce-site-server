@@ -52,49 +52,43 @@ export const getTenant = catchAsync(async (req, res, next) => {
 
 // Tenant sign up
 export const createTenant = catchAsync(async (req, res, next) => {
-  const { email, phoneNo, password } = req.body;
+  const { email, name, password, role } = req.body;
 
-  // Check if email or phone number is already registered
+  // Check if email or name is already registered
   const existingTenant = await TenantModel.findOne({
-    $or: [{ email }, { phoneNo }],
+    $or: [{ email }, { name }],
     isVerified: true,
   })
     .lean()
     .exec();
   if (existingTenant) {
-    throw next(
-      new BadRequestError('Email or phone number is already registered'),
-    );
+    throw next(new BadRequestError('Email or name is already registered'));
   }
 
   // Hash password
   const hashedPassword = await encrypt(password);
-  const tenant = await TenantModel.findOneAndUpdate(
-    {
-      email,
-      phoneNo,
-    },
-    {
-      password: hashedPassword,
-      isVerified: true,
-    },
-    { new: true },
-  )
-    .lean()
-    .exec();
+
+  // Create new tenant
+  const tenant = new TenantModel({
+    email,
+    name,
+    password: hashedPassword,
+    role,
+    isVerified: true,
+  });
+  await tenant.save();
 
   return new SuccessResponse('success', tenant).send(res);
 });
 
-// Tenant login
 export const loginTenant = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-
   // Find tenant by email
   const tenant = await TenantModel.findOne({ email })
-    .populate('role', 'roleId')
+    .populate('role', 'userPermissions productPermissions')
     .lean()
     .exec();
+
   if (!tenant) {
     throw next(new NotFoundError(`Tenant with ${email} not found`));
   }
@@ -106,8 +100,40 @@ export const loginTenant = catchAsync(async (req, res, next) => {
     throw next(new AuthFailureError(`Invalid password`));
   }
 
+  // Extract user and product permissions
+  const { role } = tenant;
+  const { userPermissions, productPermissions } = role;
+
+  type Permission = { [key: string]: any };
+
+  // Extract and filter permissions
+  const filterPermissions = (
+    permissions: Record<string, any>,
+  ): Permission[] => {
+    return Object.entries(permissions)
+      .filter(
+        ([_, value]) =>
+          (typeof value === 'number' && value > 0) ||
+          value === true ||
+          (typeof value === 'string' && value.trim() !== ''),
+      )
+      .map(([key, value]) => ({ [key]: value }));
+  };
+
+  const extractedUserPermissions = filterPermissions(userPermissions);
+  const extractedProductPermissions = filterPermissions(productPermissions);
+  console.log(
+    extractedProductPermissions,
+    extractedUserPermissions,
+    'permissions',
+  );
   // Create and send JWT token
-  const token = generateToken({ id: tenant._id, roleId: tenant.role?.roleId });
+  const token = generateToken({
+    id: tenant._id,
+    userPermissions: extractedUserPermissions,
+    productPermissions: extractedProductPermissions,
+  });
+
   return new SuccessResponse('success', { token, tenant }).send(res);
 });
 

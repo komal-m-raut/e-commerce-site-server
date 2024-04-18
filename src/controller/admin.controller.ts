@@ -57,6 +57,10 @@ export const loginAdmin = catchAsync(async (req, res, next) => {
     id: admin._id,
     roleId: admin.role?.roleId,
     type: 'admin',
+    permissions:{
+      productPermissions: admin.role?.productPermissions,
+      userPermissions: admin.role?.userPermissions,
+    }
   });
   return new SuccessResponse('success', { token, admin }).send(res);
 });

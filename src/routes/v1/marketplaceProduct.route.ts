@@ -81,7 +81,6 @@ const marketplaceProductRouter: Router = Router();
 
 marketplaceProductRouter.post(
   '/create',
-  authMiddleware(2),
   validate({ body: createMarketplaceProductSchema }),
   createMarketPlaceProduct,
 );
@@ -123,7 +122,7 @@ marketplaceProductRouter.post(
 
 marketplaceProductRouter.get(
   '/:itemsPerPage/:pageCount',
-  authMiddleware,
+
   getAllMarketPlaceProducts,
 );
 
@@ -151,18 +150,18 @@ marketplaceProductRouter.get(
  *      500:
  *        description: "Failed to fetch product"
  */
-marketplaceProductRouter.get('/:id', authMiddleware, getMarketPlaceProduct);
+marketplaceProductRouter.get('/:id',  getMarketPlaceProduct);
 
 // //*PATCH ROUTE
 // marketplaceProductRouter.patch(
 //   '/',
-//   authMiddleware,
+//
 //   validate({ body: updateMarketplaceProductSchema }),
 //   updateMarketPlaceProduct,
 // );
 
 // //*DELETE ROUTE
-// marketplaceProductRouter.delete('/:id', authMiddleware, deleteProduct);
+// marketplaceProductRouter.delete('/:id',  deleteProduct);
 
 //? Marketplace routes
 
