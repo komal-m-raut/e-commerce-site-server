@@ -6,7 +6,6 @@ import {
   searchAndFilterTenantProducts,
   searchTenantProduct,
 } from '@src/controller/tenantProduct.controller';
-import authMiddleware from '@src/middleware/auth';
 import validate from '@src/middleware/validate';
 import {
   createTenantProductSchema,

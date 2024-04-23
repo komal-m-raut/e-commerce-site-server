@@ -7,12 +7,17 @@ interface Permission {
 }
 
 interface PermissionObject {
-  userPermissions: Permission[];
-  productPermissions: Permission[];
+  userPermissions: Permission;
+  productPermissions: Permission;
 }
 
+const defaultPermissions: PermissionObject = {
+  userPermissions: {},
+  productPermissions: {},
+};
+
 const authMiddleware =
-  (permissions: PermissionObject, capacities: number) =>
+  (permissions: PermissionObject = defaultPermissions) =>
   (
     req: Request,
     _res: Response,
@@ -27,38 +32,45 @@ const authMiddleware =
       isValid: boolean;
       message: string;
       data: {
-        userPermissions: Permission[];
-        productPermissions: Permission[];
+        id: string;
+        userType: string;
+        userPermissions: Permission;
+        productPermissions: Permission;
       };
     } = validateToken(token) as {
       isValid: boolean;
       message: string;
       data: {
-        userPermissions: Permission[];
-        productPermissions: Permission[];
+        id: string;
+        userType: string;
+        userPermissions: Permission;
+        productPermissions: Permission;
       };
     };
     if (!decoded.isValid) {
       throw new AuthFailureError(decoded.message);
     }
-    const hasRequiredUserPermissions = permissions.userPermissions.every(
-      ({ key, value }) =>
-        decoded.data.userPermissions.some(
-          (permission) => permission.key === key && permission.value === value,
-        ),
+    console.log(permissions, 'permissions');
+    console.log(decoded.data, 'decoded');
+    const hasRequiredUserPermissions = Object.keys(
+      permissions.userPermissions,
+    ).every(
+      (key) =>
+        decoded.data.userPermissions[key] === permissions.userPermissions[key],
     );
-    const hasRequiredProductPermissions = permissions.productPermissions.every(
-      ({ key, value }) =>
-        decoded.data.productPermissions.some(
-          (permission) => permission.key === key && permission.value === value,
-        ),
+    const hasRequiredProductPermissions = Object.keys(
+      permissions.productPermissions,
+    ).every(
+      (key) =>
+        decoded.data.productPermissions[key] === permissions.productPermissions[key],
     );
-    const hasRequiredCapacities = capacities >= 0;
-    if (
-      !hasRequiredUserPermissions ||
-      !hasRequiredProductPermissions ||
-      !hasRequiredCapacities
-    ) {
+
+    console.log(
+      hasRequiredUserPermissions,
+      hasRequiredProductPermissions,
+      'permissions',
+    );
+    if (!hasRequiredUserPermissions || !hasRequiredProductPermissions) {
       throw new AuthFailureError(`Unauthorized`);
     }
     req.body.decoded = decoded.data;

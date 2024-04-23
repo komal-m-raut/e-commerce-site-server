@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import validate from '@src/middleware/validate';
-import authMiddleware from '@src/middleware/auth';
 import {
   createCareInstructions,
   createExchangeRefund,

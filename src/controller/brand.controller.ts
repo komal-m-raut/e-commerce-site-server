@@ -4,21 +4,29 @@ import {
   InternalError,
   NotFoundError,
 } from '@src/utils/apiError';
-import { SuccessResponse } from '@src/utils/apiResponse';
+import { SuccessMsgResponse, SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 
 export const createBrand = catchAsync(async (req, res, next) => {
-  const { brandName } = req.body;
-
-  // Check if brand with same name already exists
-  const existingBrand = await BrandModel.findOne({ brandName }).lean().exec();
+  const { brandName, decoded } = req.body;
+  const tenantId = decoded.id;
+  // Check if brand with same name already exists within the same tenant
+  const existingBrand = await BrandModel.findOne({ brandName, tenantId })
+    .lean()
+    .exec();
   if (existingBrand) {
-    throw next(new BadRequestError('Brand with this name already exists'));
+    throw next(
+      new BadRequestError(
+        'Brand with this name already exists for this tenant',
+      ),
+    );
   }
 
   // Create new brand document
   const brand = await BrandModel.create({
     ...req.body,
+    tenantId,
+    userType: 'tenant',
   });
 
   if (!brand) {
@@ -62,9 +70,11 @@ export const getAllBrands = catchAsync(async (req, res, next) => {
   const itemsPerPage = Number(req.params.itemsPerPage) || 10;
   const pageCount = Number(req.params.pageCount) || 1;
   const skipCount = itemsPerPage * (pageCount - 1);
-  const totalBrands = await BrandModel.countDocuments().exec();
+  const tenantId = req.params.tenantId; // or req.body.tenantId, depending on where you're getting it from
 
-  const brands = await BrandModel.find()
+  const totalBrands = await BrandModel.countDocuments({ tenantId }).exec();
+
+  const brands = await BrandModel.find({ tenantId })
     .skip(skipCount)
     .limit(itemsPerPage)
     .lean()
@@ -74,11 +84,8 @@ export const getAllBrands = catchAsync(async (req, res, next) => {
     throw next(new NotFoundError('No brand found'));
   }
 
-  const totalPages = Math.ceil(totalBrands / itemsPerPage);
-
   return new SuccessResponse('success', {
     brands,
-    totalPages,
     currentPage: pageCount,
     totalBrands,
   }).send(res);
@@ -87,13 +94,17 @@ export const getAllBrands = catchAsync(async (req, res, next) => {
 export const deleteBrand = catchAsync(async (req, res, next) => {
   const { brandId } = req.params;
 
-  const deleteBrand = await BrandModel.findById(brandId).lean().exec();
+  const brand = await BrandModel.findByIdAndUpdate(
+    brandId,
+    { isDisabled: true },
+    { new: true, runValidators: true },
+  )
+    .lean()
+    .exec();
 
-  if (!deleteBrand) {
+  if (!brand) {
     throw next(new NotFoundError(`Brand with id ${brandId} not found`));
   }
 
-  return new SuccessResponse('Brand deleted successfully', deleteBrand).send(
-    res,
-  );
+  return new SuccessMsgResponse('Brand disabled successfully').send(res);
 });

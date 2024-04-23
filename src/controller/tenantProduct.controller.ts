@@ -21,11 +21,8 @@ export const getAllTenantProducts = catchAsync(async (req, res, next) => {
     throw next(new NotFoundError('No product found'));
   }
 
-  const totalPages = Math.ceil(totalProducts / itemsPerPage);
-
   return new SuccessResponse('success', {
     products,
-    totalPages,
     currentPage: pageCount,
     totalProducts,
   }).send(res);

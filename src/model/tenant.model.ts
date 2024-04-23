@@ -67,6 +67,7 @@ interface ITenant extends Document {
   customHomeSection: HomeSection;
   marketingPages: MarketingPage[];
   role: PopulatedDoc<Schema.Types.ObjectId & IRole>;
+  isVerified: boolean;
 }
 
 const TenantSchema = new Schema<ITenant>({
@@ -75,7 +76,12 @@ const TenantSchema = new Schema<ITenant>({
   password: { type: String },
   customHomeSection: { type: homeSectionSchema },
   marketingPages: [marketingPageSchema],
-  role: { type: Schema.Types.ObjectId, ref: 'Role',default:'661b923a035c08718a53f50c' },
+  role: {
+    type: Schema.Types.ObjectId,
+    ref: 'Role',
+    default: '661b923a035c08718a53f50c',
+  },
+  isVerified: { type: Boolean, default: false },
 });
 
 const TenantModel = model<ITenant>('Tenant', TenantSchema);

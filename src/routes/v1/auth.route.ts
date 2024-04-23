@@ -4,7 +4,6 @@ import {
   validateOtp,
   verifyPasswordResetLink,
 } from '@src/controller/auth.controller';
-import authMiddleware from '@src/middleware/auth';
 import validate from '@src/middleware/validate';
 import {
   createOtpSchema,

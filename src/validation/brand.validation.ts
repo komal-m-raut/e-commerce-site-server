@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { validateObjectId } from './common.validation';
 
 export const createBrandSchema = Joi.object({
   brandName: Joi.string().required(),
@@ -9,11 +10,13 @@ export const createBrandSchema = Joi.object({
   manufactureName: Joi.string().required(),
   manufactureAddress: Joi.string().required(),
   manufactureContact: Joi.string().required(),
-  packerAddress: Joi.string().required(),
-  packerContact: Joi.string().required(),
+  packerAddressAndContact: Joi.string().required(),
   earthFriendly: Joi.string().required(),
-  rootCategoryClassification: Joi.string().required(),
-  mainCategoryClassification: Joi.string().required(),
+  rootCategoryClassification: Joi.array().items(validateObjectId()).required(),
+  mainCategoryClassification: Joi.array().items(validateObjectId()).required(),
+  tenantId: validateObjectId().required(),
+  userType: Joi.string().valid('tenant', 'supplier').required(),
+  isDisabled: Joi.boolean(),
 });
 
 export const updateBrandSchema = Joi.object({
@@ -31,5 +34,3 @@ export const updateBrandSchema = Joi.object({
   rootCategoryClassification: Joi.string(),
   mainCategoryClassification: Joi.string(),
 });
-
-

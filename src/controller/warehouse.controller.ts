@@ -63,11 +63,8 @@ export const getAllWarehouses = catchAsync(async (req, res, next) => {
     throw next(new NotFoundError('No warehouse found'));
   }
 
-  const totalPages = Math.ceil(totalProducts / itemsPerPage);
-
   return new SuccessResponse('success', {
     warehouses,
-    totalPages,
     currentPage: pageCount,
     totalProducts,
   }).send(res);

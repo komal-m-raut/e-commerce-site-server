@@ -53,14 +53,28 @@ export const loginAdmin = catchAsync(async (req, res, next) => {
   }
 
   // Create and send JWT token
+  const { userPermissions, productPermissions } = admin.role;
+
+  type Permission = { [key: string]: any };
+
+  // Extract and filter permissions
+  const filterPermissions = (
+    permissions: Record<string, any>,
+  ): Permission[] => {
+    return Object.entries(permissions)
+      .filter(([_, value]) => value)
+      .map(([key, value]) => ({ [key]: value }));
+  };
+
+  const extractedUserPermissions = filterPermissions(userPermissions);
+  const extractedProductPermissions = filterPermissions(productPermissions);
+
+  // Create and send JWT token
   const token = generateToken({
     id: admin._id,
-    roleId: admin.role?.roleId,
-    type: 'admin',
-    permissions:{
-      productPermissions: admin.role?.productPermissions,
-      userPermissions: admin.role?.userPermissions,
-    }
+    userType: 'admin',
+    userPermissions: extractedUserPermissions,
+    productPermissions: extractedProductPermissions,
   });
   return new SuccessResponse('success', { token, admin }).send(res);
 });

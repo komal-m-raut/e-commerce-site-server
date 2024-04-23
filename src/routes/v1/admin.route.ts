@@ -13,7 +13,6 @@ import {
   loginAdmin,
   updateAdmin,
 } from '@src/controller/admin.controller';
-import authMiddleware from '@src/middleware/auth';
 import { idSchema } from '@src/validation/common.validation';
 
 export const adminRouter: Router = Router();

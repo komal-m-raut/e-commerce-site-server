@@ -27,11 +27,8 @@ export const getAllTenants = catchAsync(async (req, res, next) => {
     throw next(new NotFoundError('No tenants found'));
   }
 
-  const totalPages = Math.ceil(totalTenants / itemsPerPage);
-
   return new SuccessResponse('success', {
     tenants,
-    totalPages,
     currentPage: pageCount,
     totalTenants,
   }).send(res);
@@ -56,27 +53,25 @@ export const createTenant = catchAsync(async (req, res, next) => {
 
   // Check if email or name is already registered
   const existingTenant = await TenantModel.findOne({
-    $or: [{ email }, { name }],
+    $or: [{ email }],
     isVerified: true,
   })
     .lean()
     .exec();
   if (existingTenant) {
-    throw next(new BadRequestError('Email or name is already registered'));
+    throw next(new BadRequestError('Email is already registered'));
   }
 
   // Hash password
   const hashedPassword = await encrypt(password);
 
   // Create new tenant
-  const tenant = new TenantModel({
+ const tenant = await TenantModel.create({
     email,
     name,
     password: hashedPassword,
     role,
-    isVerified: true,
   });
-  await tenant.save();
 
   return new SuccessResponse('success', tenant).send(res);
 });
@@ -101,38 +96,27 @@ export const loginTenant = catchAsync(async (req, res, next) => {
   }
 
   // Extract user and product permissions
-  const { role } = tenant;
-  const { userPermissions, productPermissions } = role;
-
-  type Permission = { [key: string]: any };
+  const { userPermissions, productPermissions } = tenant.role;
 
   // Extract and filter permissions
   const filterPermissions = (
-    permissions: Record<string, any>,
-  ): Permission[] => {
-    return Object.entries(permissions)
-      .filter(
-        ([_, value]) =>
-          (typeof value === 'number' && value > 0) ||
-          value === true ||
-          (typeof value === 'string' && value.trim() !== ''),
-      )
-      .map(([key, value]) => ({ [key]: value }));
-  };
+  permissions: Record<string, any>,
+): Record<string, any> => {
+  return Object.entries(permissions)
+    .filter(([_, value]) => value)
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+};
 
-  const extractedUserPermissions = filterPermissions(userPermissions);
-  const extractedProductPermissions = filterPermissions(productPermissions);
-  console.log(
-    extractedProductPermissions,
-    extractedUserPermissions,
-    'permissions',
-  );
-  // Create and send JWT token
-  const token = generateToken({
-    id: tenant._id,
-    userPermissions: extractedUserPermissions,
-    productPermissions: extractedProductPermissions,
-  });
+const extractedUserPermissions = filterPermissions(userPermissions);
+const extractedProductPermissions = filterPermissions(productPermissions);
+
+// Create and send JWT token
+const token = generateToken({
+  id: tenant._id,
+  userType: 'tenant',
+  userPermissions: extractedUserPermissions,
+  productPermissions: extractedProductPermissions,
+});
 
   return new SuccessResponse('success', { token, tenant }).send(res);
 });

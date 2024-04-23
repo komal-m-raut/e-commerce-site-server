@@ -6,7 +6,6 @@ import {
   searchAndFilterMarketPlaceProducts,
   searchMarketPlaceProduct,
 } from '@src/controller/marketplaceProduct.controller';
-import authMiddleware from '@src/middleware/auth';
 import validate from '@src/middleware/validate';
 import {
   createMarketplaceProductSchema,

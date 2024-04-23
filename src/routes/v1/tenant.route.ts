@@ -49,37 +49,24 @@ tenantRouter.post(
 //*GET ROUTE
 tenantRouter.get(
   '/',
-  authMiddleware(
-    {
-      userPermissions: [
-        { createProduct: true },
-        { editProduct: true },
-        { deleteProduct: true },
-        { productDetailReport: true },
-      ],
-      productPermissions: [{ salesReports: true }],
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
     },
-    0,
-  ),
+    userPermissions: { salesReports: true },
+  }),
   getAllTenants,
 );
 
-tenantRouter.get(
-  '/:id',
-  authMiddleware(
-    {
-      userPermissions: [],
-      productPermissions: [],
-    },
-    0,
-  ),
-  getTenant,
-);
+tenantRouter.get('/:id', authMiddleware(), getTenant);
 
 //*PATCH ROUTE
 tenantRouter.patch(
   '/:id',
-  authMiddleware({ userPermissions: [], productPermissions: [] }, 0),
+  authMiddleware(),
   validate({ body: updateTenantSchema, params: idSchema }),
   updateTenant,
 );
@@ -99,7 +86,7 @@ tenantRouter.patch(
 //*DELETE ROUTE
 tenantRouter.delete(
   '/:id',
-  authMiddleware({ userPermissions: [], productPermissions: [] }, 0),
+  authMiddleware(),
   validate({ params: idSchema }),
   deleteTenant,
 );
@@ -121,6 +108,8 @@ tenantRouter.delete(
  *     tags:
  *       - Warehouse
  *     summary: Create a new warehouse
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -171,6 +160,15 @@ tenantRouter.delete(
  */
 tenantRouter.post(
   '/warehouse/create',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
   validate({ body: createWarehouseSchema }),
   createWarehouse,
 );
@@ -186,6 +184,8 @@ tenantRouter.post(
  *     tags:
  *       - Brand
  *     summary: Create a new brand
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -201,11 +201,12 @@ tenantRouter.post(
  *               - manufactureName
  *               - manufactureAddress
  *               - manufactureContact
- *               - packerAddress
- *               - packerContact
+ *               - packerAddressAndContact
  *               - earthFriendly
  *               - rootCategoryClassification
  *               - mainCategoryClassification
+ *               - tenantId
+ *               - userType
  *             properties:
  *               brandName:
  *                 type: string
@@ -223,28 +224,65 @@ tenantRouter.post(
  *                 type: string
  *               manufactureContact:
  *                 type: string
- *               packerAddress:
- *                 type: string
- *               packerContact:
+ *               packerAddressAndContact:
  *                 type: string
  *               earthFriendly:
  *                 type: string
  *               rootCategoryClassification:
- *                 type: string
+ *                 type: array
+ *                 items:
+ *                   type: string
  *               mainCategoryClassification:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               tenantId:
  *                 type: string
+ *               userType:
+ *                 type: string
+ *                 enum: [tenant, supplier]
+ *               isDisabled:
+ *                 type: boolean
  *     responses:
  *       200:
  *         description: Brand created successfully
  *       400:
- *         description: Brand with this name already exists
+ *         description: Brand with this name already exists for this tenant
  *       500:
  *         description: Failed to create brand
  */
+
 tenantRouter.post(
   '/brand/create',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
   validate({ body: createBrandSchema }),
   createBrand,
 );
 
 export default tenantRouter;
+
+const test = {
+  brandName: 'Test Brand',
+  yearsOfOperation: 10,
+  catalogueDetails: 'Test catalogue details',
+  brandLogo: 'https://example.com/brand-logo.png',
+  tradeMark: 'Test trademark',
+  manufactureName: 'Test Manufacturer',
+  manufactureAddress: '123 Test Street, Test City, Test Country',
+  manufactureContact: 'test@example.com',
+  packerAddressAndContact: '456 Test Avenue, Test City, Test Country',
+  earthFriendly: 'Eco Friendly',
+  rootCategoryClassification: ['648dc4329ff22de1196cf46f'],
+  mainCategoryClassification: ['648dd0a89ff22de1196cf47b'],
+  tenantId: '662798bd845d60a36d9510f2',
+  userType: 'tenant',
+  isDisabled: false,
+};
