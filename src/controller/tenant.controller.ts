@@ -8,8 +8,8 @@ import {
   NotFoundError,
 } from '@src/utils/apiError';
 import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
-import { BrandModel } from '@src/model/sub-company/tenantBrand.model';
-import { WarehouseModel } from '@src/model/sub-company/tenantWarehouse.model';
+import { TenantBrandModel } from '@src/model/sub-company/tenantBrand.model';
+import { TenantWarehouseModel } from '@src/model/sub-company/tenantWarehouse.model';
 
 // Get all tenants
 export const getAllTenants = catchAsync(async (req, res, next) => {
@@ -133,7 +133,7 @@ export const updateTenant = catchAsync(async (req, res, next) => {
     countryOrigin: req.body.countryOrigin,
     website: req.body.website,
   };
-  const newBrand = await BrandModel.create(brandData);
+  const newBrand = await TenantBrandModel.create(brandData);
   if (!newBrand) {
     throw next(new NoDataError(`Failed to create brand`));
   }
@@ -153,7 +153,7 @@ export const updateTenant = catchAsync(async (req, res, next) => {
     warehouseManager: req.body.warehouseManager,
   };
 
-  const newWarehouse = await WarehouseModel.create(warehouseData);
+  const newWarehouse = await TenantWarehouseModel.create(warehouseData);
   if (!newBrand) {
     throw next(new NoDataError(`Failed to create warehouse`));
   }

@@ -50,8 +50,7 @@ const authMiddleware =
     if (!decoded.isValid) {
       throw new AuthFailureError(decoded.message);
     }
-    console.log(permissions, 'permissions');
-    console.log(decoded.data, 'decoded');
+
     const hasRequiredUserPermissions = Object.keys(
       permissions.userPermissions,
     ).every(
@@ -62,14 +61,10 @@ const authMiddleware =
       permissions.productPermissions,
     ).every(
       (key) =>
-        decoded.data.productPermissions[key] === permissions.productPermissions[key],
+        decoded.data.productPermissions[key] ===
+        permissions.productPermissions[key],
     );
 
-    console.log(
-      hasRequiredUserPermissions,
-      hasRequiredProductPermissions,
-      'permissions',
-    );
     if (!hasRequiredUserPermissions || !hasRequiredProductPermissions) {
       throw new AuthFailureError(`Unauthorized`);
     }

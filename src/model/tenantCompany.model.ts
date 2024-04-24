@@ -1,9 +1,5 @@
 import { Document, Schema, Model, model, PopulatedDoc } from 'mongoose';
-import {
-  ITenantWarehouse,
-  TenantWarehouseSchema,
-} from './sub-company/tenantWarehouse.model';
-import { ITenantBrand } from './sub-company/tenantBrand.model';
+import { ITenant } from './tenant.model';
 
 interface BusinessInfo {
   gstin: string;
@@ -21,39 +17,48 @@ interface BusinessInfo {
 }
 
 const businessInfoSchema = new Schema<BusinessInfo>({
-  gstin: String,
-  pan: String,
-  businessName: String,
-  businessOwnerName: String,
-  businessModel: String,
-  natureOfBusiness: String,
-  tryyonForPlanet: String,
-  yearsOfOperation: Number,
-  avgMrp: Number,
-  avgSellingPrice: Number,
-  avgMonthlyTurnover: Number,
-  percentageOfOnlineBusiness: Number,
+  gstin: { type: String },
+  pan: { type: String },
+  businessName: { type: String },
+  businessOwnerName: { type: String },
+  businessModel: { type: String },
+  natureOfBusiness: { type: String },
+  tryyonForPlanet: { type: String },
+  yearsOfOperation: { type: Number },
+  avgMrp: { type: Number },
+  avgSellingPrice: { type: Number },
+  avgMonthlyTurnover: { type: Number },
+  percentageOfOnlineBusiness: { type: Number },
 });
 
-interface ContactInfo {
-  businessOwnerEmail: string;
-  businessOwnerContact: string;
+interface BasicInfo {
+  primaryContactName: string;
+  primaryEmailId: string;
+  primaryContactNumber: string;
   organizationEmail: string;
   organizationContact: string;
-  primaryEmailId: string;
-  primaryContactName: string;
-  primaryContactNumber: string;
+  businessOwnerName: string;
+  businessOwnerEmail: string;
+  businessOwnerContact: string;
+  panNumber: string;
+  businessModel: string;
 }
 
-const contactInfoSchema = new Schema<ContactInfo>({
-  businessOwnerEmail: String,
-  businessOwnerContact: String,
-  organizationEmail: String,
-  organizationContact: String,
-  primaryEmailId: String,
-  primaryContactName: String,
-  primaryContactNumber: String,
-});
+const basicInfoSchema = new Schema<BasicInfo>(
+  {
+    primaryContactName: { type: String },
+    primaryEmailId: { type: String },
+    primaryContactNumber: { type: String },
+    organizationEmail: { type: String },
+    organizationContact: { type: String },
+    businessOwnerName: { type: String },
+    businessOwnerEmail: { type: String },
+    businessOwnerContact: { type: String },
+    panNumber: { type: String },
+    businessModel: { type: String },
+  },
+  { _id: false },
+);
 
 interface BankingInfo {
   accountHolderName: string;
@@ -61,19 +66,20 @@ interface BankingInfo {
   ifscCode: string;
   accountType: string;
   bankName: string;
-  bankLocation: string;
   cheque: string;
 }
 
-const bankingInfoSchema = new Schema<BankingInfo>({
-  accountHolderName: String,
-  accountNumber: String,
-  ifscCode: String,
-  accountType: String,
-  bankName: String,
-  bankLocation: String,
-  cheque: String,
-});
+const bankingInfoSchema = new Schema<BankingInfo>(
+  {
+    accountHolderName: { type: String },
+    accountNumber: { type: String },
+    ifscCode: { type: String },
+    accountType: { type: String },
+    bankName: { type: String },
+    cheque: { type: String },
+  },
+  { _id: false },
+);
 
 interface ITenantCompany extends Document {
   name: string;
@@ -85,9 +91,9 @@ interface ITenantCompany extends Document {
   aadhaarNumber: string;
   aadhaarCard?: string;
   adminApproval: boolean;
-  owner: Schema.Types.ObjectId;
+  owner: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
   businessInfo: BusinessInfo;
-  contactInfo: ContactInfo;
+  basicInfo: BasicInfo;
   bankingInfo: BankingInfo;
 }
 
@@ -102,13 +108,15 @@ const CompanySchema: Schema = new Schema(
     aadhaarNumber: { type: String, unique: true },
     aadhaarCard: { type: String },
     adminApproval: { type: Boolean, default: false },
-    owner: { type: Schema.Types.ObjectId, ref: 'Admin' },
-    businessInfo: { type: businessInfoSchema, required: true },
-    contactInfo: { type: contactInfoSchema, required: true },
-    bankingInfo: { type: bankingInfoSchema, required: true },
+    owner: { type: Schema.Types.ObjectId, ref: 'Tenant' },
+    businessInfo: { type: businessInfoSchema },
+    basicInfo: { type: basicInfoSchema },
+    bankingInfo: { type: bankingInfoSchema },
   },
   { timestamps: true, versionKey: false },
 );
+
+CompanySchema.index({ name: 1, owner: 1 }, { unique: true });
 
 const CompanyModel: Model<ITenantCompany> = model<ITenantCompany>(
   'TenantCompany',

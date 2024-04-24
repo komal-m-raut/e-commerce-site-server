@@ -4,8 +4,7 @@ import { IRootCategory } from '../sub-product/rootCategory.model';
 import { IMainCategory } from '../sub-product/mainCategory.model';
 
 interface ITenantBrand extends Document {
-  tenantId?: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
-  userType: 'tenant' | 'supplier';
+  companyId: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
   isDisabled: boolean;
   brandName: string;
   yearsOfOperation: number;
@@ -26,26 +25,25 @@ interface ITenantBrand extends Document {
 }
 
 const TenantBrandSchema: Schema<ITenantBrand> = new Schema({
-  tenantId: { type: Schema.Types.ObjectId, ref: 'Tenant', required: true },
-  userType: { type: String, enum: ['tenant', 'supplier'], required: true },
+  companyId: { type: Schema.Types.ObjectId, ref: 'TenantCompany', required: true },
   brandName: { type: String, required: true },
-  yearsOfOperation: { type: Number, required: true },
-  catalogueDetails: { type: String, required: true },
-  brandLogo: { type: String, required: true },
-  tradeMark: { type: String, required: true },
+  yearsOfOperation: { type: Number },
+  catalogueDetails: { type: String },
+  brandLogo: { type: String },
+  tradeMark: { type: String },
   manufactureName: { type: String, required: true },
   manufactureAddress: { type: String, required: true },
   manufactureContact: { type: String, required: true },
-  packerAddressAndContact: { type: String, required: true },
-  earthFriendly: { type: String, required: true },
+  packerAddressAndContact: { type: String },
+  earthFriendly: { type: String },
   isDisabled: { type: Boolean, default: false, required: true },
   rootCategoryClassification: [{ type: Types.ObjectId, ref: 'RootCategory', required: true }],
   mainCategoryClassification: [{ type: Types.ObjectId, ref: 'MainCategory', required: true }],
 });
 
 // Create a composite unique index on tenantId and brandName
-TenantBrandSchema.index({ tenantId: 1, brandName: 1 }, { unique: true });
+TenantBrandSchema.index({ companyId: 1, brandName: 1 }, { unique: true });
 
-const BrandModel = model<ITenantBrand>('TenantBrand', TenantBrandSchema);
+const TenantBrandModel = model<ITenantBrand>('TenantBrand', TenantBrandSchema);
 
-export { BrandModel, ITenantBrand, TenantBrandSchema };
+export { TenantBrandModel, ITenantBrand, TenantBrandSchema };

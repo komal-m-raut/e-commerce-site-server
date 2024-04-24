@@ -1,8 +1,9 @@
 import { PopulatedDoc, Schema, model } from 'mongoose';
-import { ITenant } from '../tenant.model';
+import { ITenantCompany } from '../tenantCompany.model';
 
 // Warehouse Model
 interface ITenantWarehouse extends Document {
+warehouseName: string;
   warehousePinCode: string;
   gstinDetails: string;
   warehouseAddress: string;
@@ -15,10 +16,10 @@ interface ITenantWarehouse extends Document {
   operationEndTime: string;
   perDayOrderCapacity: number;
   isDisabled: boolean;
-  tenantId?: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
+  companyId: PopulatedDoc<Schema.Types.ObjectId & ITenantCompany>;
 }
-
 const TenantWarehouseSchema: Schema<ITenantWarehouse> = new Schema({
+  warehouseName: { type: String },
   warehousePinCode: { type: String },
   gstinDetails: { type: String, unique: true },
   warehouseAddress: { type: String },
@@ -31,9 +32,12 @@ const TenantWarehouseSchema: Schema<ITenantWarehouse> = new Schema({
   operationEndTime: { type: String },
   perDayOrderCapacity: { type: Number },
   isDisabled: { type: Boolean, default: false },
-  tenantId: { type: Schema.Types.ObjectId, ref: 'Tenant' },
+  companyId: { type: Schema.Types.ObjectId, ref: 'Tenant' },
 });
 
-const WarehouseModel = model<ITenantWarehouse>('TenantWarehouse', TenantWarehouseSchema);
+// Add composite key
+TenantWarehouseSchema.index({ companyId: 1, warehouseName: 1 }, { unique: true });
 
-export { WarehouseModel, ITenantWarehouse, TenantWarehouseSchema };
+const TenantWarehouseModel = model<ITenantWarehouse>('TenantWarehouse', TenantWarehouseSchema);
+
+export { TenantWarehouseModel, ITenantWarehouse, TenantWarehouseSchema };
