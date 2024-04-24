@@ -32,7 +32,7 @@ const TenantWarehouseSchema: Schema<ITenantWarehouse> = new Schema({
   operationEndTime: { type: String },
   perDayOrderCapacity: { type: Number },
   isDisabled: { type: Boolean, default: false },
-  companyId: { type: Schema.Types.ObjectId, ref: 'Tenant' },
+  companyId: { type: Schema.Types.ObjectId, ref: 'TenantCompany' },
 });
 
 // Add composite key

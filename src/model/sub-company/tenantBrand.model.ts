@@ -1,10 +1,10 @@
 import { Schema, model, Types, PopulatedDoc } from 'mongoose';
-import { ITenant } from '../tenant.model';
 import { IRootCategory } from '../sub-product/rootCategory.model';
 import { IMainCategory } from '../sub-product/mainCategory.model';
+import { ITenantCompany } from '../tenantCompany.model';
 
 interface ITenantBrand extends Document {
-  companyId: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
+  companyId: PopulatedDoc<Schema.Types.ObjectId & ITenantCompany>;
   isDisabled: boolean;
   brandName: string;
   yearsOfOperation: number;
