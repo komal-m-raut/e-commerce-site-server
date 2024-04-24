@@ -1,13 +1,20 @@
 import { TenantWarehouseModel } from '@src/model/sub-company/tenantWarehouse.model';
-import { BadRequestError, InternalError, NotFoundError } from '@src/utils/apiError';
-import { SuccessResponse } from '@src/utils/apiResponse';
+import {
+  BadRequestError,
+  InternalError,
+  NotFoundError,
+} from '@src/utils/apiError';
+import { SuccessMsgResponse, SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 
 export const createTenantWarehouse = catchAsync(async (req, res, next) => {
   const { warehouseName, companyId } = req.body;
 
   // Check if warehouse with same name already exists within the same tenant
-  const existingWarehouse = await TenantWarehouseModel.findOne({ warehouseName, companyId })
+  const existingWarehouse = await TenantWarehouseModel.findOne({
+    warehouseName,
+    companyId,
+  })
     .lean()
     .exec();
 
@@ -22,7 +29,6 @@ export const createTenantWarehouse = catchAsync(async (req, res, next) => {
   // Create new warehouse document
   const warehouse = await TenantWarehouseModel.create({
     ...req.body,
-    companyId,
   });
 
   if (!warehouse) {
@@ -30,7 +36,9 @@ export const createTenantWarehouse = catchAsync(async (req, res, next) => {
   }
 
   // Return success response
-  return new SuccessResponse('Warehouse created successfully', warehouse).send(res);
+  return new SuccessResponse('Warehouse created successfully', warehouse).send(
+    res,
+  );
 });
 
 export const updateWarehouse = catchAsync(async (req, res, next) => {
@@ -55,7 +63,9 @@ export const updateWarehouse = catchAsync(async (req, res, next) => {
 export const getWarehouse = catchAsync(async (req, res, next) => {
   const { warehouseId } = req.params;
 
-  const warehouse = await TenantWarehouseModel.findById(warehouseId).lean().exec();
+  const warehouse = await TenantWarehouseModel.findById(warehouseId)
+    .lean()
+    .exec();
 
   if (!warehouse) {
     throw next(new NotFoundError(`Warehouse with id ${warehouseId} not found`));
@@ -68,9 +78,17 @@ export const getAllWarehouses = catchAsync(async (req, res, next) => {
   const itemsPerPage = Number(req.params.itemsPerPage) || 10;
   const pageCount = Number(req.params.pageCount) || 1;
   const skipCount = itemsPerPage * (pageCount - 1);
-  const totalProducts = await TenantWarehouseModel.countDocuments().exec();
+  const companyId = req.params.companyId; // or req.body.companyId
 
-  const warehouses = await TenantWarehouseModel.find()
+  const totalWarehouses = await TenantWarehouseModel.countDocuments({
+    companyId,
+    isDisabled: { $ne: true },
+  }).exec();
+
+  const warehouses = await TenantWarehouseModel.find({
+    companyId,
+    isDisabled: { $ne: true },
+  })
     .skip(skipCount)
     .limit(itemsPerPage)
     .lean()
@@ -83,14 +101,18 @@ export const getAllWarehouses = catchAsync(async (req, res, next) => {
   return new SuccessResponse('success', {
     warehouses,
     currentPage: pageCount,
-    totalProducts,
+    totalWarehouses,
   }).send(res);
 });
 
-export const deleteWarehouse = catchAsync(async (req, res, next) => {
+export const disableWarehouse = catchAsync(async (req, res, next) => {
   const { warehouseId } = req.params;
 
-  const warehouse = await TenantWarehouseModel.findByIdAndDelete(warehouseId)
+  const warehouse = await TenantWarehouseModel.findByIdAndUpdate(
+    warehouseId,
+    { isDisabled: true },
+    { new: true },
+  )
     .lean()
     .exec();
 
@@ -98,7 +120,5 @@ export const deleteWarehouse = catchAsync(async (req, res, next) => {
     throw next(new NotFoundError(`Warehouse with id ${warehouseId} not found`));
   }
 
-  return new SuccessResponse('success', {
-    message: 'Warehouse deleted successfully',
-  }).send(res);
+  return new SuccessMsgResponse('Warehouse disabled successfully').send(res);
 });

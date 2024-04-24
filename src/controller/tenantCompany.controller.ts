@@ -35,6 +35,8 @@ export const updateTenantCompany = catchAsync(async (req, res, next) => {
   const updates = req.body;
   const companyId = req.params.id;
 
+  //TODO:Optimize this code
+
   // Determine the path from the URL
   let path;
   let updateObject: { [key: string]: any } = {};

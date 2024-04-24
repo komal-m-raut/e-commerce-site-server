@@ -1,6 +1,5 @@
 import { Document, PopulatedDoc, Schema, model } from 'mongoose';
 import { IRole } from './role.model';
-import { ITenantCompany } from './tenantCompany.model';
 
 interface IAdmin extends Document {
   username: string;
@@ -11,9 +10,8 @@ interface IAdmin extends Document {
   passwordHash: string;
   approved: boolean;
   emailVerified: boolean;
-  role?: PopulatedDoc<Schema.Types.ObjectId & IRole>;
-  type: 'super-admin' | 'tenant' | 'supplier';
-  companies?: PopulatedDoc<Schema.Types.ObjectId & ITenantCompany>[];
+  role: PopulatedDoc<Schema.Types.ObjectId & IRole>;
+
 }
 
 const AdminSchema = new Schema<IAdmin>(
@@ -27,12 +25,6 @@ const AdminSchema = new Schema<IAdmin>(
     approved: { type: Boolean, default: false },
     emailVerified: { type: Boolean, default: false },
     role: { type: Schema.Types.ObjectId, ref: 'Role' },
-    type: {
-      type: String,
-      enum: ['super-admin', 'tenant', 'supplier'],
-      default: 'supplier',
-    },
-    companies: [{ type: Schema.Types.ObjectId, ref: 'Company' }],
   },
   { timestamps: true, versionKey: false },
 );

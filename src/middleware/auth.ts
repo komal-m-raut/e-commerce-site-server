@@ -33,7 +33,7 @@ const authMiddleware =
       message: string;
       data: {
         id: string;
-        userType: string;
+        userType: 'tenant' | 'supplier' | 'admin';
         userPermissions: Permission;
         productPermissions: Permission;
       };
@@ -42,7 +42,7 @@ const authMiddleware =
       message: string;
       data: {
         id: string;
-        userType: string;
+        userType: 'tenant' | 'supplier' | 'admin';
         userPermissions: Permission;
         productPermissions: Permission;
       };

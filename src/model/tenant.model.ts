@@ -1,6 +1,5 @@
 import { Schema, model, Document, PopulatedDoc } from 'mongoose';
 import { IRole } from './role.model';
-import { ITenantCompany } from './tenantCompany.model';
 
 interface CustomCard {
   cssProperties: Record<string, string>;
@@ -69,7 +68,7 @@ interface ITenant extends Document {
   customHomeSection: HomeSection;
   marketingPages: MarketingPage[];
   role: PopulatedDoc<Schema.Types.ObjectId & IRole>;
-  company: PopulatedDoc<Schema.Types.ObjectId & ITenantCompany>;
+  addOns: Record<string, any>;
   isVerified: boolean;
 }
 
@@ -85,7 +84,7 @@ const TenantSchema = new Schema<ITenant>({
     ref: 'Role',
     default: '661b923a035c08718a53f50c',
   },
-  company: { type: Schema.Types.ObjectId, ref: 'Company' },
+  addOns: { type: Schema.Types.Mixed },
   isVerified: { type: Boolean, default: false },
 });
 

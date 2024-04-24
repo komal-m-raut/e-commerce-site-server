@@ -1,9 +1,10 @@
-import { SuccessResponse } from '../utils/apiResponse';
+import { SuccessMsgResponse, SuccessResponse } from '../utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 import { TenantModel } from '@src/model/tenant.model';
 import {
   AuthFailureError,
   BadRequestError,
+  InternalError,
   NoDataError,
   NotFoundError,
 } from '@src/utils/apiError';
@@ -51,7 +52,7 @@ export const getTenant = catchAsync(async (req, res, next) => {
 export const createTenant = catchAsync(async (req, res, next) => {
   const { email, phoneNo, name, password, role } = req.body;
 
-  // Check if email or name is already registered
+  // Check if email or phoneNo is already registered
   const existingTenant = await TenantModel.findOne({
     $or: [{ email }, { phoneNo }],
   })
@@ -65,7 +66,7 @@ export const createTenant = catchAsync(async (req, res, next) => {
   const hashedPassword = await encrypt(password);
 
   // Create new tenant
-  const tenant = await TenantModel.create({
+  const newTenant = await TenantModel.create({
     email,
     phoneNo,
     name,
@@ -73,7 +74,11 @@ export const createTenant = catchAsync(async (req, res, next) => {
     role,
   });
 
-  return new SuccessResponse('success', tenant).send(res);
+  if (!newTenant) {
+    throw next(new InternalError('Tenant creation failed'));
+  }
+
+  return new SuccessMsgResponse('Tenant created successfully').send(res);
 });
 
 export const loginTenant = catchAsync(async (req, res, next) => {

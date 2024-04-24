@@ -24,7 +24,6 @@ export const createTenantBrand = catchAsync(async (req, res, next) => {
   // Create new brand document
   const brand = await TenantBrandModel.create({
     ...req.body,
-    companyId,
   });
 
   if (!brand) {
@@ -37,9 +36,13 @@ export const createTenantBrand = catchAsync(async (req, res, next) => {
 
 export const updateBrand = catchAsync(async (req, res, next) => {
   const { brandId } = req.params;
-  const updateBrand = await TenantBrandModel.findByIdAndUpdate(brandId, req.body, {
-    new: true,
-  })
+  const updateBrand = await TenantBrandModel.findByIdAndUpdate(
+    brandId,
+    req.body,
+    {
+      new: true,
+    },
+  )
     .lean()
     .exec();
 
@@ -68,11 +71,17 @@ export const getAllBrands = catchAsync(async (req, res, next) => {
   const itemsPerPage = Number(req.params.itemsPerPage) || 10;
   const pageCount = Number(req.params.pageCount) || 1;
   const skipCount = itemsPerPage * (pageCount - 1);
-  const tenantId = req.params.tenantId; // or req.body.tenantId, depending on where you're getting it from
+  const companyId = req.params.companyId; // or req.body.companyId, depending on where you're getting it from
 
-  const totalBrands = await TenantBrandModel.countDocuments({ tenantId }).exec();
+  const totalBrands = await TenantBrandModel.countDocuments({
+    companyId,
+    isDisabled: { $ne: true },
+  }).exec();
 
-  const brands = await TenantBrandModel.find({ tenantId })
+  const brands = await TenantBrandModel.find({
+    companyId,
+    isDisabled: { $ne: true },
+  })
     .skip(skipCount)
     .limit(itemsPerPage)
     .lean()
