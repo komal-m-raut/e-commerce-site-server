@@ -8,8 +8,8 @@ import {
   NotFoundError,
 } from '@src/utils/apiError';
 import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
-import { BrandModel } from '@src/model/sub-company/brand.model';
-import { WarehouseModel } from '@src/model/sub-company/warehouse.model';
+import { BrandModel } from '@src/model/sub-company/tenantBrand.model';
+import { WarehouseModel } from '@src/model/sub-company/tenantWarehouse.model';
 
 // Get all tenants
 export const getAllTenants = catchAsync(async (req, res, next) => {
@@ -49,25 +49,25 @@ export const getTenant = catchAsync(async (req, res, next) => {
 
 // Tenant sign up
 export const createTenant = catchAsync(async (req, res, next) => {
-  const { email, name, password, role } = req.body;
+  const { email, phoneNo, name, password, role } = req.body;
 
   // Check if email or name is already registered
   const existingTenant = await TenantModel.findOne({
-    $or: [{ email }],
-    isVerified: true,
+    $or: [{ email }, { phoneNo }],
   })
     .lean()
     .exec();
   if (existingTenant) {
-    throw next(new BadRequestError('Email is already registered'));
+    throw next(new BadRequestError('Email or Phone is already registered'));
   }
 
   // Hash password
   const hashedPassword = await encrypt(password);
 
   // Create new tenant
- const tenant = await TenantModel.create({
+  const tenant = await TenantModel.create({
     email,
+    phoneNo,
     name,
     password: hashedPassword,
     role,
@@ -100,23 +100,23 @@ export const loginTenant = catchAsync(async (req, res, next) => {
 
   // Extract and filter permissions
   const filterPermissions = (
-  permissions: Record<string, any>,
-): Record<string, any> => {
-  return Object.entries(permissions)
-    .filter(([_, value]) => value)
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
-};
+    permissions: Record<string, any>,
+  ): Record<string, any> => {
+    return Object.entries(permissions)
+      .filter(([_, value]) => value)
+      .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+  };
 
-const extractedUserPermissions = filterPermissions(userPermissions);
-const extractedProductPermissions = filterPermissions(productPermissions);
+  const extractedUserPermissions = filterPermissions(userPermissions);
+  const extractedProductPermissions = filterPermissions(productPermissions);
 
-// Create and send JWT token
-const token = generateToken({
-  id: tenant._id,
-  userType: 'tenant',
-  userPermissions: extractedUserPermissions,
-  productPermissions: extractedProductPermissions,
-});
+  // Create and send JWT token
+  const token = generateToken({
+    id: tenant._id,
+    userType: 'tenant',
+    userPermissions: extractedUserPermissions,
+    productPermissions: extractedProductPermissions,
+  });
 
   return new SuccessResponse('success', { token, tenant }).send(res);
 });

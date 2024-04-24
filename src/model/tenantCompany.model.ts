@@ -1,6 +1,9 @@
-import { Document, Schema, Model, model } from 'mongoose';
-import { IWarehouse, WarehouseSchema } from './sub-company/warehouse.model';
-import { BrandSchema, IBrand } from './sub-company/brand.model';
+import { Document, Schema, Model, model, PopulatedDoc } from 'mongoose';
+import {
+  ITenantWarehouse,
+  TenantWarehouseSchema,
+} from './sub-company/tenantWarehouse.model';
+import { ITenantBrand } from './sub-company/tenantBrand.model';
 
 interface BusinessInfo {
   gstin: string;
@@ -72,7 +75,7 @@ const bankingInfoSchema = new Schema<BankingInfo>({
   cheque: String,
 });
 
-interface ICompany extends Document {
+interface ITenantCompany extends Document {
   name: string;
   description?: string;
   gstNumber: string;
@@ -85,9 +88,7 @@ interface ICompany extends Document {
   owner: Schema.Types.ObjectId;
   businessInfo: BusinessInfo;
   contactInfo: ContactInfo;
-  warehouseInfo: IWarehouse;
   bankingInfo: BankingInfo;
-  brandInfo: IBrand;
 }
 
 const CompanySchema: Schema = new Schema(
@@ -104,13 +105,14 @@ const CompanySchema: Schema = new Schema(
     owner: { type: Schema.Types.ObjectId, ref: 'Admin' },
     businessInfo: { type: businessInfoSchema, required: true },
     contactInfo: { type: contactInfoSchema, required: true },
-    warehouseInfo: { type: WarehouseSchema, required: true },
     bankingInfo: { type: bankingInfoSchema, required: true },
-    brandInfo: { type: BrandSchema, required: true },
   },
   { timestamps: true, versionKey: false },
 );
 
-const CompanyModel: Model<ICompany> = model<ICompany>('Company', CompanySchema);
+const CompanyModel: Model<ITenantCompany> = model<ITenantCompany>(
+  'TenantCompany',
+  CompanySchema,
+);
 
-export { CompanyModel, ICompany };
+export { CompanyModel, ITenantCompany };

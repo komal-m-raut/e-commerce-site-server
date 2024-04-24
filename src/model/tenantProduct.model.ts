@@ -12,8 +12,8 @@ import {
   IChildCategory,
 } from './sub-product/childCategory.mode';
 import { ITenant, TenantSchema } from './tenant.model';
-import { BrandSchema, IBrand } from './sub-company/brand.model';
-import { IWarehouse, WarehouseSchema } from './sub-company/warehouse.model';
+import { TenantBrandSchema, ITenantBrand } from './sub-company/tenantBrand.model';
+import { TenantWarehouseSchema, ITenantWarehouse } from './sub-company/tenantWarehouse.model';
 import { AttributeSchema, IAttribute } from './sub-product/attribute.model';
 import { ISKU, skuSchema } from './sub-product/sku.model';
 import { GroupSchema, IGroup } from './sub-product/group.model';
@@ -29,11 +29,11 @@ interface GeneralDetails {
   status: string;
   productId: string;
   language: string;
-  manufacturer: PopulatedDoc<Schema.Types.ObjectId & IBrand>;
+  manufacturer: PopulatedDoc<Schema.Types.ObjectId & ITenantBrand>;
   supplier: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
   countryOfOrigin: string;
   importerName: string;
-  location: PopulatedDoc<Schema.Types.ObjectId & IWarehouse>;
+  location: PopulatedDoc<Schema.Types.ObjectId & ITenantWarehouse>;
   productName: string;
   urlKey: string;
   isMarketplace: boolean;
@@ -50,8 +50,8 @@ const GeneralDetailsSchema = new Schema<GeneralDetails>({
     type: String,
   },
   manufacturer: {
-    type: BrandSchema,
-    ref: 'Brand',
+    type: TenantBrandSchema,
+    ref: 'TenantBrand',
   },
   supplier: {
     type: TenantSchema,
@@ -64,8 +64,8 @@ const GeneralDetailsSchema = new Schema<GeneralDetails>({
     type: String,
   },
   location: {
-    type: WarehouseSchema,
-    ref: 'Warehouse',
+    type: TenantWarehouseSchema,
+    ref: 'TenantWarehouse',
   },
   productName: {
     type: String,

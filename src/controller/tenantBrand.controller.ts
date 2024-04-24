@@ -1,4 +1,4 @@
-import { BrandModel } from '@src/model/sub-company/brand.model';
+import { BrandModel } from '@src/model/sub-company/tenantBrand.model';
 import {
   BadRequestError,
   InternalError,

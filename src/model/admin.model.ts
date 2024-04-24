@@ -1,6 +1,6 @@
 import { Document, PopulatedDoc, Schema, model } from 'mongoose';
 import { IRole } from './role.model';
-import { ICompany } from './company.model';
+import { ITenantCompany } from './tenantCompany.model';
 
 interface IAdmin extends Document {
   username: string;
@@ -13,7 +13,7 @@ interface IAdmin extends Document {
   emailVerified: boolean;
   role?: PopulatedDoc<Schema.Types.ObjectId & IRole>;
   type: 'super-admin' | 'tenant' | 'supplier';
-  companies?: PopulatedDoc<Schema.Types.ObjectId & ICompany>[];
+  companies?: PopulatedDoc<Schema.Types.ObjectId & ITenantCompany>[];
 }
 
 const AdminSchema = new Schema<IAdmin>(

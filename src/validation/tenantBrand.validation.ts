@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { validateObjectId } from './common.validation';
 
-export const createBrandSchema = Joi.object({
+export const createTenantBrandSchema = Joi.object({
   brandName: Joi.string().required(),
   yearsOfOperation: Joi.number().required(),
   catalogueDetails: Joi.string().required(),
@@ -19,7 +19,7 @@ export const createBrandSchema = Joi.object({
   isDisabled: Joi.boolean(),
 });
 
-export const updateBrandSchema = Joi.object({
+export const updateTenantBrandSchema = Joi.object({
   brandName: Joi.string(),
   yearsOfOperation: Joi.number(),
   catalogueDetails: Joi.string(),

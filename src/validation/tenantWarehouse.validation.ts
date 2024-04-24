@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const createWarehouseSchema = Joi.object({
+export const createTenantWarehouseSchema = Joi.object({
   warehousePinCode: Joi.string().required(),
   gstinDetails: Joi.string().required(),
   warehouseAddress: Joi.string().required(),
@@ -14,7 +14,7 @@ export const createWarehouseSchema = Joi.object({
   perDayOrderCapacity: Joi.number().required(),
 });
 
-export const updateWarehouseSchema = Joi.object({
+export const updateTenantWarehouseSchema = Joi.object({
   warehousePinCode: Joi.string(),
   gstinDetails: Joi.string(),
   warehouseAddress: Joi.string(),

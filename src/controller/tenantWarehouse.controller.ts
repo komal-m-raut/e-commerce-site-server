@@ -1,4 +1,4 @@
-import { WarehouseModel } from '@src/model/sub-company/warehouse.model';
+import { WarehouseModel } from '@src/model/sub-company/tenantWarehouse.model';
 import { InternalError, NotFoundError } from '@src/utils/apiError';
 import { SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';

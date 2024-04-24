@@ -7,6 +7,7 @@ export const loginTenantSchema = Joi.object({
 
 export const createTenantSchema = Joi.object({
   name: Joi.string().required(),
+  phoneNo: Joi.number().required(),
   email: Joi.string().email().required(),
   password: Joi.string()
     .min(8)
@@ -22,7 +23,7 @@ export const createTenantSchema = Joi.object({
       'string.pattern.base':
         'Password must contain at least 1 symbol, 1 lowercase letter, 1 uppercase letter and 1 number',
     }),
-  role: Joi.string(),
+  role: Joi.string().regex(/^[0-9a-fA-F]{24}$/),
 });
 
 export const updateTenantSchema = Joi.object({
