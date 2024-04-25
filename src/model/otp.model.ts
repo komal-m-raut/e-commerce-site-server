@@ -20,7 +20,7 @@ const OtpSchema: Schema = new Schema(
     category: {
       type: String,
       required: true,
-      enum: ['email', 'phone'],
+      enum: ['email', 'phoneNo'],
     },
     otpFor: { type: String, required: true },
     userId: { type: Schema.Types.ObjectId, required: true },

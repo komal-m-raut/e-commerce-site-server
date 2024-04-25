@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { validateObjectId } from './common.validation';
 
 export const loginTenantSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -23,7 +24,7 @@ export const createTenantSchema = Joi.object({
       'string.pattern.base':
         'Password must contain at least 1 symbol, 1 lowercase letter, 1 uppercase letter and 1 number',
     }),
-  role: Joi.string().regex(/^[0-9a-fA-F]{24}$/),
+  role: validateObjectId().optional(),
 });
 
 export const updateTenantSchema = Joi.object({

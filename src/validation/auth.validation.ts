@@ -1,9 +1,11 @@
 import Joi from 'joi';
+import { validateObjectId } from './common.validation';
 
 export const createOtpSchema = Joi.object({
   userType: Joi.string().valid('admin', 'tenant', 'user').required(),
   phoneNo: Joi.number(),
   email: Joi.string().email(),
+  userId: validateObjectId(),
 }).or('phoneNo', 'email');
 
 export const createOtpTypeSchema = Joi.object({
@@ -13,7 +15,7 @@ export const createOtpTypeSchema = Joi.object({
 export const validateOtpSchema = Joi.object({
   otp: Joi.string().required(),
   userType: Joi.string().valid('admin', 'tenant', 'user').required(),
-  userId: Joi.string().required(),
+  userId: validateObjectId().required(),
 });
 
 export const createPasswordResetLinkSchema = Joi.object({

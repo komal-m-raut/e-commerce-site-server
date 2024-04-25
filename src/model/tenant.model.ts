@@ -73,10 +73,10 @@ interface ITenant extends Document {
 }
 
 const TenantSchema = new Schema<ITenant>({
-  name: { type: String, required: true },
-  phoneNo: { type: Number, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  name: { type: String },
+  phoneNo: { type: Number, unique: true },
+  email: { type: String, unique: true },
+  password: { type: String },
   customHomeSection: { type: homeSectionSchema },
   marketingPages: [marketingPageSchema],
   role: {

@@ -52,33 +52,24 @@ export const getTenant = catchAsync(async (req, res, next) => {
 export const createTenant = catchAsync(async (req, res, next) => {
   const { email, phoneNo, name, password, role } = req.body;
 
-  // Check if email or phoneNo is already registered
+  // Check if email and phoneNo is already verified
   const existingTenant = await TenantModel.findOne({
-    $or: [{ email }, { phoneNo }],
-  })
-    .lean()
-    .exec();
-  if (existingTenant) {
-    throw next(new BadRequestError('Email or Phone is already registered'));
+    email,
+    phoneNo,
+  }).exec();
+  if (!existingTenant) {
+    throw next(new BadRequestError('Email or Phone is not verified yet'));
   }
 
   // Hash password
   const hashedPassword = await encrypt(password);
 
-  // Create new tenant
-  const newTenant = await TenantModel.create({
-    email,
-    phoneNo,
-    name,
-    password: hashedPassword,
-    role,
-  });
+  await existingTenant
+    .update({ password: hashedPassword, name, role }, { new: true })
+    .lean()
+    .exec();
 
-  if (!newTenant) {
-    throw next(new InternalError('Tenant creation failed'));
-  }
-
-  return new SuccessMsgResponse('Tenant created successfully').send(res);
+  return new SuccessMsgResponse('Tenant updated successfully').send(res);
 });
 
 export const loginTenant = catchAsync(async (req, res, next) => {

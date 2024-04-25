@@ -20,20 +20,20 @@ const userTypeModel: {
 };
 
 type IModel = IAdmin | ITenant | IUser;
-export const createOtp = catchAsync(async (req, res, _next) => {
-  const { phoneNo, email, userType } = req.body;
+export const createOtp = catchAsync(async (req, res) => {
+  const { phoneNo, email, userType, userId } = req.body;
   const { type } = req.params;
   const user = userTypeModel[
     userType as keyof typeof userTypeModel
   ] as Model<IModel>;
   let currUser = await user
     .findOne({
-      $or: [{ phoneNo }, { email }],
+      $or: [{ _id: userId }, { phoneNo }, { email }],
     })
     .lean()
     .exec();
   if (!currUser) {
-    currUser = await user.create({ phoneNo, email });
+    currUser = await user.create({});
   }
 
   // Generate 6-digit OTP
@@ -48,7 +48,7 @@ export const createOtp = catchAsync(async (req, res, _next) => {
     otp: hashedOtp,
     category: type,
     otpFor: req.body[type],
-    expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+    expiresAt: new Date(Date.now() + 30 * 60 * 1000),
   });
 
   if (type === 'phone') {
