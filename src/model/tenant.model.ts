@@ -72,21 +72,24 @@ interface ITenant extends Document {
   isVerified: boolean;
 }
 
-const TenantSchema = new Schema<ITenant>({
-  name: { type: String },
-  phoneNo: { type: Number, unique: true },
-  email: { type: String, unique: true },
-  password: { type: String },
-  customHomeSection: { type: homeSectionSchema },
-  marketingPages: [marketingPageSchema],
-  role: {
-    type: Schema.Types.ObjectId,
-    ref: 'Role',
-    default: '661b923a035c08718a53f50c',
+const TenantSchema = new Schema<ITenant>(
+  {
+    name: { type: String },
+    phoneNo: { type: Number, unique: true },
+    email: { type: String, unique: true },
+    password: { type: String },
+    customHomeSection: { type: homeSectionSchema },
+    marketingPages: [marketingPageSchema],
+    role: {
+      type: Schema.Types.ObjectId,
+      ref: 'Role',
+      default: '661b923a035c08718a53f50c',
+    },
+    addOns: { type: Schema.Types.Mixed },
+    isVerified: { type: Boolean, default: false },
   },
-  addOns: { type: Schema.Types.Mixed },
-  isVerified: { type: Boolean, default: false },
-});
+  { versionKey: false },
+);
 
 const TenantModel = model<ITenant>('Tenant', TenantSchema);
 export { ITenant, TenantModel, TenantSchema };

@@ -5,7 +5,7 @@ export const createOtpSchema = Joi.object({
   userType: Joi.string().valid('admin', 'tenant', 'user').required(),
   phoneNo: Joi.number(),
   email: Joi.string().email(),
-  userId: validateObjectId(),
+  userId: validateObjectId().optional(),
 }).or('phoneNo', 'email');
 
 export const createOtpTypeSchema = Joi.object({

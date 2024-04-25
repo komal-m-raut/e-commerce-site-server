@@ -4,9 +4,11 @@ export interface IOtp extends Document {
   otp: string;
   userType: 'admin' | 'tenant' | 'user';
   userId: Schema.Types.ObjectId;
-  category: 'email' | 'phone';
+  category: 'email' | 'phoneNo';
   otpFor: string;
   createdAt: Date;
+  updatedAt: Date;
+  expiresAt: Date;
 }
 
 const OtpSchema: Schema = new Schema(
@@ -24,8 +26,9 @@ const OtpSchema: Schema = new Schema(
     },
     otpFor: { type: String, required: true },
     userId: { type: Schema.Types.ObjectId, required: true },
+    expiresAt: { type: Date, default: Date.now, index: { expires: '15m' } },
   },
-  { versionKey: false, timestamps: true, expireAfterSeconds: 60 * 15 },
+  { versionKey: false, timestamps: true },
 );
 
 export default model<IOtp>('Otp', OtpSchema);

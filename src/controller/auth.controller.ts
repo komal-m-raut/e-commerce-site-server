@@ -42,32 +42,45 @@ export const createOtp = catchAsync(async (req, res) => {
   console.log('otp', otp);
   const hashedOtp = await encrypt(otp);
 
-  const newOtp = await OtpModel.create({
+  const existingOtp = await OtpModel.findOne({
+    userId: currUser._id,
+    userType,
+  }).exec();
+
+  if (existingOtp) {
+    return new SuccessMsgResponse('OTP already sent').send(res);
+  }
+
+  await OtpModel.create({
     userId: currUser._id,
     userType,
     otp: hashedOtp,
     category: type,
     otpFor: req.body[type],
-    expiresAt: new Date(Date.now() + 30 * 60 * 1000),
   });
 
-  if (type === 'phone') {
+  if (type === 'phoneNo') {
     // const message = `Your OTP for authentication is ${otp}. It is valid for 15 minutes.`;
     // await sendSms(phoneNo, message);
   } else {
     // mail otp
   }
 
-  return new SuccessResponse('OTP sent successfully', newOtp).send(res);
+  return new SuccessMsgResponse('OTP sent successfully').send(res);
 });
 
 export const validateOtp = catchAsync(async (req, res) => {
   const { userType, userId, otp } = req.body;
 
   // find the OTP document
-  const existingOtp = await OtpModel.findOne({ userType, userId }, {})
-    .select('+otp category otpFor')
-    .exec();
+  const existingOtp = await OtpModel.findOne(
+    { userType, userId },
+    {
+      otp: 1,
+      category: 1,
+      otpFor: 1,
+    },
+  ).exec();
 
   if (!existingOtp) {
     return res.status(400).json({ message: 'OTP not found' });
