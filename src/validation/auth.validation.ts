@@ -16,6 +16,7 @@ export const validateOtpSchema = Joi.object({
   otp: Joi.string().required(),
   userType: Joi.string().valid('admin', 'tenant', 'user').required(),
   userId: validateObjectId().required(),
+  category: Joi.string().valid('phoneNo', 'email').required(),
 });
 
 export const createPasswordResetLinkSchema = Joi.object({

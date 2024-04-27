@@ -39,18 +39,21 @@ export const createOtp = catchAsync(async (req, res) => {
   // Generate 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   // Encrypt OTP using bcrypt
-  console.log('otp', otp);
   const hashedOtp = await encrypt(otp);
 
   const existingOtp = await OtpModel.findOne({
     userId: currUser._id,
     userType,
+    category: type,
   }).exec();
 
   if (existingOtp) {
-    return new SuccessMsgResponse('OTP already sent').send(res);
+    return new SuccessResponse('OTP already sent', {
+      userId: currUser._id,
+    }).send(res);
   }
 
+  console.log('otp', otp);
   await OtpModel.create({
     userId: currUser._id,
     userType,
@@ -66,16 +69,18 @@ export const createOtp = catchAsync(async (req, res) => {
     // mail otp
   }
 
-  return new SuccessMsgResponse('OTP sent successfully').send(res);
+  return new SuccessResponse('OTP sent successfully', {
+    userId: currUser._id,
+  }).send(res);
 });
 
 export const validateOtp = catchAsync(async (req, res) => {
-  const { userType, userId, otp } = req.body;
+  const { userType, userId, category, otp } = req.body;
 
   console.log('otp', otp, userType, userId);
   // find the OTP document
   const existingOtp = await OtpModel.findOne(
-    { userType, userId },
+    { userType, userId, category },
     {
       otp: 1,
       category: 1,

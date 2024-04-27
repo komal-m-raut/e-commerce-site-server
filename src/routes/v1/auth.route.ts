@@ -67,6 +67,8 @@ authRouter.post(
   createOtp,
 );
 
+//TODO: Add resend otp api
+
 /**
  * @swagger
  * /v1/auth/validate-otp:
