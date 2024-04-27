@@ -72,6 +72,7 @@ export const createOtp = catchAsync(async (req, res) => {
 export const validateOtp = catchAsync(async (req, res) => {
   const { userType, userId, otp } = req.body;
 
+  console.log('otp', otp, userType, userId);
   // find the OTP document
   const existingOtp = await OtpModel.findOne(
     { userType, userId },
@@ -82,6 +83,7 @@ export const validateOtp = catchAsync(async (req, res) => {
     },
   ).exec();
 
+  console.log(existingOtp, 'existing');
   if (!existingOtp) {
     return res.status(400).json({ message: 'OTP not found' });
   }

@@ -57,7 +57,6 @@ const tenantRouter: Router = Router();
  *               - phoneNo
  *               - name
  *               - password
- *               - role
  *             properties:
  *               email:
  *                 type: string
@@ -68,8 +67,11 @@ const tenantRouter: Router = Router();
  *                 type: string
  *               password:
  *                 type: string
+ *                 description: Password must contain at least 1 symbol, 1 lowercase letter, 1 uppercase letter and 1 number. Minimum length is 8 characters.
  *               role:
  *                 type: string
+ *                 format: objectId
+ *                 description: Role ID (optional)
  *     responses:
  *       200:
  *         description: Tenant registered successfully
