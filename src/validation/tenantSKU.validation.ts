@@ -47,19 +47,19 @@ const visibilityOptionsSchema = Joi.object({
   isYourWardrobeMustHave: Joi.boolean(),
 });
 
-export const visibilitySchema = Joi.object({
+export const tenantSkuVisibilitySchema = Joi.object({
   guestCheckout: visibilityOptionsSchema,
   privateGroup: visibilityOptionsSchema,
 });
 
-export const createSkuSchema = Joi.object({
+export const createTenantSkuSchema = Joi.object({
   variants: Joi.array()
     .items(
       Joi.object({
         images: imagesSchema.required(),
         retailPricing: retailPricingSchema.required(),
         b2bPricing: b2bPricingSchema.required(),
-        visibility: visibilitySchema,
+        visibility: tenantSkuVisibilitySchema,
         variant: Joi.object({
           name: Joi.string().required(),
           value: Joi.array().items(Joi.string()).required(),
@@ -78,10 +78,10 @@ export const createSkuSchema = Joi.object({
     .required(),
 });
 
-export const updateSkuSchema = Joi.object({
+export const updateTenantSkuSchema = Joi.object({
   images: imagesSchema,
   retailPricing: retailPricingSchema,
   b2bPricing: b2bPricingSchema,
-  visibility: visibilitySchema,
+  visibility: tenantSkuVisibilitySchema,
   variants: Joi.array().items(Joi.object()),
 });

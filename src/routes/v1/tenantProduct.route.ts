@@ -5,10 +5,15 @@ import {
   getTenantProduct,
   searchAndFilterTenantProducts,
   searchTenantProduct,
+  updateTenantProduct,
 } from '@src/controller/tenantProduct.controller';
+import authMiddleware from '@src/middleware/auth';
 import validate from '@src/middleware/validate';
+import { idSchema } from '@src/validation/common.validation';
 import {
-  createTenantProductSchema,
+  GeneralDetailsValidationSchema,
+  ProductDescriptionSchema,
+  ProductIdentifiersJoiSchema,
   filterTenantProductSchema,
   searchAndFilterTenantProductSchema,
   searchTenantProductSchema,
@@ -22,66 +27,156 @@ const tenantProductRouter: Router = Router();
 /**
  * @swagger
  * /v1/tenant/product/create:
- *  post:
- *    tags:
- *      - "Tenant Product"
- *    summary: "Create a new product"
- *    requestBody:
- *      required: true
- *      content:
- *        application/json:
- *          schema:
- *            type: object
- *            required:
- *              - generalDetails
- *            properties:
- *              generalDetails:
- *                type: object
- *                required:
- *                  - status
- *                  - productId
- *                  - language
- *                  - manufacturer
- *                  - countryOfOrigin
- *                  - importerName
- *                  - location
- *                  - productName
- *                  - urlKey
- *                  - isMarketplace
- *                properties:
- *                  status:
- *                    type: string
- *                  productId:
- *                    type: string
- *                  language:
- *                    type: string
- *                  manufacturer:
- *                    type: string
- *                  countryOfOrigin:
- *                    type: string
- *                  importerName:
- *                    type: string
- *                  location:
- *                    type: string
- *                  productName:
- *                    type: string
- *                  urlKey:
- *                    type: string
- *                  isMarketplace:
- *                    type: boolean
- *    responses:
- *      200:
- *        description: "Product created successfully"
- *      400:
- *        description: "Product with this URL key is already registered"
- *      500:
- *        description: "Failed to create product"
+ *   post:
+ *     tags:
+ *       - "Tenant Product"
+ *     summary: "Create a new product"
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - tenantId
+ *               - productId
+ *               - sellerName
+ *               - countryOfOrigin
+ *               - importerName
+ *               - brandName
+ *               - productName
+ *               - categoryDetails
+ *               - attributeDetails
+ *               - manufacturerName
+ *               - manufacturerContact
+ *               - hsnNo
+ *             properties:
+ *               tenantId:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *               productId:
+ *                 type: string
+ *               sellerName:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *               countryOfOrigin:
+ *                 type: string
+ *               importerName:
+ *                 type: string
+ *               brandName:
+ *                 type: string
+ *               productName:
+ *                 type: string
+ *               categoryDetails:
+ *                 type: object
+ *                 properties:
+ *                   rootCategory:
+ *                     type: string
+ *                   mainCategory:
+ *                     type: string
+ *                   childCategory:
+ *                     type: string
+ *               attributeDetails:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                   value:
+ *                     type: string
+ *                   slug:
+ *                     type: string
+ *                   applicableTo:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *               manufacturerName:
+ *                 type: string
+ *               manufacturerContact:
+ *                 type: string
+ *               hsnNo:
+ *                 type: string
+ *               manufacturerPartNo:
+ *                 type: string
+ *               globalTradeItemNo:
+ *                 type: string
+ *               searchKeywords:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: "Product created successfully"
+ *       400:
+ *         description: "Product with this name and brand already exists"
+ *       500:
+ *         description: "Failed to create product"
  */
 
 tenantProductRouter.post(
   '/create',
-  validate({ body: createTenantProductSchema }),
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: GeneralDetailsValidationSchema }),
   createTenantProduct,
+);
+
+// * PATCH ROUTE
+
+// ? Not sure which fields can be updated that's why used same validation
+tenantProductRouter.patch(
+  '/product-general-details/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: GeneralDetailsValidationSchema, params: idSchema }),
+  updateTenantProduct,
+);
+
+tenantProductRouter.patch(
+  '/product-identifiers/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: ProductIdentifiersJoiSchema, params: idSchema }),
+  updateTenantProduct,
+);
+
+tenantProductRouter.patch(
+  '/product-description/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: ProductDescriptionSchema, params: idSchema }),
+  updateTenantProduct,
 );
 
 //*GET ROUTE
@@ -150,7 +245,7 @@ tenantProductRouter.get(
  *        description: "Failed to fetch product"
  */
 
-tenantProductRouter.get('/:id',  getTenantProduct);
+tenantProductRouter.get('/:id', getTenantProduct);
 
 // //*PATCH ROUTE
 // tenantProductRouter.patch(

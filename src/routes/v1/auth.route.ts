@@ -86,6 +86,7 @@ authRouter.post(
  *               - otp
  *               - userType
  *               - userId
+ *               - category
  *             properties:
  *               otp:
  *                 type: string
@@ -95,6 +96,9 @@ authRouter.post(
  *               userId:
  *                 type: string
  *                 format: objectId
+ *               category:
+ *                 type: string
+ *                 enum: [phoneNo, email]
  *     responses:
  *       200:
  *         description: OTP validated successfully
@@ -104,6 +108,11 @@ authRouter.post(
  *         description: Failed to validate OTP
  */
 
+authRouter.post(
+  '/validate-otp',
+  validate({ body: validateOtpSchema }),
+  validateOtp,
+);
 authRouter.post(
   '/validate-otp',
   validate({ body: validateOtpSchema }),
