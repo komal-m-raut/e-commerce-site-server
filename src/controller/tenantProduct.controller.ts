@@ -93,28 +93,28 @@ export const updateTenantProduct = catchAsync(async (req, res, next) => {
   // Determine the path from the URL
   let path;
   let updateObject: { [key: string]: any } = {};
-  if (req.originalUrl.includes('product-general-details')) {
+  if (req.originalUrl.includes('general-details')) {
     path = 'generalDetails';
     updateObject[path] = updates;
-  } else if (req.originalUrl.includes('product-identifiers')) {
+  } else if (req.originalUrl.includes('identifiers')) {
     path = 'productIdentifiers';
     updateObject[path] = updates;
-  } else if (req.originalUrl.includes('product-description')) {
+  } else if (req.originalUrl.includes('description')) {
     path = 'productDescription';
     updateObject[path] = updates;
-  } else if (req.originalUrl.includes('product-instruction')) {
-    path = 'instruction';
+  } else if (req.originalUrl.includes('instructions')) {
+    path = 'instructions';
     updateObject[path] = updates;
-  } else if (req.originalUrl.includes('product-visibility')) {
+  } else if (req.originalUrl.includes('visibility')) {
     path = 'visibility';
     updateObject[path] = updates;
-  } else if (req.originalUrl.includes('product-groups')) {
+  } else if (req.originalUrl.includes('groups')) {
     path = 'groups';
     updateObject[path] = updates;
-  } else if (req.originalUrl.includes('product-inventory')) {
+  } else if (req.originalUrl.includes('inventory')) {
     path = 'inventory';
     updateObject[path] = updates;
-  } else if (req.originalUrl.includes('product-gift-wrapping')) {
+  } else if (req.originalUrl.includes('gift-wrapping')) {
     path = 'giftWrapping';
     updateObject[path] = updates;
   } else if (req.originalUrl.includes('/update-product')) {

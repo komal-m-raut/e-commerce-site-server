@@ -323,7 +323,7 @@ const QuestionAndAnswersSchema = new Schema<QuestionAndAnswers>({
 }, { _id: false });
 
 // 4. Instructions
-interface Instruction {
+interface Instructions {
   isEssential: boolean;
   isFragile: boolean;
   careInstructions: string[];
@@ -338,7 +338,7 @@ interface Instruction {
   selectMessage: string;
 }
 
-const InstructionSchema = new Schema<Instruction>({
+const InstructionSchema = new Schema<Instructions>({
   isEssential: {
     type: Boolean,
   },
@@ -437,7 +437,7 @@ const VisibilitySchema = new Schema<Visibility>({
   privateGroup: {
     type: VisibilityOptionsSchema,
   },
-});
+}, { _id: false });
 
 interface Groups {
   wholesaleGroups: PopulatedDoc<Schema.Types.ObjectId & IGroup>[];
@@ -447,17 +447,17 @@ interface Groups {
 const GroupsSchema = new Schema<Groups>({
   wholesaleGroups: [
     {
-      type: GroupSchema,
+      type: Schema.Types.ObjectId,
       ref: 'Group',
     },
   ],
   retailGroups: [
     {
-      type: GroupSchema,
+      type: Schema.Types.ObjectId,
       ref: 'Group',
     },
   ],
-});
+}, { _id: false });
 interface Inventory {
   preBookingSelectDate: string;
   restockSelectDate: string;
@@ -490,7 +490,7 @@ const InventorySchema = new Schema<Inventory>({
   outOfStockMessage: {
     type: String,
   },
-});
+}, { _id: false });
 interface GiftWrappingOptions {
   useAllGiftWrappingOptions: boolean;
   isGiftWrapping: boolean;
@@ -512,7 +512,7 @@ const GiftWrappingOptionsSchema = new Schema<GiftWrappingOptions>({
     type: Schema.Types.ObjectId,
     ref: 'GiftWrapping',
   },
-});
+}, { _id: false });
 
 // interface LinkedProducts {
 //   upSelling: PopulatedDoc<Schema.Types.ObjectId & ITenantSKU>[];
@@ -621,7 +621,7 @@ interface ITenantProduct extends Document {
   generalDetails: GeneralDetails;
   productIdentifiers: ProductIdentifiers[];
   productDescription: ProductDescription;
-  instruction: Instruction;
+  instructions: Instructions;
   visibility: Visibility;
   groups: Groups;
   inventory: Inventory;
@@ -634,7 +634,7 @@ const productSchema = new Schema<ITenantProduct>({
   generalDetails: { type: GeneralDetailsSchema, required: true },
   productIdentifiers: [{ type: ProductIdentifiersSchema }],
   productDescription: { type: ProductDescriptionSchema },
-  instruction: { type: InstructionSchema },
+  instructions: { type: InstructionSchema },
   visibility: { type: VisibilitySchema },
   groups: { type: GroupsSchema },
   inventory: { type: InventorySchema },

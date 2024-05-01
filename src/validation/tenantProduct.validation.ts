@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { validateObjectId } from './common.validation';
+import { optionalObjectId, validateObjectId } from './common.validation';
 
 export const AttributeValidationSchema = Joi.object({
   name: Joi.string().required(),
@@ -69,12 +69,78 @@ export const ProductIdentifiersJoiSchema = Joi.object({
 // ? Is it necessary to add max characters
 
 export const ProductDescriptionSchema = Joi.object({
-  shortDescription: Joi.string().optional(),
-  longDescription: Joi.string().optional(),
-  metaTitle: Joi.string().optional(),
-  metaDescription: Joi.string().optional(),
-  metaKeywords: Joi.array().items(Joi.string()).optional(),
+  shortDescription: Joi.string(),
+  longDescription: Joi.string(),
+  metaTitle: Joi.string(),
+  metaDescription: Joi.string(),
+  metaKeywords: Joi.array().items(Joi.string()),
 });
+
+const CustomizationSchema = Joi.object({
+  fieldName: Joi.string(),
+  value: Joi.string(),
+});
+
+const QuestionAndAnswersSchema = Joi.object({
+  question: Joi.string(),
+  answer: Joi.string(),
+});
+
+export const InstructionSchema = Joi.object({
+  isEssential: Joi.boolean(),
+  isFragile: Joi.boolean(),
+  careInstructions: Joi.array().items(Joi.string()),
+  sizeChart: Joi.string(),
+  condition: Joi.string(),
+  returnAvailable: Joi.boolean(),
+  returnDuration: Joi.string(),
+  warranty: Joi.string(),
+  isAvailableOnline: Joi.boolean(),
+  questionAndAnswers: Joi.array().items(QuestionAndAnswersSchema),
+  customFields: Joi.array().items(CustomizationSchema),
+  selectMessage: Joi.string(),
+});
+
+const VisibilityOptionsJoiSchema = Joi.object({
+  isFeatured: Joi.boolean(),
+  isBudgetPicks: Joi.boolean(),
+  isTrendingNow: Joi.boolean(),
+  isMostLoved: Joi.boolean(),
+  isMostViewed: Joi.boolean(),
+  isAllGiftItems: Joi.boolean(),
+  isNewArrival: Joi.boolean(),
+  isDealOfTheDay: Joi.boolean(),
+  isDealOfTheWeek: Joi.boolean(),
+  isTopPick: Joi.boolean(),
+});
+
+export const VisibilitySchema = Joi.object({
+  guestCheckout: VisibilityOptionsJoiSchema,
+  privateGroup: VisibilityOptionsJoiSchema,
+});
+
+export const GroupsSchema = Joi.object({
+  wholesaleGroups: Joi.array().items(optionalObjectId()),
+  retailGroups: Joi.array().items(optionalObjectId()),
+});
+
+export const InventorySchema = Joi.object({
+  preBookingSelectDate: Joi.string(),
+  restockSelectDate: Joi.string(),
+  trackAvailableQuantity: Joi.boolean(),
+  canBePurchasedOnline: Joi.boolean(),
+  showWhenOutOfStockToCustomers: Joi.boolean(),
+  allowOrdersOnOutOfStockProducts: Joi.boolean(),
+  outOfStockMessage: Joi.string(),
+});
+
+export const GiftWrappingOptionsSchema = Joi.object({
+  useAllGiftWrappingOptions: Joi.boolean(),
+  isGiftWrapping: Joi.boolean(),
+  specifyGiftWrappingOptions: Joi.boolean(),
+  giftWrapping: optionalObjectId(),
+});
+
 
 // export const updateTenantProductSchema = Joi.object({
 //   generalDetails: Joi.object({

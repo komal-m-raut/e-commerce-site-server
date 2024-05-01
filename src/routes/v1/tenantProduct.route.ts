@@ -12,8 +12,13 @@ import validate from '@src/middleware/validate';
 import { idSchema } from '@src/validation/common.validation';
 import {
   GeneralDetailsValidationSchema,
+  GiftWrappingOptionsSchema,
+  GroupsSchema,
+  InstructionSchema,
+  InventorySchema,
   ProductDescriptionSchema,
   ProductIdentifiersJoiSchema,
+  VisibilitySchema,
   filterTenantProductSchema,
   searchAndFilterTenantProductSchema,
   searchTenantProductSchema,
@@ -135,7 +140,7 @@ tenantProductRouter.post(
 
 // ? Not sure which fields can be updated that's why used same validation
 tenantProductRouter.patch(
-  '/product-general-details/:id',
+  '/general-details/:id',
   authMiddleware({
     productPermissions: {
       createProduct: true,
@@ -150,7 +155,7 @@ tenantProductRouter.patch(
 );
 
 tenantProductRouter.patch(
-  '/product-identifiers/:id',
+  '/identifiers/:id',
   authMiddleware({
     productPermissions: {
       createProduct: true,
@@ -165,7 +170,7 @@ tenantProductRouter.patch(
 );
 
 tenantProductRouter.patch(
-  '/product-description/:id',
+  '/description/:id',
   authMiddleware({
     productPermissions: {
       createProduct: true,
@@ -176,6 +181,81 @@ tenantProductRouter.patch(
     userPermissions: { salesReports: true },
   }),
   validate({ body: ProductDescriptionSchema, params: idSchema }),
+  updateTenantProduct,
+);
+
+tenantProductRouter.patch(
+  '/instructions/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: InstructionSchema, params: idSchema }),
+  updateTenantProduct,
+);
+
+tenantProductRouter.patch(
+  '/visibility/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: VisibilitySchema, params: idSchema }),
+  updateTenantProduct,
+);
+
+tenantProductRouter.patch(
+  '/groups/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: GroupsSchema, params: idSchema }),
+  updateTenantProduct,
+);
+
+tenantProductRouter.patch(
+  '/inventory/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: InventorySchema, params: idSchema }),
+  updateTenantProduct,
+);
+
+tenantProductRouter.patch(
+  '/gift-wrapping/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: GiftWrappingOptionsSchema, params: idSchema }),
   updateTenantProduct,
 );
 

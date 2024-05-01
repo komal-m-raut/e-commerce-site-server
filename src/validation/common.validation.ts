@@ -26,3 +26,9 @@ export const validateObjectId = (): Joi.StringSchema =>
     .regex(/^[0-9a-fA-F]{24}$/)
     .required()
     .label('Valid MongoDB ObjectID');
+
+export const optionalObjectId = (): Joi.StringSchema =>
+  Joi.string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .optional()
+    .label('Valid MongoDB ObjectID');
