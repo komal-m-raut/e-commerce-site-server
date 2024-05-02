@@ -51,11 +51,12 @@ export const getTenantProduct = catchAsync(async (req, res, next) => {
 //Create Tenant product
 
 export const createTenantProduct = catchAsync(async (req, res, next) => {
-  const { decoded, productName, brandName } = req.body;
+  const { decoded, productName } = req.body;
 
+  const tenantId = decoded.id;
   const existingProduct = await TenantProductModel.findOne({
     'generalDetails.productName': productName,
-    'generalDetails.brandName': brandName,
+    'generalDetails.tenantId': tenantId,
   })
     .lean()
     .exec();
@@ -63,13 +64,12 @@ export const createTenantProduct = catchAsync(async (req, res, next) => {
   if (existingProduct) {
     throw next(
       new BadRequestError(
-        `Product with name ${productName} and brand ${brandName} already exists`,
+        `Product with name ${productName} and tenant ${tenantId} already exists`,
       ),
     );
   }
 
   // Create product
-  const tenantId = decoded.id;
 
   const newProduct = await TenantProductModel.create({
     generalDetails: { ...req.body, tenantId: tenantId },
@@ -89,38 +89,43 @@ export const updateTenantProduct = catchAsync(async (req, res, next) => {
   const updates = req.body;
   const productId = req.params.id;
 
-  //TODO:Optimize this code
   // Determine the path from the URL
   let path;
   let updateObject: { [key: string]: any } = {};
-  if (req.originalUrl.includes('general-details')) {
-    path = 'generalDetails';
+  const urlSegments = req.originalUrl.split('/');
+  const lastSegment = urlSegments[urlSegments.length - 2];
+
+  switch (lastSegment) {
+    case 'general-details':
+      path = 'generalDetails';
+      break;
+    case 'identifiers':
+      path = 'productIdentifiers';
+      break;
+    case 'description':
+      path = 'productDescription';
+      break;
+    case 'instructions':
+      path = 'instructions';
+      break;
+    case 'groups':
+      path = 'groups';
+      break;
+    case 'inventory':
+      path = 'inventory';
+      break;
+    case 'gift-wrapping':
+      path = 'giftWrapping';
+      break;
+    case 'update-product':
+      updateObject = updates;
+      break;
+    default:
+      throw next(new Error('Invalid path'));
+  }
+  console.log('path', path);
+  if (path) {
     updateObject[path] = updates;
-  } else if (req.originalUrl.includes('identifiers')) {
-    path = 'productIdentifiers';
-    updateObject[path] = updates;
-  } else if (req.originalUrl.includes('description')) {
-    path = 'productDescription';
-    updateObject[path] = updates;
-  } else if (req.originalUrl.includes('instructions')) {
-    path = 'instructions';
-    updateObject[path] = updates;
-  } else if (req.originalUrl.includes('visibility')) {
-    path = 'visibility';
-    updateObject[path] = updates;
-  } else if (req.originalUrl.includes('groups')) {
-    path = 'groups';
-    updateObject[path] = updates;
-  } else if (req.originalUrl.includes('inventory')) {
-    path = 'inventory';
-    updateObject[path] = updates;
-  } else if (req.originalUrl.includes('gift-wrapping')) {
-    path = 'giftWrapping';
-    updateObject[path] = updates;
-  } else if (req.originalUrl.includes('/update-product')) {
-    updateObject = updates;
-  } else {
-    throw next(new Error('Invalid path'));
   }
 
   // Find the product and update it
@@ -141,7 +146,6 @@ export const updateTenantProduct = catchAsync(async (req, res, next) => {
 
   return new SuccessResponse('Product updated successfully', product).send(res);
 });
-
 
 //* Tenant controller
 

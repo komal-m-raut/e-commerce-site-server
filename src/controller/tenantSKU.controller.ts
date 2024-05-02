@@ -10,10 +10,10 @@ import catchAsync from '@src/utils/catchAsync';
 export const createTenantSku = catchAsync(async (req, res, next) => {
   const { decoded } = req.body;
   const { productId } = req.params;
-  const supplier = decoded.id;
+  const tenantId = decoded.id;
   const product = await TenantProductModel.exists({
     _id: productId,
-    'generalDetails.supplier': supplier,
+    'generalDetails.tenantId': tenantId,
   });
 
   if (!product) {
@@ -40,6 +40,7 @@ export const createTenantSku = catchAsync(async (req, res, next) => {
         };
       }) => {
         const newSku = await TenantSKUModel.create({
+          productId,
           images: variant.images,
           retailPricing: variant.retailPricing,
           b2bPricing: variant.b2bPricing,
@@ -65,10 +66,11 @@ export const createTenantSku = catchAsync(async (req, res, next) => {
               isYourWardrobeMustHave: false,
             },
           },
-          variants: variant.variant,
+          variant: variant.variant,
         });
         return {
           skuId: newSku._id,
+          productId: newSku.productId,
           barcode: variant.productIdentifier.barcode,
           hsnNo: variant.productIdentifier.hsnNo,
           manufacturerPartNumber:
@@ -98,35 +100,35 @@ export const createTenantSku = catchAsync(async (req, res, next) => {
 });
 
 // Update product visibility
-export const updateTenantProductVisibility = catchAsync(async (req, res, next) => {
-  const { decoded } = req.body;
-  const { productId } = req.params;
-  const supplier = decoded.id;
-  const product = await TenantProductModel.findOne(
-    {
-      _id: productId,
-      'generalDetails.supplier': supplier,
-    },
-    { 'productIdentifiers.skuId': 1 },
-  ).exec();
+// export const updateTenantProductVisibility = catchAsync(async (req, res, next) => {
+//   const { decoded } = req.body;
+//   const { productId } = req.params;
+//   const supplier = decoded.id;
+//   const product = await TenantProductModel.findOne(
+//     {
+//       _id: productId,
+//       'generalDetails.supplier': supplier,
+//     },
+//     { 'productIdentifiers.skuId': 1 },
+//   ).exec();
 
-  if (!product) {
-    throw next(new NotFoundError('Product not found'));
-  }
-  const updatedSku = await TenantSKUModel.updateMany(
-    {
-      _id: {
-        $in: product.productIdentifiers.map((identifier) => identifier.skuId),
-      },
-    },
-    { $set: { visibility: req.body } },
-  ).exec();
+//   if (!product) {
+//     throw next(new NotFoundError('Product not found'));
+//   }
+//   const updatedSku = await TenantSKUModel.updateMany(
+//     {
+//       _id: {
+//         $in: product.productIdentifiers.map((identifier) => identifier.skuId),
+//       },
+//     },
+//     { $set: { visibility: req.body } },
+//   ).exec();
 
-  if (!updatedSku) {
-    throw next(new NotFoundError('Failed to update product visibility'));
-  }
+//   if (!updatedSku) {
+//     throw next(new NotFoundError('Failed to update product visibility'));
+//   }
 
-  return new SuccessResponse('Product visibility updated', updatedSku).send(
-    res,
-  );
-});
+//   return new SuccessResponse('Product visibility updated', updatedSku).send(
+//     res,
+//   );
+// });

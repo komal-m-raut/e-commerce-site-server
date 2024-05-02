@@ -16,14 +16,16 @@ export const CategoryValidationSchema = Joi.object({
 
 export const GeneralDetailsValidationSchema = Joi.object({
   tenantId: validateObjectId().required(),
-  status: Joi.string().optional(),
+  brandName: validateObjectId().required(),
   productId: Joi.string().required(),
+  productName: Joi.string().required(),
+  status: Joi.string()
+    .valid('approved', 'pending', 'rejected')
+    .default('pending'),
   sellerName: Joi.string().required(),
   language: Joi.string().optional(),
   countryOfOrigin: Joi.string().required(),
   importerName: Joi.string().required(),
-  brandName: validateObjectId().required(),
-  productName: Joi.string().required(),
   categoryDetails: CategoryValidationSchema.required(),
   attributeDetails: AttributeValidationSchema.required(),
   manufacturerName: Joi.string().required(),
@@ -33,8 +35,6 @@ export const GeneralDetailsValidationSchema = Joi.object({
   globalTradeItemNo: Joi.string().optional(),
   searchKeywords: Joi.array().items(Joi.string()).optional(),
 });
-
-
 
 const InfluencerDetailsJoiSchema = Joi.object({
   isReselling: Joi.boolean().required(),
@@ -46,22 +46,8 @@ const InfluencerDetailsJoiSchema = Joi.object({
   commissionReceivedByInfluencer: Joi.number().required(),
 });
 
-//TODO: Change the skuId and includes to be required and also change type to validateObjectId
-
 export const ProductIdentifiersJoiSchema = Joi.object({
-  skuId: Joi.string().optional(),
-  barcode: Joi.string().required(),
-  size: Joi.string(),
-  color: Joi.string(),
-  location: Joi.string().required(),
-  mrp: Joi.number().required(),
-  sellingPrice: Joi.number(),
-  wholesalePrice: Joi.number(),
-  quantity: Joi.number().required(),
-  minOrderQuantityB2B: Joi.number(),
-  maxOrderQuantityB2B: Joi.number(),
   shelfNumber: Joi.number(),
-  images: Joi.array().items(Joi.string()).required(),
   influencerDetails: InfluencerDetailsJoiSchema.required(),
   includes: Joi.array().items(Joi.string()).optional(),
 });
@@ -140,7 +126,6 @@ export const GiftWrappingOptionsSchema = Joi.object({
   specifyGiftWrappingOptions: Joi.boolean(),
   giftWrapping: optionalObjectId(),
 });
-
 
 // export const updateTenantProductSchema = Joi.object({
 //   generalDetails: Joi.object({

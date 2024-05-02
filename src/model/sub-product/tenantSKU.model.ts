@@ -1,7 +1,9 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, PopulatedDoc } from 'mongoose';
 import { IVariant, VariantSchema } from './variant.model';
+import { ITenantProduct } from '../tenantProduct.model';
 
 export interface TenantSkuRetailPricing {
+  barcode: string;
   mrp: number;
   sellingPrice: number;
   cost: number;
@@ -16,6 +18,9 @@ export interface TenantSkuRetailPricing {
 }
 
 const TenantSkuRetailPricingSchema = new Schema<TenantSkuRetailPricing>({
+  barcode: {
+    type: String,
+  },
   mrp: {
     type: Number,
   },
@@ -182,6 +187,7 @@ const VisibilitySchema = new Schema<Visibility>({
 });
 
 interface ITenantSKU extends Document {
+  productId: PopulatedDoc<Schema.Types.ObjectId & ITenantProduct>;
   retailPricing: TenantSkuRetailPricing;
   b2bPricing: TenantSkuB2BPricing;
   images: Images;
@@ -191,6 +197,11 @@ interface ITenantSKU extends Document {
 
 const tenantSKUSchema = new Schema<ITenantSKU>(
   {
+    productId: {
+      type: Schema.Types.ObjectId,
+      ref: 'TenantProduct',
+      required: true,
+    },
     images: { type: ImagesSchema },
     retailPricing: { type: TenantSkuRetailPricingSchema },
     b2bPricing: { type: TenantSkuB2BPricingSchema },

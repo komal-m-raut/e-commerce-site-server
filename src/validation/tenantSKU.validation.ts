@@ -1,6 +1,7 @@
 import Joi from 'joi';
 
 const retailPricingSchema = Joi.object({
+  barcode: Joi.string(),
   mrp: Joi.number(),
   sellingPrice: Joi.number(),
   cost: Joi.number(),

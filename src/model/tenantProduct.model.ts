@@ -5,15 +5,11 @@ import { IChildCategory } from './sub-product/childCategory.mode';
 import { ITenantBrand } from './sub-company/tenantBrand.model';
 
 import { AttributeSchema, IAttribute } from './sub-product/attribute.model';
-import { ISizeChart, SizeChartSchema } from './sub-product/sizeChart.model';
+import { ISizeChart } from './sub-product/sizeChart.model';
 import { IGiftWrapping } from './sub-product/giftWrapping.model';
-import { ITenantSKU } from './sub-product/tenantSKU.model';
-import { IIncludes, IncludesSchema } from './sub-product/includes.model';
-import { GroupSchema, IGroup } from './sub-product/group.model';
+import { IIncludes } from './sub-product/includes.model';
+import { IGroup } from './sub-product/group.model';
 import { ITenant } from './tenant.model';
-
-// ? Need confirmation about type of hsnNo, manufacturerPartNo, binPickingNo, globalTradeItemNo
-// ? Why import the schema for reference fields instead of using the ID directly?
 
 interface Category {
   rootCategory: PopulatedDoc<Schema.Types.ObjectId & IRootCategory>;
@@ -41,9 +37,6 @@ const CategorySchema = new Schema<Category>(
   },
   { _id: false },
 );
-
-// ? Should I use Tenant Id here or not?
-// ? Who is the seller here? a reference or a string? If reference, what is the model?
 
 interface GeneralDetails {
   tenantId: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
@@ -183,71 +176,15 @@ const InfluencerDetailsSchema = new Schema<InfluencerDetails>(
 
 // 2. Product Identifiers
 interface ProductIdentifiers {
-  skuId: PopulatedDoc<Schema.Types.ObjectId & ITenantSKU>;
-  barcode: string;
-  size: string;
-  color: string;
-  location: string;
-  mrp: number;
-  sellingPrice: number;
-  wholesalePrice: number;
-  quantity: number;
-  minOrderQuantityB2B: number;
-  maxOrderQuantityB2B: number;
   shelfNumber: number;
-  images: string[];
   influencerDetails: InfluencerDetails;
   includes: PopulatedDoc<Schema.Types.ObjectId & IIncludes>[];
 }
 
-//TODO: Add required true for sku id
-
 const ProductIdentifiersSchema = new Schema<ProductIdentifiers>(
   {
-    skuId: {
-      type: IncludesSchema,
-      ref: 'ITenantSKU',
-    },
-    barcode: {
-      type: String,
-      required: true,
-    },
-    size: {
-      type: String,
-    },
-    color: {
-      type: String,
-    },
-    location: {
-      type: String,
-      required: true,
-    },
-    mrp: {
-      type: Number,
-      required: true,
-    },
-    sellingPrice: {
-      type: Number,
-    },
-    wholesalePrice: {
-      type: Number,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-    },
-    minOrderQuantityB2B: {
-      type: Number,
-    },
-    maxOrderQuantityB2B: {
-      type: Number,
-    },
     shelfNumber: {
       type: Number,
-    },
-    images: {
-      type: [String],
-      required: true,
     },
     influencerDetails: {
       type: InfluencerDetailsSchema,
@@ -299,28 +236,34 @@ interface Customization {
   value: string;
 }
 
-const CustomizationSchema = new Schema<Customization>({
-  fieldName: {
-    type: String,
+const CustomizationSchema = new Schema<Customization>(
+  {
+    fieldName: {
+      type: String,
+    },
+    value: {
+      type: String,
+    },
   },
-  value: {
-    type: String,
-  },
-}, { _id: false });
+  { _id: false },
+);
 
 interface QuestionAndAnswers {
   question: string;
   answer: string;
 }
 
-const QuestionAndAnswersSchema = new Schema<QuestionAndAnswers>({
-  question: {
-    type: String,
+const QuestionAndAnswersSchema = new Schema<QuestionAndAnswers>(
+  {
+    question: {
+      type: String,
+    },
+    answer: {
+      type: String,
+    },
   },
-  answer: {
-    type: String,
-  },
-}, { _id: false });
+  { _id: false },
+);
 
 // 4. Instructions
 interface Instructions {
@@ -338,126 +281,71 @@ interface Instructions {
   selectMessage: string;
 }
 
-const InstructionSchema = new Schema<Instructions>({
-  isEssential: {
-    type: Boolean,
+const InstructionSchema = new Schema<Instructions>(
+  {
+    isEssential: {
+      type: Boolean,
+    },
+    isFragile: {
+      type: Boolean,
+    },
+    careInstructions: {
+      type: [String],
+    },
+    sizeChart: {
+      type: Schema.Types.ObjectId,
+      ref: 'ISizeChart',
+    },
+    condition: {
+      type: String,
+    },
+    returnAvailable: {
+      type: Boolean,
+    },
+    returnDuration: {
+      type: String,
+    },
+    warranty: {
+      type: String,
+    },
+    isAvailableOnline: {
+      type: Boolean,
+    },
+    questionAndAnswers: {
+      type: [QuestionAndAnswersSchema],
+    },
+    customFields: {
+      type: [CustomizationSchema],
+    },
+    selectMessage: {
+      type: String,
+    },
   },
-  isFragile: {
-    type: Boolean,
-  },
-  careInstructions: {
-    type: [String],
-  },
-  sizeChart: {
-    type: Schema.Types.ObjectId,
-    ref: 'ISizeChart',
-  },
-  condition: {
-    type: String,
-  },
-  returnAvailable: {
-    type: Boolean,
-  },
-  returnDuration: {
-    type: String,
-  },
-  warranty: {
-    type: String,
-  },
-  isAvailableOnline: {
-    type: Boolean,
-  },
-  questionAndAnswers: {
-    type: [QuestionAndAnswersSchema],
-  },
-  customFields: {
-    type: [CustomizationSchema],
-  },
-  selectMessage: {
-    type: String,
-  },
-}, { _id: false });
-
-// ? These visibility options are there in Tenant SKU as well. Should I use that options here or remove the options from SKU model?
-interface VisibilityOptions {
-  isFeatured: boolean;
-  isBudgetPicks: boolean;
-  isTrendingNow: boolean;
-  isMostLoved: boolean;
-  isMostViewed: boolean;
-  isAllGiftItems: boolean;
-  isNewArrival: boolean;
-  isDealOfTheDay: boolean;
-  isDealOfTheWeek: boolean;
-  isTopPick: boolean;
-}
-
-const VisibilityOptionsSchema = new Schema<VisibilityOptions>({
-  isFeatured: {
-    type: Boolean,
-  },
-  isBudgetPicks: {
-    type: Boolean,
-  },
-  isTrendingNow: {
-    type: Boolean,
-  },
-  isMostLoved: {
-    type: Boolean,
-  },
-  isMostViewed: {
-    type: Boolean,
-  },
-  isAllGiftItems: {
-    type: Boolean,
-  },
-  isNewArrival: {
-    type: Boolean,
-  },
-  isDealOfTheDay: {
-    type: Boolean,
-  },
-  isDealOfTheWeek: {
-    type: Boolean,
-  },
-  isTopPick: {
-    type: Boolean,
-  },
-});
-
-interface Visibility {
-  guestCheckout: VisibilityOptions;
-  privateGroup: VisibilityOptions;
-}
-
-const VisibilitySchema = new Schema<Visibility>({
-  guestCheckout: {
-    type: VisibilityOptionsSchema,
-  },
-  privateGroup: {
-    type: VisibilityOptionsSchema,
-  },
-}, { _id: false });
+  { _id: false },
+);
 
 interface Groups {
   wholesaleGroups: PopulatedDoc<Schema.Types.ObjectId & IGroup>[];
   retailGroups: PopulatedDoc<Schema.Types.ObjectId & IGroup>[];
 }
 
-const GroupsSchema = new Schema<Groups>({
-  wholesaleGroups: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Group',
-    },
-  ],
-  retailGroups: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Group',
-    },
-  ],
-}, { _id: false });
+const GroupsSchema = new Schema<Groups>(
+  {
+    wholesaleGroups: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Group',
+      },
+    ],
+    retailGroups: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Group',
+      },
+    ],
+  },
+  { _id: false },
+);
 interface Inventory {
   preBookingSelectDate: string;
   restockSelectDate: string;
@@ -468,29 +356,32 @@ interface Inventory {
   outOfStockMessage: string;
 }
 
-const InventorySchema = new Schema<Inventory>({
-  preBookingSelectDate: {
-    type: String,
+const InventorySchema = new Schema<Inventory>(
+  {
+    preBookingSelectDate: {
+      type: String,
+    },
+    restockSelectDate: {
+      type: String,
+    },
+    trackAvailableQuantity: {
+      type: Boolean,
+    },
+    canBePurchasedOnline: {
+      type: Boolean,
+    },
+    showWhenOutOfStockToCustomers: {
+      type: Boolean,
+    },
+    allowOrdersOnOutOfStockProducts: {
+      type: Boolean,
+    },
+    outOfStockMessage: {
+      type: String,
+    },
   },
-  restockSelectDate: {
-    type: String,
-  },
-  trackAvailableQuantity: {
-    type: Boolean,
-  },
-  canBePurchasedOnline: {
-    type: Boolean,
-  },
-  showWhenOutOfStockToCustomers: {
-    type: Boolean,
-  },
-  allowOrdersOnOutOfStockProducts: {
-    type: Boolean,
-  },
-  outOfStockMessage: {
-    type: String,
-  },
-}, { _id: false });
+  { _id: false },
+);
 interface GiftWrappingOptions {
   useAllGiftWrappingOptions: boolean;
   isGiftWrapping: boolean;
@@ -498,21 +389,24 @@ interface GiftWrappingOptions {
   giftWrapping: PopulatedDoc<Schema.Types.ObjectId & IGiftWrapping>;
 }
 
-const GiftWrappingOptionsSchema = new Schema<GiftWrappingOptions>({
-  useAllGiftWrappingOptions: {
-    type: Boolean,
+const GiftWrappingOptionsSchema = new Schema<GiftWrappingOptions>(
+  {
+    useAllGiftWrappingOptions: {
+      type: Boolean,
+    },
+    isGiftWrapping: {
+      type: Boolean,
+    },
+    specifyGiftWrappingOptions: {
+      type: Boolean,
+    },
+    giftWrapping: {
+      type: Schema.Types.ObjectId,
+      ref: 'GiftWrapping',
+    },
   },
-  isGiftWrapping: {
-    type: Boolean,
-  },
-  specifyGiftWrappingOptions: {
-    type: Boolean,
-  },
-  giftWrapping: {
-    type: Schema.Types.ObjectId,
-    ref: 'GiftWrapping',
-  },
-}, { _id: false });
+  { _id: false },
+);
 
 // interface LinkedProducts {
 //   upSelling: PopulatedDoc<Schema.Types.ObjectId & ITenantSKU>[];
@@ -615,14 +509,11 @@ const GiftWrappingOptionsSchema = new Schema<GiftWrappingOptions>({
 //   },
 // });
 
-// ? Why is product Identifiers an array?
-
 interface ITenantProduct extends Document {
   generalDetails: GeneralDetails;
   productIdentifiers: ProductIdentifiers[];
   productDescription: ProductDescription;
   instructions: Instructions;
-  visibility: Visibility;
   groups: Groups;
   inventory: Inventory;
   giftWrapping: GiftWrappingOptions;
@@ -635,7 +526,6 @@ const productSchema = new Schema<ITenantProduct>({
   productIdentifiers: [{ type: ProductIdentifiersSchema }],
   productDescription: { type: ProductDescriptionSchema },
   instructions: { type: InstructionSchema },
-  visibility: { type: VisibilitySchema },
   groups: { type: GroupsSchema },
   inventory: { type: InventorySchema },
   giftWrapping: { type: GiftWrappingOptionsSchema },
@@ -645,7 +535,7 @@ const productSchema = new Schema<ITenantProduct>({
 // ? Is it necessary to create an index for productName and brandName? or should I create it for productId?
 
 productSchema.index(
-  { 'generalDetails.productName': 1, 'generalDetails.brandName': 1 },
+  { 'generalDetails.productName': 1, 'generalDetails.tenantId': 1 },
   { unique: true },
 );
 
