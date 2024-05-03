@@ -72,19 +72,19 @@ export const generateAndSendInvoice = catchAsync(
       if (err) {
         return next(err);
       }
-      await sendMail({
-        to: email,
-        subject: `Invoice for order: ${id}}`,
-        html: '<p>Attached is your invoice.</p>',
-        text: 'Attached is your invoice.',
-        attachments: [
-          {
-            content: pdfBuffer.toString('base64'),
-            filename: 'invoice.pdf',
-            type: 'application/pdf',
-          },
-        ],
-      });
+      //TODO: Fix this
+      // await sendMail({
+      //   to: email,
+      //   subject: `Invoice for order: ${id}}`,
+      //   html: '<p>Attached is your invoice.</p>',
+      //   text: 'Attached is your invoice.',
+      //   attachments: [
+      //     {
+      //       file: pdfBuffer.toString('base64'),
+      //       fileName: 'invoice.pdf',
+      //     },
+      //   ],
+      // });
       // Send email with PDF attachment
       return new SuccessResponse('Invoice sent successfully', {}).send(res);
     });

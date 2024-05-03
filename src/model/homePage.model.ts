@@ -14,6 +14,7 @@ interface ISeo {
 
 interface IHomePage extends Document {
   tenantId: Schema.Types.ObjectId;
+  theme: string;
   sections: ISection[];
   seoDetails: ISeo;
 }
@@ -28,6 +29,7 @@ const SectionSchema = new Schema<ISection>({
   data: { type: Schema.Types.Mixed },
 });
 
+//TODO: Remove if not needed
 const SeoSchema = new Schema<ISeo>({
   title: { type: String },
   description: { type: String },
@@ -36,7 +38,8 @@ const SeoSchema = new Schema<ISeo>({
 
 const HomePageSchema = new Schema<IHomePage>(
   {
-    tenantId: { type: Schema.Types.ObjectId, unique: true, required: true },
+    tenantId: { type: Schema.Types.ObjectId, required: true },
+    theme: { type: String },
     sections: { type: [SectionSchema] },
     seoDetails: { type: SeoSchema },
   },

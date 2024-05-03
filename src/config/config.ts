@@ -32,6 +32,7 @@ const envVarsSchema = Joi.object()
     EMAIL_FROM: Joi.string().description(
       'the from field in the emails sent by the app',
     ),
+    EMAIL_DOMAIN: Joi.string().description('email domain'),
     SENDGRID_API_KEY: Joi.string().required().description('SendGrid API key'),
     MONGOOSE_STRICT_MODE: Joi.boolean(),
     MSG_AUTH_KEY: Joi.string().description('MSG91 auth key'),
@@ -82,6 +83,7 @@ const config = {
     },
     sendgridApi: envVars.SENDGRID_API_KEY,
     from: envVars.EMAIL_FROM,
+    domain: envVars.EMAIL_DOMAIN,
   },
   msg: {
     authKey: envVars.MSG_AUTH_KEY,

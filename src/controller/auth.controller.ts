@@ -20,7 +20,7 @@ const userTypeModel: {
 };
 
 type IModel = IAdmin | ITenant | IUser;
-export const createOtp = catchAsync(async (req, res) => {
+export const createOtp = catchAsync(async (req, res, next) => {
   const { phoneNo, email, userType, userId } = req.body;
   const { type } = req.params;
   const user = userTypeModel[
@@ -53,20 +53,54 @@ export const createOtp = catchAsync(async (req, res) => {
     }).send(res);
   }
 
-  console.log('otp', otp);
-  await OtpModel.create({
-    userId: currUser._id,
-    userType,
-    otp: hashedOtp,
-    category: type,
-    otpFor: req.body[type],
-  });
-
   if (type === 'phoneNo') {
-    // const message = `Your OTP for authentication is ${otp}. It is valid for 15 minutes.`;
-    // await sendSms(phoneNo, message);
+    //TODO: add msg service once available
+    const mailOptions = {
+      recipients: [
+        {
+          to: [{ name: '', email: 'nothingmeyaar@gmail.com' }],
+          variables: {
+            company_name: 'Moreshop',
+            otp,
+          },
+        },
+      ],
+      templateType: 'otp' as const,
+    };
+
+    await sendMail(mailOptions, next);
+
+    console.log('otp', otp);
+    await OtpModel.create({
+      userId: currUser._id,
+      userType,
+      otp: hashedOtp,
+      category: type,
+      otpFor: req.body[type],
+    });
   } else {
-    // mail otp
+    const mailOptions = {
+      recipients: [
+        {
+          to: [{ name: '', email }],
+          variables: {
+            company_name: 'Moreshop',
+            otp,
+          },
+        },
+      ],
+      templateType: 'otp' as const,
+    };
+    await sendMail(mailOptions, next);
+
+    console.log('otp', otp);
+    await OtpModel.create({
+      userId: currUser._id,
+      userType,
+      otp: hashedOtp,
+      category: type,
+      otpFor: req.body[type],
+    });
   }
 
   return new SuccessResponse('OTP sent successfully', {
@@ -144,8 +178,8 @@ export const createPasswordResetLink = catchAsync(async (req, res, next) => {
     html: `<h1>Here is your password reset link: ${resetLink}</h1>`,
     text: `Here is your password reset link: ${resetLink}`,
   };
-
-  await sendMail(mailOptions);
+  //TODO: Fix this
+  // await sendMail(mailOptions);
 
   return new SuccessMsgResponse('Password reset link sent successfully').send(
     res,
