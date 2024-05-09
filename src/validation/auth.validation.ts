@@ -12,6 +12,14 @@ export const createOtpTypeSchema = Joi.object({
   type: Joi.string().valid('email', 'phoneNo').required(),
 });
 
+export const resendOtpSchema = Joi.object({
+  userType: Joi.string().valid('admin', 'tenant', 'user').required(),
+  userId: validateObjectId().required(),
+  category: Joi.string().valid('phoneNo', 'email').required(),
+  email: Joi.string().email(),
+  phoneNo: Joi.number(),
+}).or('phoneNo', 'email');
+
 export const validateOtpSchema = Joi.object({
   otp: Joi.string().required(),
   userType: Joi.string().valid('admin', 'tenant', 'user').required(),

@@ -48,9 +48,14 @@ export const createOtp = catchAsync(async (req, res, next) => {
   }).exec();
 
   if (existingOtp) {
-    return new SuccessResponse('OTP already sent', {
-      userId: currUser._id,
-    }).send(res);
+    // Delete the existing OTP if the email has been corrected
+    if (existingOtp.otpFor !== req.body[type]) {
+      await OtpModel.deleteOne({ _id: existingOtp._id });
+    } else {
+      return new SuccessResponse('OTP already sent', {
+        userId: currUser._id,
+      }).send(res);
+    }
   }
 
   if (type === 'phoneNo') {
@@ -147,6 +152,78 @@ export const validateOtp = catchAsync(async (req, res) => {
   return new SuccessMsgResponse('OTP validated successfully').send(res);
 });
 
+export const resendOtp = catchAsync(async (req, res, next) => {
+  const { phoneNo, email, userType, userId } = req.body;
+  const { type } = req.params;
+
+  await OtpModel.deleteOne({
+    userId,
+    userType,
+    category: type,
+  }).exec();
+
+  // Generate a new OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString(); // generates a 6 digit number
+
+  // Encrypt the new OTP
+  const hashedOtp = await encrypt(otp);
+
+  // Save the new OTP
+
+  if (type === 'phoneNo') {
+    //TODO: add msg service once available
+    const mailOptions = {
+      recipients: [
+        {
+          to: [{ name: '', email: 'nothingmeyaar@gmail.com' }],
+          variables: {
+            company_name: 'Moreshop',
+            otp,
+          },
+        },
+      ],
+      templateType: 'otp' as const,
+    };
+
+    await sendMail(mailOptions, next);
+
+    console.log('otp', otp);
+    await OtpModel.create({
+      userId: userId,
+      userType,
+      otp: hashedOtp,
+      category: type,
+      otpFor: req.body[type],
+    });
+  } else {
+    const mailOptions = {
+      recipients: [
+        {
+          to: [{ name: '', email }],
+          variables: {
+            company_name: 'Moreshop',
+            otp,
+          },
+        },
+      ],
+      templateType: 'otp' as const,
+    };
+    await sendMail(mailOptions, next);
+
+    console.log('otp', otp);
+    await OtpModel.create({
+      userId: userId,
+      userType,
+      otp: hashedOtp,
+      category: type,
+      otpFor: req.body[type],
+    });
+  }
+
+  return new SuccessResponse('OTP resent successfully', {
+    userId,
+  }).send(res);
+});
 export const createPasswordResetLink = catchAsync(async (req, res, next) => {
   const { email, userType } = req.body;
   const user = userTypeModel[

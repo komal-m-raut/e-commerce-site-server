@@ -77,6 +77,8 @@ const tenantRouter: Router = Router();
  *         description: Tenant registered successfully
  *       400:
  *         description: Tenant with this email or phone number already exists
+ *       404:
+ *         description: No tenant found
  *       500:
  *         description: Failed to register tenant
  */
@@ -124,33 +126,33 @@ tenantRouter.post('/login', validate({ body: loginTenantSchema }), loginTenant);
 //*POST ROUTE
 
 /**
-  * @swagger
-  * /v1/tenant/create-company:
-  *   post:
-  *     tags:
-  *       - Tenant
-  *     summary: Create a new company
-  *     security:
-  *       - bearerAuth: []
-  *     requestBody:
-  *       required: true
-  *       content:
-  *         application/json:
-  *           schema:
-  *             type: object
-  *             required:
-  *               - name
-  *             properties:
-  *               name:
-  *                 type: string
-  *     responses:
-  *       200:
-  *         description: Company created successfully
-  *       400:
-  *         description: Company with this name is already registered by the owner
-  *       500:
-  *         description: Failed to create company
-  */
+ * @swagger
+ * /v1/tenant/create-company:
+ *   post:
+ *     tags:
+ *       - Tenant
+ *     summary: Create a new company
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Company created successfully
+ *       400:
+ *         description: Company with this name is already registered by the owner
+ *       500:
+ *         description: Failed to create company
+ */
 
 tenantRouter.post(
   '/create-company',
@@ -169,59 +171,59 @@ tenantRouter.post(
 
 //*PATCH ROUTE
 /**
-  * @swagger
-  * /v1/tenant/company-basic-details/{id}:
-  *   patch:
-  *     tags:
-  *       - Tenant
-  *     summary: Update basic company details
-  *     security:
-  *       - bearerAuth: []
-  *     parameters:
-  *       - in: path
-  *         name: id
-  *         schema:
-  *           type: string
-  *         required: true
-  *         description: The id of the company
-  *     requestBody:
-  *       required: true
-  *       content:
-  *         application/json:
-  *           schema:
-  *             type: object
-  *             properties:
-  *               primaryContactName:
-  *                 type: string
-  *               primaryEmailId:
-  *                 type: string
-  *                 format: email
-  *               primaryContactNumber:
-  *                 type: string
-  *               organizationEmail:
-  *                 type: string
-  *                 format: email
-  *               organizationContact:
-  *                 type: string
-  *               businessOwnerName:
-  *                 type: string
-  *               businessOwnerEmail:
-  *                 type: string
-  *                 format: email
-  *               businessOwnerContact:
-  *                 type: string
-  *               panNumber:
-  *                 type: string
-  *               businessModel:
-  *                 type: string
-  *     responses:
-  *       200:
-  *         description: Company details updated successfully
-  *       400:
-  *         description: Invalid input
-  *       500:
-  *         description: Failed to update company details
-  */
+ * @swagger
+ * /v1/tenant/company-basic-details/{id}:
+ *   patch:
+ *     tags:
+ *       - Tenant
+ *     summary: Update basic company details
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the company
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               primaryContactName:
+ *                 type: string
+ *               primaryEmailId:
+ *                 type: string
+ *                 format: email
+ *               primaryContactNumber:
+ *                 type: string
+ *               organizationEmail:
+ *                 type: string
+ *                 format: email
+ *               organizationContact:
+ *                 type: string
+ *               businessOwnerName:
+ *                 type: string
+ *               businessOwnerEmail:
+ *                 type: string
+ *                 format: email
+ *               businessOwnerContact:
+ *                 type: string
+ *               panNumber:
+ *                 type: string
+ *               businessModel:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Company details updated successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Failed to update company details
+ */
 
 tenantRouter.patch(
   '/company-basic-details/:id',
@@ -239,48 +241,48 @@ tenantRouter.patch(
 );
 
 /**
-  * @swagger
-  * /v1/tenant/company-banking-details/{id}:
-  *   patch:
-  *     tags:
-  *       - Tenant
-  *     summary: Update banking details
-  *     security:
-  *       - bearerAuth: []
-  *     parameters:
-  *       - in: path
-  *         name: id
-  *         schema:
-  *           type: string
-  *         required: true
-  *         description: The id of the company
-  *     requestBody:
-  *       required: true
-  *       content:
-  *         application/json:
-  *           schema:
-  *             type: object
-  *             properties:
-  *               accountHolderName:
-  *                 type: string
-  *               accountNumber:
-  *                 type: string
-  *               ifscCode:
-  *                 type: string
-  *               bankName:
-  *                 type: string
-  *               accountType:
-  *                 type: string
-  *               cheque:
-  *                 type: string
-  *     responses:
-  *       200:
-  *         description: Banking details updated successfully
-  *       400:
-  *         description: Invalid input
-  *       500:
-  *         description: Failed to update banking details
-  */
+ * @swagger
+ * /v1/tenant/company-banking-details/{id}:
+ *   patch:
+ *     tags:
+ *       - Tenant
+ *     summary: Update banking details
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the company
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               accountHolderName:
+ *                 type: string
+ *               accountNumber:
+ *                 type: string
+ *               ifscCode:
+ *                 type: string
+ *               bankName:
+ *                 type: string
+ *               accountType:
+ *                 type: string
+ *               cheque:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Banking details updated successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Failed to update banking details
+ */
 
 tenantRouter.patch(
   '/company-banking-details/:id',
@@ -300,61 +302,61 @@ tenantRouter.patch(
 //*POST ROUTE
 
 /**
-  * @swagger
-  * /v1/tenant/warehouse/create:
-  *   post:
-  *     tags:
-  *       - Tenant
-  *     summary: Create a new warehouse
-  *     security:
-  *       - bearerAuth: []
-  *     requestBody:
-  *       required: true
-  *       content:
-  *         application/json:
-  *           schema:
-  *             type: object
-  *             required:
-  *               - companyId
-  *               - gstinDetails
-  *               - warehouseAddress
-  *               - warehouseEmail
-  *               - warehouseContact
-  *               - perDayOrderCapacity
-  *             properties:
-  *               companyId:
-  *                 type: string
-  *               warehousePinCode:
-  *                 type: string
-  *               gstinDetails:
-  *                 type: string
-  *               warehouseAddress:
-  *                 type: string
-  *               city:
-  *                 type: string
-  *               state:
-  *                 type: string
-  *               country:
-  *                 type: string
-  *               warehouseEmail:
-  *                 type: string
-  *                 format: email
-  *               warehouseContact:
-  *                 type: string
-  *               operationStartTime:
-  *                 type: string
-  *               operationEndTime:
-  *                 type: string
-  *               perDayOrderCapacity:
-  *                 type: number
-  *     responses:
-  *       200:
-  *         description: Warehouse created successfully
-  *       400:
-  *         description: Warehouse with this name already exists for this tenant
-  *       500:
-  *         description: Failed to create warehouse
-  */
+ * @swagger
+ * /v1/tenant/warehouse/create:
+ *   post:
+ *     tags:
+ *       - Tenant
+ *     summary: Create a new warehouse
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - companyId
+ *               - gstinDetails
+ *               - warehouseAddress
+ *               - warehouseEmail
+ *               - warehouseContact
+ *               - perDayOrderCapacity
+ *             properties:
+ *               companyId:
+ *                 type: string
+ *               warehousePinCode:
+ *                 type: string
+ *               gstinDetails:
+ *                 type: string
+ *               warehouseAddress:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *               warehouseEmail:
+ *                 type: string
+ *                 format: email
+ *               warehouseContact:
+ *                 type: string
+ *               operationStartTime:
+ *                 type: string
+ *               operationEndTime:
+ *                 type: string
+ *               perDayOrderCapacity:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Warehouse created successfully
+ *       400:
+ *         description: Warehouse with this name already exists for this tenant
+ *       500:
+ *         description: Failed to create warehouse
+ */
 
 tenantRouter.post(
   '/warehouse/create',
@@ -516,7 +518,5 @@ tenantRouter.delete(
 // );
 
 //? Warehouse routes
-
-
 
 export default tenantRouter;

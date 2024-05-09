@@ -1,6 +1,7 @@
 import {
   createOtp,
   createPasswordResetLink,
+  resendOtp,
   validateOtp,
   verifyPasswordResetLink,
 } from '@src/controller/auth.controller';
@@ -9,10 +10,12 @@ import {
   createOtpSchema,
   createOtpTypeSchema,
   createPasswordResetLinkSchema,
+  resendOtpSchema,
   validateOtpSchema,
   verifyPasswordResetLinkSchema,
 } from '@src/validation/auth.validation';
 import { Router } from 'express';
+import { auth } from 'google-auth-library';
 
 const authRouter = Router();
 
@@ -112,6 +115,59 @@ authRouter.post(
   validateOtp,
 );
 
+/**
+ * @swagger
+ * /v1/auth/resend-otp/{type}:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Resend an OTP
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [email, phoneNo]
+ *         description: The type of OTP to resend (email or phoneNo)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userType
+ *               - userId
+ *               - category
+ *             properties:
+ *               userType:
+ *                 type: string
+ *                 enum: [admin, tenant, user]
+ *               userId:
+ *                 type: string
+ *                 format: objectId
+ *               category:
+ *                 type: string
+ *                 enum: [phoneNo, email]
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               phoneNo:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: OTP resent successfully
+ *       400:
+ *         description: Invalid request
+ *       500:
+ *         description: Failed to resend OTP
+ */
+authRouter.post(
+  '/resend-otp/:type',
+  validate({ body: resendOtpSchema, params: createOtpTypeSchema }),
+  resendOtp,
+);
 
 authRouter.post(
   '/create-password-reset-link',
