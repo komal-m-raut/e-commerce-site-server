@@ -19,7 +19,6 @@ import { Router } from 'express';
 const userRouter: Router = Router();
 
 //*POST ROUTE
-
 /**
  * @swagger
  * /v1/user/register:
@@ -34,12 +33,24 @@ const userRouter: Router = Router();
  *           schema:
  *             type: object
  *             required:
+ *               - firstName
+ *               - lastName
  *               - email
+ *               - phoneNumber
  *               - password
  *             properties:
+ *               firstName:
+ *                 type: string
+ *                 description: The user's first name.
+ *               lastName:
+ *                 type: string
+ *                 description: The user's last name.
  *               email:
  *                 type: string
  *                 description: The user's email.
+ *               phoneNumber:
+ *                 type: number
+ *                 description: The user's phone number.
  *               password:
  *                 type: string
  *                 description: The user's password.
@@ -218,7 +229,6 @@ userRouter.patch(
  *       500:
  *         description: Failed to update wishlist
  */
-
 
 userRouter.patch(
   '/:userId/wishlist',

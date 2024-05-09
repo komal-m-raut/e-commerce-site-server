@@ -64,12 +64,21 @@ export const createTenant = catchAsync(async (req, res, next) => {
   // Hash password
   const hashedPassword = await encrypt(password);
 
-  await existingTenant
+  const updatedTenant = await existingTenant
     .update({ password: hashedPassword, name, role }, { new: true })
+    .populate('role', 'userPermissions productPermissions')
     .lean()
     .exec();
 
-  return new SuccessMsgResponse('Tenant updated successfully').send(res);
+  // Generate token
+  const token = generateToken({
+    id: updatedTenant._id,
+    userType: 'tenant',
+    userPermissions: updatedTenant.role.userPermissions,
+    productPermissions: updatedTenant.role.productPermissions,
+  });
+
+  return new SuccessResponse('Tenant updated successfully', { token, tenant: updatedTenant }).send(res);
 });
 
 export const loginTenant = catchAsync(async (req, res, next) => {

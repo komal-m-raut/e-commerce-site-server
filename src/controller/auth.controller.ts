@@ -84,6 +84,7 @@ export const validateOtp = catchAsync(async (req, res) => {
     {
       otp: 1,
       category: 1,
+
       otpFor: 1,
     },
   ).exec();

@@ -67,8 +67,6 @@ authRouter.post(
   createOtp,
 );
 
-//TODO: Add resend otp api
-
 /**
  * @swagger
  * /v1/auth/validate-otp:
@@ -113,11 +111,7 @@ authRouter.post(
   validate({ body: validateOtpSchema }),
   validateOtp,
 );
-authRouter.post(
-  '/validate-otp',
-  validate({ body: validateOtpSchema }),
-  validateOtp,
-);
+
 
 authRouter.post(
   '/create-password-reset-link',
