@@ -47,9 +47,10 @@ export const loginUser = catchAsync(async (req, res, next) => {
 
   // Find user by email
   const user = await UserModel.findOne({ email })
-    .populate('role', 'roleId')
+    .populate('role', 'userPermissions productPermissions')
     .lean()
     .exec();
+
   if (!user) {
     throw next(new NotFoundError(`User with ${email} not found`));
   }
@@ -61,9 +62,26 @@ export const loginUser = catchAsync(async (req, res, next) => {
     throw next(new AuthFailureError(`Invalid password`));
   }
 
+  const { userPermissions, productPermissions } = user.role;
   // Create and send JWT token
-  const token = generateToken({ id: user._id, roleId: user.role?.roleId });
-  return new SuccessResponse('success', { token, user }).send(res);
+  const filterPermissions = (
+    permissions: Record<string, any>,
+  ): Record<string, any> => {
+    return Object.entries(permissions)
+      .filter(([_, value]) => value)
+      .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+  };
+
+  const extractedUserPermissions = filterPermissions(userPermissions);
+  const extractedProductPermissions = filterPermissions(productPermissions);
+
+  // Create and send JWT token
+  const token = generateToken({
+    id: user._id,
+    userType: 'user',
+    userPermissions: extractedUserPermissions,
+    productPermissions: extractedProductPermissions,
+  });  return new SuccessResponse('success', { token, user }).send(res);
 });
 
 export const updateUser = catchAsync(async (req, res, next) => {

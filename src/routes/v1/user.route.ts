@@ -5,6 +5,7 @@ import {
   updateUser,
   updateWishlist,
 } from '@src/controller/user.controller';
+import authMiddleware from '@src/middleware/auth';
 import validate from '@src/middleware/validate';
 import { userIdSchema } from '@src/validation/common.validation';
 import {
@@ -205,6 +206,8 @@ userRouter.patch(
  *     tags:
  *       - User
  *     summary: Update user wishlist
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: userId
  *         in: path
@@ -218,20 +221,31 @@ userRouter.patch(
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - productId
  *             properties:
  *               productId:
  *                 type: string
+ *                 description: ID of the product to add to the wishlist
  *     responses:
  *       200:
  *         description: Wishlist updated successfully
  *       400:
  *         description: Bad request
+ *       404:
+ *         description: User not found
  *       500:
  *         description: Failed to update wishlist
  */
 
 userRouter.patch(
   '/:userId/wishlist',
+  authMiddleware({
+    productPermissions: {
+      accessToPremiumSupplierProducts: true,
+    },
+    userPermissions: {},
+  }),
   validate({ body: wishlistSchema, params: userIdSchema }),
   updateWishlist,
 );
@@ -243,6 +257,8 @@ userRouter.patch(
  *     tags:
  *       - User
  *     summary: Update user cart
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: userId
  *         in: path
@@ -256,21 +272,34 @@ userRouter.patch(
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - productId
+ *               - quantity
  *             properties:
  *               productId:
  *                 type: string
+ *                 description: ID of the product to add to the cart
  *               quantity:
  *                 type: number
+ *                 description: Quantity of the product to add to the cart
  *     responses:
  *       200:
  *         description: Cart updated successfully
  *       400:
  *         description: Bad request
+ *       404:
+ *         description: User not found
  *       500:
  *         description: Failed to update cart
  */
 userRouter.patch(
   '/:userId/cart',
+  authMiddleware({
+    productPermissions: {
+      accessToPremiumSupplierProducts: true,
+    },
+    userPermissions: {},
+  }),
   validate({ body: cartSchema, params: userIdSchema }),
   updateCart,
 );

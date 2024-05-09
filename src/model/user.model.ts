@@ -1,5 +1,6 @@
 import { Schema, model, Document, PopulatedDoc } from 'mongoose';
 import { IRole } from './role.model';
+import { ITenantProduct } from './tenantProduct.model';
 
 interface IUser extends Document {
   firstName: string;
@@ -23,9 +24,9 @@ interface IUser extends Document {
     cardExpiryDate: string;
     cardCVV: string;
   }>;
-  wishlistProducts: string[]; // Array of product IDs
+  wishlistProducts: PopulatedDoc<Schema.Types.ObjectId & ITenantProduct>[]; // Array of product IDs
   cart: Array<{
-    productId: string; // Product ID
+    productId: PopulatedDoc<Schema.Types.ObjectId & ITenantProduct>; // Product ID
     quantity: number;
   }>;
   role?: PopulatedDoc<Schema.Types.ObjectId & IRole>;
@@ -58,17 +59,22 @@ const userSchema = new Schema<IUser>({
       cardCVV: { type: String },
     },
   ],
-  wishlistProducts: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+  wishlistProducts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'TenantProduct',
+    },
+  ],
   cart: [
     {
       productId: {
         type: Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: 'TenantProduct',
       },
       quantity: { type: Number, default: 1 },
     },
   ],
-  role: { type: Schema.Types.ObjectId, ref: 'Role' },
+  role: { type: Schema.Types.ObjectId, ref: 'Role', default: '661b9cf0b68b1b70fd594ed6'},
 });
 
 const UserModel = model<IUser>('User', userSchema);
