@@ -5,7 +5,12 @@ import { AdminModel, IAdmin } from '@src/model/admin.model';
 import { ITenant, TenantModel } from '@src/model/tenant.model';
 import { IUser, UserModel } from '@src/model/user.model';
 import { Model } from 'mongoose';
-import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
+import {
+  decrypt,
+  encrypt,
+  generateToken,
+  getHashedOtp,
+} from '@src/services/auth.service';
 import { sendMail } from '@src/utils/sendMail';
 import { NotFoundError } from '@src/utils/apiError';
 
@@ -36,10 +41,7 @@ export const createOtp = catchAsync(async (req, res, next) => {
     currUser = await user.create({});
   }
 
-  // Generate 6-digit OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  // Encrypt OTP using bcrypt
-  const hashedOtp = await encrypt(otp);
+  const { otp, hashedOtp } = await getHashedOtp();
 
   const existingOtp = await OtpModel.findOne({
     userId: currUser._id,
@@ -162,11 +164,7 @@ export const resendOtp = catchAsync(async (req, res, next) => {
     category: type,
   }).exec();
 
-  // Generate a new OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString(); // generates a 6 digit number
-
-  // Encrypt the new OTP
-  const hashedOtp = await encrypt(otp);
+  const { otp, hashedOtp } = await getHashedOtp();
 
   // Save the new OTP
 

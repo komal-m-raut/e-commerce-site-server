@@ -35,11 +35,9 @@ export const updateTenantCompany = catchAsync(async (req, res, next) => {
   const updates = req.body;
   const companyId = req.params.id;
 
-  //TODO:Optimize this code
-
-  // Determine the path from the URL
   let path;
   let updateObject: { [key: string]: any } = {};
+
   if (req.originalUrl.includes('company-basic-details')) {
     path = 'basicInfo';
     updateObject[path] = updates;
@@ -48,14 +46,22 @@ export const updateTenantCompany = catchAsync(async (req, res, next) => {
     updateObject[path] = updates;
   } else if (req.originalUrl.includes('company-banking-details')) {
     path = 'bankingInfo';
-    updateObject[path] = updates;
-  } else if (req.originalUrl.includes('/update-company')) {
-    updateObject = updates;
-  } else {
+  } else if (req.originalUrl.includes('verify-gstin')) {
+    path = 'gstNumber';
+  } else if (!req.originalUrl.includes('/update-company')) {
     throw next(new Error('Invalid path'));
   }
 
-  // Find the company and update it
+  if (path) {
+    updateObject[path] = updates;
+  } else {
+    updateObject = updates;
+  }
+
+  if (path === 'gstNumber') {
+    //TOOD: Verify GSTIN
+  }
+
   const company = await CompanyModel.findByIdAndUpdate(
     companyId,
     updateObject,

@@ -37,3 +37,14 @@ export const decrypt = async (
 ): Promise<boolean> => {
   return await bcrypt.compare(plaintext, hashedText);
 };
+
+export const getHashedOtp = async (): Promise<{
+  otp: string;
+  hashedOtp: string;
+}> => {
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  // Encrypt OTP using bcrypt
+  const hashedOtp = await encrypt(otp);
+  return { otp, hashedOtp };
+};

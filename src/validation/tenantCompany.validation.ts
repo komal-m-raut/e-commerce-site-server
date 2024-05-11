@@ -2,9 +2,10 @@ import Joi from 'joi';
 
 export const createTenantCompanySchema = Joi.object({
   name: Joi.string().required(),
-  description: Joi.string(),
-  aadharNumber: Joi.string(),
-  aadharCard: Joi.string(),
+});
+
+export const verifyGstSchema = Joi.object({
+  gstin: Joi.string().required(),
 });
 
 export const updateBasicInfoSchema = Joi.object({
@@ -35,6 +36,11 @@ export const organizationDetailsSchema = Joi.object({
   gstCertificate: Joi.string(),
   organizationEmail: Joi.string().email(),
   organizationContact: Joi.string(),
+  businessOwnerName: Joi.string(),
+  businessOwnerEmail: Joi.string().email(),
+  businessOwnerContact: Joi.string(),
+  panNumber: Joi.string(),
+  businessModel: Joi.string(),
 });
 
 export const updateBankingInfoSchema = Joi.object({
