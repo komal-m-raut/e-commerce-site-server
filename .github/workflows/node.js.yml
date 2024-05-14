@@ -21,8 +21,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Print system logs
-      run: dmesg
     - run: npm run build --if-present
     - run: |
         touch .env
