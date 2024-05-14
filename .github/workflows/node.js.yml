@@ -14,8 +14,8 @@ jobs:
         node-version: [18.x]
 
     steps:
-    - name: Set permissions
-      run: sudo chmod -R 755 /home/ec2-user/server-action/_work/mono-repo/mono-repo
+    - name: Delete directory
+      run: sudo rm -rf /home/ec2-user/server-action/_work/mono-repo/mono-repo/build
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
