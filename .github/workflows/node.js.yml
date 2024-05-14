@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Delete directory
-      run: sudo rm -rf /home/ec2-user/server-action/_work/mono-repo/mono-repo/
+      run: sudo rm -rf /home/ec2-user/server-action/_work/mono-repo/mono-repo/build
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
