@@ -15,10 +15,7 @@ jobs:
 
     steps:
     - name: Set permissions
-      run: |
-        if [ -d "/home/ec2-user/server-action/_work/mono-repo/mono-repo/build/__tests__" ]; then
-          sudo chmod -R 755 /home/ec2-user/server-action/_work/mono-repo/mono-repo/build/__tests__
-        fi
+      run: sudo chmod -R 755 /home/ec2-user/server-action/_work/mono-repo/mono-repo/build
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
