@@ -111,8 +111,6 @@ tenantRouter.post(
  *               - password
  *               - userId
  *             properties:
- *               userId:
- *                 type: string
  *               name:
  *                 type: string
  *               password:
