@@ -1,12 +1,13 @@
 name: Node.js CI/CD
 
 on:
-  push:
-    branches: [ "master" ]
+  pull_request:
+    types: [closed]
+    branches: [master]
 
 jobs:
   build:
-
+    if: github.event.pull_request.merged == true
     runs-on: self-hosted
     strategy:
       matrix:
@@ -14,6 +15,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Change permissions
+      run: sudo chmod -R 777 /home/ec2-user/server-action/_work/mono-repo/mono-repo/build/__tests__
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
