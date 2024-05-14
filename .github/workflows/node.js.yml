@@ -14,6 +14,11 @@ jobs:
         node-version: [18.x]
 
     steps:
+    - name: Set permissions
+      run: |
+        if [ -d "/home/ec2-user/server-action/_work/mono-repo/mono-repo/build/__tests__" ]; then
+          sudo chmod -R 755 /home/ec2-user/server-action/_work/mono-repo/mono-repo/build/__tests__
+        fi
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
@@ -33,5 +38,3 @@ jobs:
         touch .env
         echo "${{ secrets.DEV_ENV }}" > .env
     - run: pm2 restart server
-    - name: Cleanup
-      run: sudo chmod -R 755 /home/ec2-user/server-action/_work/mono-repo/mono-repo/build/__tests__
