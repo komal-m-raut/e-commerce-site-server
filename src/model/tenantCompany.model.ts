@@ -1,61 +1,68 @@
 import { Document, Schema, Model, model, PopulatedDoc } from 'mongoose';
 import { ITenant } from './tenant.model';
 
-interface BusinessInfo {
-  gstin: string;
-  pan: string;
-  businessName: string;
-  businessOwnerName: string;
-  businessModel: string;
-  natureOfBusiness: string;
-  tryyonForPlanet: string;
-  yearsOfOperation: number;
-  avgMrp: number;
-  avgSellingPrice: number;
-  avgMonthlyTurnover: number;
-  percentageOfOnlineBusiness: number;
-}
-
-const businessInfoSchema = new Schema<BusinessInfo>({
-  gstin: { type: String },
-  pan: { type: String },
-  businessName: { type: String },
-  businessOwnerName: { type: String },
-  businessModel: { type: String },
-  natureOfBusiness: { type: String },
-  tryyonForPlanet: { type: String },
-  yearsOfOperation: { type: Number },
-  avgMrp: { type: Number },
-  avgSellingPrice: { type: Number },
-  avgMonthlyTurnover: { type: Number },
-  percentageOfOnlineBusiness: { type: Number },
-});
-
 interface BasicInfo {
-  primaryContactName: string;
-  primaryEmailId: string;
-  primaryContactNumber: string;
-  organizationEmail: string;
-  organizationContact: string;
   businessOwnerName: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  pincode: string;
+  businessModel: string;
   businessOwnerEmail: string;
   businessOwnerContact: string;
   panNumber: string;
-  businessModel: string;
+  primaryContactName: string;
+  primaryEmailId: string;
+  primaryContactNumber: string;
 }
 
 const basicInfoSchema = new Schema<BasicInfo>(
   {
-    primaryContactName: { type: String },
-    primaryEmailId: { type: String },
-    primaryContactNumber: { type: String },
-    organizationEmail: { type: String },
-    organizationContact: { type: String },
     businessOwnerName: { type: String },
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
+    pincode: { type: String },
+    businessModel: { type: String },
     businessOwnerEmail: { type: String },
     businessOwnerContact: { type: String },
     panNumber: { type: String },
-    businessModel: { type: String },
+    primaryContactName: { type: String },
+    primaryEmailId: { type: String },
+    primaryContactNumber: { type: String },
+  },
+  { _id: false },
+);
+
+interface OrganizationDetails {
+  registeredCompanyName: string;
+  gstin: string;
+  panNumber: string;
+  registeredCompanyAddress: string;
+  city: string;
+  pincode: string;
+  state: string;
+  country: string;
+  gstCertificate: string;
+  organizationEmail: string;
+  organizationContact: string;
+}
+
+const organizationDetailsSchema = new Schema<OrganizationDetails>(
+  {
+    registeredCompanyName: { type: String },
+    gstin: { type: String },
+    panNumber: { type: String },
+    registeredCompanyAddress: { type: String },
+    city: { type: String },
+    pincode: { type: String },
+    state: { type: String },
+    country: { type: String },
+    gstCertificate: { type: String },
+    organizationEmail: { type: String },
+    organizationContact: { type: String },
   },
   { _id: false },
 );
@@ -84,16 +91,12 @@ const bankingInfoSchema = new Schema<BankingInfo>(
 interface ITenantCompany extends Document {
   name: string;
   description?: string;
-  gstNumber: string;
-  gstCertificate?: string;
-  panNumber: string;
-  panCard?: string;
   aadhaarNumber: string;
   aadhaarCard?: string;
   adminApproval: boolean;
   owner: PopulatedDoc<Schema.Types.ObjectId & ITenant>;
-  businessInfo: BusinessInfo;
   basicInfo: BasicInfo;
+  organizationDetails: OrganizationDetails[];
   bankingInfo: BankingInfo;
 }
 
@@ -101,15 +104,11 @@ const CompanySchema: Schema = new Schema(
   {
     name: { type: String },
     description: { type: String },
-    gstNumber: { type: String, unique: true },
-    gstCertificate: { type: String },
-    panNumber: { type: String, unique: true },
-    panCard: { type: String },
     aadhaarNumber: { type: String, unique: true },
     aadhaarCard: { type: String },
     adminApproval: { type: Boolean, default: false },
     owner: { type: Schema.Types.ObjectId, ref: 'Tenant' },
-    businessInfo: { type: businessInfoSchema },
+    organizationDetails: { type: [organizationDetailsSchema] },
     basicInfo: { type: basicInfoSchema },
     bankingInfo: { type: bankingInfoSchema },
   },

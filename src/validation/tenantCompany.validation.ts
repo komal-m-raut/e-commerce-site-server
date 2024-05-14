@@ -2,34 +2,39 @@ import Joi from 'joi';
 
 export const createTenantCompanySchema = Joi.object({
   name: Joi.string().required(),
+  description: Joi.string(),
+  aadharNumber: Joi.string(),
+  aadharCard: Joi.string(),
 });
 
 export const updateBasicInfoSchema = Joi.object({
-  primaryContactName: Joi.string(),
-  primaryEmailId: Joi.string().email(),
-  primaryContactNumber: Joi.string(),
-  organizationEmail: Joi.string().email(),
-  organizationContact: Joi.string(),
   businessOwnerName: Joi.string(),
+  address: Joi.string(),
+  city: Joi.string(),
+  state: Joi.string(),
+  country: Joi.string(),
+  pincode: Joi.string(),
+  businessModel: Joi.string(),
   businessOwnerEmail: Joi.string().email(),
   businessOwnerContact: Joi.string(),
   panNumber: Joi.string(),
-  businessModel: Joi.string(),
+  primaryContactName: Joi.string(),
+  primaryEmailId: Joi.string().email(),
+  primaryContactNumber: Joi.string(),
 });
 
-export const updateBusinessInfoSchema = Joi.object({
-  gstin: Joi.string().required(),
-  pan: Joi.string().required(),
-  businessName: Joi.string().required(),
-  businessOwnerName: Joi.string().required(),
-  businessModel: Joi.string().required(),
-  natureOfBusiness: Joi.string().required(),
-  tryyonForPlanet: Joi.string().required(),
-  yearsOfOperation: Joi.number().required(),
-  avgMrp: Joi.number().required(),
-  avgSellingPrice: Joi.number().required(),
-  avgMonthlyTurnover: Joi.number().required(),
-  percentageOfOnlineBusiness: Joi.number().required(),
+export const organizationDetailsSchema = Joi.object({
+  registeredCompanyName: Joi.string(),
+  gstin: Joi.string(),
+  panNumber: Joi.string(),
+  registeredCompanyAddress: Joi.string(),
+  city: Joi.string(),
+  pincode: Joi.string(),
+  state: Joi.string(),
+  country: Joi.string(),
+  gstCertificate: Joi.string(),
+  organizationEmail: Joi.string().email(),
+  organizationContact: Joi.string(),
 });
 
 export const updateBankingInfoSchema = Joi.object({

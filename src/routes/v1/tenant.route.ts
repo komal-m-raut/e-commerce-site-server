@@ -27,6 +27,7 @@ import { createTenantWarehouseSchema } from '@src/validation/tenantWarehouse.val
 import { Router } from 'express';
 import {
   createTenantCompanySchema,
+  organizationDetailsSchema,
   updateBankingInfoSchema,
   updateBasicInfoSchema,
 } from '@src/validation/tenantCompany.validation';
@@ -124,7 +125,6 @@ tenantRouter.post('/login', validate({ body: loginTenantSchema }), loginTenant);
 //? Company routes
 
 //*POST ROUTE
-
 /**
  * @swagger
  * /v1/tenant/create-company:
@@ -144,6 +144,12 @@ tenantRouter.post('/login', validate({ body: loginTenantSchema }), loginTenant);
  *               - name
  *             properties:
  *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               aadharNumber:
+ *                 type: string
+ *               aadharCard:
  *                 type: string
  *     responses:
  *       200:
@@ -200,11 +206,6 @@ tenantRouter.post(
  *                 format: email
  *               primaryContactNumber:
  *                 type: string
- *               organizationEmail:
- *                 type: string
- *                 format: email
- *               organizationContact:
- *                 type: string
  *               businessOwnerName:
  *                 type: string
  *               businessOwnerEmail:
@@ -215,6 +216,16 @@ tenantRouter.post(
  *               panNumber:
  *                 type: string
  *               businessModel:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *               pincode:
  *                 type: string
  *     responses:
  *       200:
@@ -240,6 +251,75 @@ tenantRouter.patch(
   updateTenantCompany,
 );
 
+/**
+ * @swagger
+ * /v1/tenant/company-organization-details/{id}:
+ *   patch:
+ *     tags:
+ *       - Tenant
+ *     summary: Update organization details
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the company
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               registeredCompanyName:
+ *                 type: string
+ *               gstin:
+ *                 type: string
+ *               panNumber:
+ *                 type: string
+ *               registeredCompanyAddress:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               pincode:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *               gstCertificate:
+ *                 type: string
+ *               organizationEmail:
+ *                 type: string
+ *                 format: email
+ *               organizationContact:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Organization details updated successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Failed to update organization details
+ */
+
+tenantRouter.patch(
+  '/company-organization-details/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: organizationDetailsSchema, params: idSchema }),
+  updateTenantCompany,
+);
 /**
  * @swagger
  * /v1/tenant/company-banking-details/{id}:

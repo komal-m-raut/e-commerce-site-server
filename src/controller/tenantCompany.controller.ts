@@ -43,6 +43,9 @@ export const updateTenantCompany = catchAsync(async (req, res, next) => {
   if (req.originalUrl.includes('company-basic-details')) {
     path = 'basicInfo';
     updateObject[path] = updates;
+  } else if (req.originalUrl.includes('company-organization-details')) {
+    path = 'organizationDetails';
+    updateObject[path] = updates;
   } else if (req.originalUrl.includes('company-banking-details')) {
     path = 'bankingInfo';
     updateObject[path] = updates;
