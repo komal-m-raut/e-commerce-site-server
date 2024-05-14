@@ -15,14 +15,23 @@ jobs:
 
     steps:
     - name: Delete directory
-      run: sudo rm -rf /home/ec2-user/server-action/_work/mono-repo/mono-repo/build
+      run: sudo rm -rf /home/ec2-user/server-action/_work/mono-repo/mono-repo/
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install eslint
-    - run: npm run build --if-present
+        cache: 'npm'
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Install dependencies
+      run: sudo npm ci
+    - run: sudo npm run build --if-present
     - run: |
         touch .env
         echo "${{ secrets.DEV_ENV }}" > .env
