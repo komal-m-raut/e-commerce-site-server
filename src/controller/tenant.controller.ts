@@ -67,8 +67,10 @@ export const createTenant = catchAsync(async (req, res, next) => {
   const updatedTenant = await TenantModel.findOneAndUpdate(
     { _id: existingTenant._id },
     { password: hashedPassword, name, role },
-    { new: true }
-  ).lean().exec();
+    { new: true },
+  )
+    .lean()
+    .exec();
 
   if (!updatedTenant) {
     throw next(new BadRequestError('No tenant found with this id'));
@@ -80,6 +82,47 @@ export const createTenant = catchAsync(async (req, res, next) => {
   // Generate token
   const token = generateToken({
     id: updatedTenant._id,
+    userType: 'tenant',
+    userPermissions: userPermissions,
+    productPermissions: productPermissions,
+  });
+
+  return new SuccessResponse('Tenant updated successfully', {
+    token,
+    tenant: updatedTenant,
+  }).send(res);
+});
+
+export const createTenantPassword = catchAsync(async (req, res, next) => {
+  const { userId, name, password } = req.body;
+
+  // Check if email and phoneNo is already verified
+  const tenant = await TenantModel.findById(userId).exec();
+  if (!tenant?.email || !tenant?.phoneNo) {
+    throw next(new BadRequestError('Email or Phone is not verified yet'));
+  }
+
+  if (tenant.password) {
+    throw next(new BadRequestError('Password already exists'));
+  }
+
+  // Hash password
+  const hashedPassword = await encrypt(password);
+
+  const updatedTenant = await TenantModel.findOneAndUpdate(
+    { _id: tenant._id },
+    { password: hashedPassword, name },
+    { new: true },
+  )
+    .lean()
+    .exec();
+
+  // Populate role after successful update
+  const { userPermissions, productPermissions } = tenant.role;
+
+  // Generate token
+  const token = generateToken({
+    id: tenant._id,
     userType: 'tenant',
     userPermissions: userPermissions,
     productPermissions: productPermissions,

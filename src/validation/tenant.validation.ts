@@ -27,6 +27,25 @@ export const createTenantSchema = Joi.object({
   role: validateObjectId().optional(),
 });
 
+export const createTenantPasswordSchema = Joi.object({
+  name: Joi.string().required(),
+  password: Joi.string()
+    .min(8)
+    .pattern(
+      /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+    )
+    .required()
+    .messages({
+      'string.base': 'Password must be a string',
+      'string.empty': 'Password is required',
+      'string.min': 'Password must have at least {{#limit}} characters',
+      'any.required': 'Password is required',
+      'string.pattern.base':
+        'Password must contain at least 1 symbol, 1 lowercase letter, 1 uppercase letter and 1 number',
+    }),
+  userId: validateObjectId(),
+});
+
 export const updateTenantSchema = Joi.object({
   businessInfo: Joi.object({
     gstin: Joi.string(),

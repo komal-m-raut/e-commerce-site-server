@@ -2,6 +2,7 @@ import { createTenantBrand } from '@src/controller/tenantBrand.controller';
 import {
   createMarketingPage,
   createTenant,
+  createTenantPassword,
   deleteTenant,
   getAllTenants,
   getTenant,
@@ -16,6 +17,7 @@ import validate from '@src/middleware/validate';
 import { createTenantBrandSchema } from '@src/validation/tenantBrand.validation';
 import { idSchema } from '@src/validation/common.validation';
 import {
+  createTenantPasswordSchema,
   createTenantSchema,
   homeSectionSchema,
   loginTenantSchema,
@@ -89,6 +91,50 @@ tenantRouter.post(
   '/register',
   validate({ body: createTenantSchema }),
   createTenant,
+);
+
+/**
+ * @swagger
+ * /v1/tenant/set-password:
+ *   post:
+ *     tags:
+ *       - Tenant
+ *     summary: Register a new tenant
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - password
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 description: Password must contain at least 1 symbol, 1 lowercase letter, 1 uppercase letter and 1 number. Minimum length is 8 characters.
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password set successfully
+ *       400:
+ *         description: Tenant with this userId doesn't exists
+ *       404:
+ *         description: No tenant found
+ *       500:
+ *         description: Failed to register tenant
+ */
+
+tenantRouter.post(
+  '/set-password',
+  validate({ body: createTenantPasswordSchema }),
+  createTenantPassword,
 );
 
 /**

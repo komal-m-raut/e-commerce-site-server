@@ -58,7 +58,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // global error handler
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof ApiError) {
     ApiError.handle(err, res);
   } else {
