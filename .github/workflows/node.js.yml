@@ -11,7 +11,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [16.x]
 
     steps:
     - name: Delete directory
@@ -29,7 +29,11 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    - run: npm install
+    - name: Install dependencies
+      run: npm ci
+      continue-on-error: true
+    - name: Print system logs
+      run: dmesg
     - run: npm run build --if-present
     - run: |
         touch .env
