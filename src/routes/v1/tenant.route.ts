@@ -9,7 +9,6 @@ import {
   homeSection,
   loginTenant,
   updateMarketingPage,
-  updateTenant,
 } from '@src/controller/tenant.controller';
 import { createTenantWarehouse } from '@src/controller/tenantWarehouse.controller';
 import authMiddleware from '@src/middleware/auth';
@@ -23,7 +22,6 @@ import {
   loginTenantSchema,
   marketingPageSchema,
   marketingPageUpdateSchema,
-  updateTenantSchema,
 } from '@src/validation/tenant.validation';
 import { createTenantWarehouseSchema } from '@src/validation/tenantWarehouse.validation';
 import { Router } from 'express';
@@ -632,11 +630,30 @@ tenantRouter.post(
 
 tenantRouter.post(
   '/home-section/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
   validate({ body: homeSectionSchema, params: idSchema }),
   homeSection,
 );
+
 tenantRouter.post(
   '/marketing-page/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
   validate({ body: marketingPageSchema, params: idSchema }),
   createMarketingPage,
 );
@@ -658,13 +675,6 @@ tenantRouter.get(
 
 tenantRouter.get('/:id', authMiddleware(), getTenant);
 
-//*PATCH ROUTE
-tenantRouter.patch(
-  '/:id',
-  authMiddleware(),
-  validate({ body: updateTenantSchema, params: idSchema }),
-  updateTenant,
-);
 
 tenantRouter.patch(
   '/home-section/:id',
