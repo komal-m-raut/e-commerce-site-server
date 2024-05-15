@@ -12,6 +12,7 @@ import skuRouter from './sku.route';
 import marketplaceProductRouter from './marketplaceProduct.route';
 import tenantProductRouter from './tenantProduct.route';
 import tenantSkuRouter from './tenantSKU.route';
+import couponRouter from './coupon.route';
 
 const router = Router();
 
@@ -26,7 +27,8 @@ router.use('/home-page', homePageRouter);
 router.use('/role', roleRouter);
 router.use('/settings', settingsRouter);
 router.use('/sku', skuRouter);
-router.use('/tenant/sku', tenantSkuRouter)
+router.use('/tenant/sku', tenantSkuRouter);
+router.use('/coupons', couponRouter);
 
 router.use('/invoice', invoiceRouter);
 
