@@ -1,6 +1,8 @@
 name: Node.js CI/CD
 
 on:
+  push:
+    branches: [master]
   pull_request:
     types: [closed]
     branches: [master]
