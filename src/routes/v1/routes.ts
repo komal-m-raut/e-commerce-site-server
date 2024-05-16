@@ -29,7 +29,6 @@ router.use('/settings', settingsRouter);
 router.use('/sku', skuRouter);
 router.use('/tenant/sku', tenantSkuRouter);
 router.use('/coupons', couponRouter);
-
 router.use('/invoice', invoiceRouter);
 
 export default router;

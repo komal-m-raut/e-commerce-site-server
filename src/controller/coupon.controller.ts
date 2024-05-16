@@ -1,6 +1,6 @@
 import { CouponsModel } from '@src/model/coupon.model';
 import { BadRequestError, NotFoundError } from '@src/utils/apiError';
-import { SuccessResponse } from '@src/utils/apiResponse';
+import { SuccessMsgResponse, SuccessResponse } from '@src/utils/apiResponse';
 import catchAsync from '@src/utils/catchAsync';
 
 export const createCoupon = catchAsync(async (req, res, next) => {
@@ -14,14 +14,17 @@ export const createCoupon = catchAsync(async (req, res, next) => {
     throw next(new BadRequestError('Coupon code is already in use'));
   }
 
-  // Create new coupon
-  let coupon = new CouponsModel({
-    code,
-    tenantId: decoded.userType === 'tenant' ? decodedId : undefined,
-    supplierId: decoded.userType === 'supplier' ? decodedId : undefined,
-  });
+  // Prepare the coupon data
+  const couponData = { ...req.body, code };
 
-  coupon = await coupon.save();
+  // Add tenantId or supplierId based on userType
+  if (decoded.userType === 'tenant') {
+    couponData.tenantId = decodedId;
+  } else if (decoded.userType === 'supplier') {
+    couponData.supplierId = decodedId;
+  }
+
+  const coupon = await CouponsModel.create(couponData);
 
   if (!coupon) {
     throw next(new BadRequestError('Failed to create coupon'));
@@ -34,35 +37,43 @@ export const createCoupon = catchAsync(async (req, res, next) => {
 
 // Update Coupon
 export const updateCoupon = catchAsync(async (req, res, next) => {
-  const { code, ...updateFields } = req.body;
+  const { id } = req.params;
+  const updateFields = req.body;
 
-  // Check if the coupon code is already in use
+  // Check if the coupon id exists
   const updatedCoupon = await CouponsModel.findOneAndUpdate(
-    { code },
+    { _id: id },
     { $set: updateFields },
     { new: true },
   ).exec();
 
   if (!updatedCoupon) {
-    throw next(new BadRequestError('Coupon code does not exist'));
+    throw next(new BadRequestError('Coupon with provided id does not exist'));
   }
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      coupon: updatedCoupon,
-    },
-  });
+  return new SuccessMsgResponse('Coupon updated successfully').send(res);
 });
 // Create new coupon
 
-//Get all coupons
+//Get all active coupons based on userType
 export const getAllCoupons = catchAsync(async (req, res, next) => {
-  const itemsPerPage = Number(req.params.itemsPerPage) || 10;
-  const pageCount = Number(req.params.pageCount) || 1;
-  const skip = itemsPerPage * (pageCount - 1);
-  const totalCoupons = await CouponsModel.countDocuments().exec();
-  const coupons = await CouponsModel.find()
+  const itemsPerPage = parseInt(req.query.itemsPerPage as string) || 10; // default to 10 items per page
+  const pageNo = parseInt(req.query.pageNo as string) || 1; // default to first page
+
+  if (itemsPerPage < 1 || pageNo < 1)
+    throw next(new BadRequestError('Invalid query params'));
+
+  const skip = itemsPerPage * (pageNo - 1);
+  const decodedId = req.body.decoded.id;
+
+  const query = {
+    $or: [{ tenantId: decodedId }, { supplierId: decodedId }],
+    isActive: true,
+    isDeleted: false,
+  };
+
+  const totalCoupons = await CouponsModel.countDocuments(query).exec();
+  const coupons = await CouponsModel.find(query)
     .skip(skip)
     .limit(itemsPerPage)
     .lean()
@@ -74,18 +85,18 @@ export const getAllCoupons = catchAsync(async (req, res, next) => {
 
   return new SuccessResponse('success', {
     coupons,
-    currentPage: pageCount,
+    currentPage: pageNo,
     totalCoupons,
   }).send(res);
 });
 
 // Get a single coupon
-export const getCoupon = catchAsync(async (req, res, next) => {
-  const { code } = req.params;
+export const getCouponById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
 
-  const coupon = await CouponsModel.findOne({ code }).lean().exec();
+  const coupon = await CouponsModel.findOne({ id }).lean().exec();
   if (!coupon) {
-    throw next(new NotFoundError(`Coupon with code ${code} not found`));
+    throw next(new NotFoundError(`Coupon with id ${id} not found`));
   }
 
   return new SuccessResponse('success', coupon).send(res);
@@ -93,18 +104,16 @@ export const getCoupon = catchAsync(async (req, res, next) => {
 
 // Delete coupon
 export const deleteCoupon = catchAsync(async (req, res, next) => {
-  const { code } = req.params;
+  const { id } = req.params;
 
   const deletedCoupon = await CouponsModel.findOneAndUpdate(
-    { code },
+    { id },
     { isDeleted: true },
     { new: true },
   ).exec();
   if (!deletedCoupon) {
-    throw next(new NotFoundError(`Coupon with code ${code} not found`));
+    throw next(new NotFoundError(`Coupon with id ${id} not found`));
   }
 
-  return new SuccessResponse('Coupon deleted successfully', {
-    coupon: deletedCoupon,
-  }).send(res);
+  return new SuccessMsgResponse('Coupon deleted successfully').send(res);
 });

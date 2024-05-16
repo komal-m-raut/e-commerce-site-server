@@ -177,7 +177,7 @@ const CouponValiditySchema = new Schema<CouponValidity>(
   { _id: false },
 );
 
-interface Coupons {
+interface ICoupons {
   id: string;
   code: string;
   description: string;
@@ -191,7 +191,7 @@ interface Coupons {
   validity: CouponValidity;
 }
 
-const CouponSchema = new Schema<Coupons>(
+const CouponSchema = new Schema<ICoupons>(
   {
     code: { type: String, required: true, unique: true },
     description: { type: String },
@@ -203,14 +203,14 @@ const CouponSchema = new Schema<Coupons>(
       required: true,
     },
     supplierId: { type: String },
-    couponDetails: { type: CouponDetailsSchema, required: true },
-    functionality: { type: CouponFunctionalitySchema, required: true },
-    validity: { type: CouponValiditySchema, required: true },
+    couponDetails: { type: CouponDetailsSchema },
+    functionality: { type: CouponFunctionalitySchema },
+    validity: { type: CouponValiditySchema },
   },
   { timestamps: true, versionKey: false },
 );
 
 //create coupons model
-const CouponsModel = model<Coupons>('Coupon', CouponSchema);
+const CouponsModel = model<ICoupons>('Coupon', CouponSchema);
 
-export { Coupons, CouponsModel };
+export { ICoupons, CouponsModel };

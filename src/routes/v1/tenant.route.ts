@@ -630,30 +630,14 @@ tenantRouter.post(
 
 tenantRouter.post(
   '/home-section/:id',
-  authMiddleware({
-    productPermissions: {
-      createProduct: true,
-      editProduct: true,
-      deleteProduct: true,
-      productDetailReport: true,
-    },
-    userPermissions: { salesReports: true },
-  }),
+  authMiddleware(),
   validate({ body: homeSectionSchema, params: idSchema }),
   homeSection,
 );
 
 tenantRouter.post(
   '/marketing-page/:id',
-  authMiddleware({
-    productPermissions: {
-      createProduct: true,
-      editProduct: true,
-      deleteProduct: true,
-      productDetailReport: true,
-    },
-    userPermissions: { salesReports: true },
-  }),
+  authMiddleware(),
   validate({ body: marketingPageSchema, params: idSchema }),
   createMarketingPage,
 );
@@ -674,7 +658,6 @@ tenantRouter.get(
 );
 
 tenantRouter.get('/:id', authMiddleware(), getTenant);
-
 
 tenantRouter.patch(
   '/home-section/:id',
