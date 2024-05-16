@@ -17,7 +17,7 @@ interface IUser extends Document {
     country: string;
     addressType: 'Home' | 'Word';
   }>;
-  phoneNumber: string;
+  phoneNo: string;
   billingAddress?: string;
   paymentMethods: Array<{
     cardholderName: string;
@@ -39,7 +39,7 @@ const userSchema = new Schema<IUser>({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  phoneNumber: { type: String, required: true },
+  phoneNo: { type: String, required: true },
   password: { type: String, required: true },
   shippingAddresses: [
     {

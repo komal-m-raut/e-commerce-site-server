@@ -27,17 +27,22 @@ const userTypeModel: {
 type IModel = IAdmin | ITenant | IUser;
 export const createOtp = catchAsync(async (req, res, next) => {
   const { phoneNo, email, userType, userId } = req.body;
-  const { type } = req.params;
+  const { type } = req.params as { type: 'phoneNo' | 'email' };
   const user = userTypeModel[
     userType as keyof typeof userTypeModel
   ] as Model<IModel>;
-  let currUser = await user
-    .findOne({
-      $or: [{ _id: userId }, { phoneNo }, { email }],
-    })
-    .lean()
-    .exec();
-  if (!currUser) {
+  let currUser = await user.findById(userId).lean().exec();
+
+  if (currUser) {
+    if (currUser[type]) {
+      return new SuccessResponse(
+        `${currUser[type]} already verified for this userId`,
+        {
+          userId: currUser._id,
+        },
+      ).send(res);
+    }
+  } else {
     currUser = await user.create({});
   }
 
@@ -125,7 +130,6 @@ export const validateOtp = catchAsync(async (req, res) => {
     {
       otp: 1,
       category: 1,
-
       otpFor: 1,
     },
   ).exec();
