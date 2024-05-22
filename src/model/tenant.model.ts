@@ -19,13 +19,13 @@ interface HomeSection {
 }
 
 const homeSectionSchema = new Schema<HomeSection>({
-  preset: { type: String, required: true },
-  headerTemplate: { type: String, required: true },
-  navTemplate: { type: String, required: true },
+  preset: { type: String },
+  headerTemplate: { type: String },
+  navTemplate: { type: String },
   sections: [
     {
-      cardTemplate: { type: String, required: true },
-      heading: { type: String, required: true },
+      cardTemplate: { type: String },
+      heading: { type: String },
       cards: [
         {
           cssProperties: { type: Schema.Types.Mixed },
@@ -49,14 +49,14 @@ interface MarketingPage {
 }
 
 const marketingPageSchema = new Schema<MarketingPage>({
-  title: { type: String, required: true },
-  slug: { type: String, required: true },
-  html: { type: String, required: true },
-  status: { type: String, required: true },
+  title: { type: String },
+  slug: { type: String },
+  html: { type: String },
+  status: { type: String },
   seo: {
-    title: { type: String, required: true },
+    title: { type: String },
     keywords: [{ type: String }],
-    description: { type: String, required: true },
+    description: { type: String },
   },
 });
 
@@ -65,6 +65,7 @@ interface ITenant extends Document {
   phoneNo: number;
   email: string;
   password: string;
+  domain: string;
   customHomeSection: HomeSection;
   marketingPages: MarketingPage[];
   role: PopulatedDoc<Schema.Types.ObjectId & IRole>;
@@ -78,6 +79,7 @@ const TenantSchema = new Schema<ITenant>(
     phoneNo: { type: Number, unique: true },
     email: { type: String, unique: true },
     password: { type: String },
+    domain: { type: String, unique: true },
     customHomeSection: { type: homeSectionSchema },
     marketingPages: [marketingPageSchema],
     role: {

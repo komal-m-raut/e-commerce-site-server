@@ -102,12 +102,12 @@ interface ITenantCompany extends Document {
 
 const CompanySchema: Schema = new Schema(
   {
-    name: { type: String },
+    name: { type: String, required: true},
     description: { type: String },
     aadhaarNumber: { type: String, unique: true },
     aadhaarCard: { type: String },
     adminApproval: { type: Boolean, default: false },
-    owner: { type: Schema.Types.ObjectId, ref: 'Tenant' },
+    owner: { type: Schema.Types.ObjectId, ref: 'Tenant', required: true},
     organizationDetails: { type: [organizationDetailsSchema] },
     basicInfo: { type: basicInfoSchema },
     bankingInfo: { type: bankingInfoSchema },

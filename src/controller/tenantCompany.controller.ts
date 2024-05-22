@@ -25,6 +25,7 @@ export const createTenantCompany = catchAsync(async (req, res, next) => {
   // Create new company
   const company = await CompanyModel.create({
     name,
+    ...req.body,
     owner: ownerId,
   });
 
@@ -49,7 +50,7 @@ export const updateTenantCompany = catchAsync(async (req, res, next) => {
   } else if (req.originalUrl.includes('verify-gstin')) {
     path = 'gstNumber';
   } else if (!req.originalUrl.includes('/update-company')) {
-    throw next(new Error('Invalid path'));
+    path = 'companyDetails';
   }
 
   if (path) {
@@ -70,6 +71,24 @@ export const updateTenantCompany = catchAsync(async (req, res, next) => {
       runValidators: true,
     },
   )
+    .lean()
+    .exec();
+
+  if (!company) {
+    throw next(new NotFoundError('Company not found'));
+  }
+
+  return new SuccessResponse('Company updated successfully', company).send(res);
+});
+
+export const updateTenantCompanyDetails = catchAsync(async (req, res, next) => {
+  const updates = req.body;
+  const companyId = req.params.id;
+
+  const company = await CompanyModel.findByIdAndUpdate(companyId, updates, {
+    new: true,
+    runValidators: true,
+  })
     .lean()
     .exec();
 

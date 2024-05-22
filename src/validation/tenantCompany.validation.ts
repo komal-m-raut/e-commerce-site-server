@@ -2,6 +2,27 @@ import Joi from 'joi';
 
 export const createTenantCompanySchema = Joi.object({
   name: Joi.string().required(),
+  description: Joi.string(),
+  aadhaarNumber: Joi.string()
+    .length(12)
+    .pattern(/^[0-9]+$/)
+    .messages({
+      'string.length': `Aadhaar Number should have an exact length of 12`,
+      'string.pattern.base': `Aadhaar Number should only contain digits`,
+    }),
+  aadhaarCard: Joi.string(),
+});
+
+export const updateTenantCompanySchema = Joi.object({
+  description: Joi.string(),
+  aadhaarNumber: Joi.string()
+    .length(12)
+    .pattern(/^[0-9]+$/)
+    .messages({
+      'string.length': `Aadhaar Number should have an exact length of 12`,
+      'string.pattern.base': `Aadhaar Number should only contain digits`,
+    }),
+  aadhaarCard: Joi.string(),
 });
 
 export const verifyGstSchema = Joi.object({

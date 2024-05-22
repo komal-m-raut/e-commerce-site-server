@@ -4,18 +4,14 @@ import { TenantModel } from '@src/model/tenant.model';
 import {
   AuthFailureError,
   BadRequestError,
-  InternalError,
-  NoDataError,
   NotFoundError,
 } from '@src/utils/apiError';
 import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
-import { TenantBrandModel } from '@src/model/sub-company/tenantBrand.model';
-import { TenantWarehouseModel } from '@src/model/sub-company/tenantWarehouse.model';
 
 // Get all tenants
 export const getAllTenants = catchAsync(async (req, res, next) => {
-  const itemsPerPage = Number(req.params.itemsPerPage) || 10;
-  const pageCount = Number(req.params.pageCount) || 1;
+  const itemsPerPage = Number(req.query.itemsPerPage) || 10;
+  const pageCount = Number(req.query.pageCount) || 1;
   const skip = itemsPerPage * (pageCount - 1);
   const totalTenants = await TenantModel.countDocuments().exec();
   const tenants = await TenantModel.find()
@@ -56,7 +52,7 @@ export const createTenant = catchAsync(async (req, res, next) => {
   const existingTenant = await TenantModel.findOne({
     email,
     phoneNo,
-  }).exec();
+  }).populate('role').exec();
   if (!existingTenant) {
     throw next(new BadRequestError('Email or Phone is not verified yet'));
   }
@@ -79,12 +75,24 @@ export const createTenant = catchAsync(async (req, res, next) => {
   // Populate role after successful update
   const { userPermissions, productPermissions } = updatedTenant.role;
 
-  // Generate token
+  // Extract and filter permissions
+  const filterPermissions = (
+    permissions: Record<string, any>,
+  ): Record<string, any> => {
+    return Object.entries(permissions)
+      .filter(([_, value]) => value)
+      .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+  };
+
+  const extractedUserPermissions = filterPermissions(userPermissions);
+  const extractedProductPermissions = filterPermissions(productPermissions);
+
+  // Create and send JWT token
   const token = generateToken({
     id: updatedTenant._id,
     userType: 'tenant',
-    userPermissions: userPermissions,
-    productPermissions: productPermissions,
+    userPermissions: extractedUserPermissions,
+    productPermissions: extractedProductPermissions,
   });
 
   return new SuccessResponse('Tenant updated successfully', {
@@ -97,7 +105,7 @@ export const createTenantPassword = catchAsync(async (req, res, next) => {
   const { userId, name, password } = req.body;
 
   // Check if email and phoneNo is already verified
-  const tenant = await TenantModel.findById(userId).exec();
+  const tenant = await TenantModel.findById(userId).populate('role').exec();
   if (!tenant?.email || !tenant?.phoneNo) {
     throw next(new BadRequestError('Email or Phone is not verified yet'));
   }
@@ -120,12 +128,24 @@ export const createTenantPassword = catchAsync(async (req, res, next) => {
   // Populate role after successful update
   const { userPermissions, productPermissions } = tenant.role;
 
-  // Generate token
+  // Extract and filter permissions
+  const filterPermissions = (
+    permissions: Record<string, any>,
+  ): Record<string, any> => {
+    return Object.entries(permissions)
+      .filter(([_, value]) => value)
+      .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+  };
+
+  const extractedUserPermissions = filterPermissions(userPermissions);
+  const extractedProductPermissions = filterPermissions(productPermissions);
+
+  // Create and send JWT token
   const token = generateToken({
     id: tenant._id,
     userType: 'tenant',
-    userPermissions: userPermissions,
-    productPermissions: productPermissions,
+    userPermissions: extractedUserPermissions,
+    productPermissions: extractedProductPermissions,
   });
 
   return new SuccessResponse('Tenant updated successfully', {
@@ -181,57 +201,17 @@ export const loginTenant = catchAsync(async (req, res, next) => {
 
 // Update a tenant
 export const updateTenant = catchAsync(async (req, res, next) => {
-  const { decoded } = req.body;
-  const brandData = {
-    brandName: req.body.brandName,
-    catalogueDetails: req.body.catalogueDetails,
-    brandLogo: req.body.brandLogo,
-    documentOfProof: req.body.documentOfProof,
-    categories: req.body.categories,
-    countryOrigin: req.body.countryOrigin,
-    website: req.body.website,
-  };
-  const newBrand = await TenantBrandModel.create(brandData);
-  if (!newBrand) {
-    throw next(new NoDataError(`Failed to create brand`));
-  }
-  const warehouseData = {
-    warehouseName: req.body.warehouseName,
-    warehousePinCode: req.body.warehousePinCode,
-    gstinDetails: req.body.gstinDetails,
-    warehouseAddress: req.body.warehouseAddress,
-    city: req.body.city,
-    state: req.body.state,
-    country: req.body.country,
-    warehouseEmail: req.body.warehouseEmail,
-    warehouseContact: req.body.warehouseContact,
-    operationStartTime: req.body.operationStartTime,
-    operationEndTime: req.body.operationEndTime,
-    perDayOrderCapacity: req.body.perDayOrderCapacity,
-    warehouseManager: req.body.warehouseManager,
-  };
+  const { id } = req.params;
+  const updateData = req.body;
 
-  const newWarehouse = await TenantWarehouseModel.create(warehouseData);
-  if (!newBrand) {
-    throw next(new NoDataError(`Failed to create warehouse`));
-  }
-
-  const tenant = await TenantModel.findByIdAndUpdate(
-    decoded.id,
-    {
-      ...req.body,
-      warehouseInfo: newWarehouse,
-      brandInfo: newBrand,
-    },
-    {
-      new: true,
-    },
-  )
+  const tenant = await TenantModel.findByIdAndUpdate(id, updateData, {
+    new: true,
+  })
     .lean()
     .exec();
 
   if (!tenant) {
-    throw next(new NotFoundError(`Tenant with id ${decoded.id} not found`));
+    throw next(new NotFoundError(`Tenant with id ${id} not found`));
   }
 
   return new SuccessResponse('success', tenant).send(res);
@@ -252,10 +232,31 @@ export const deleteTenant = catchAsync(async (req, res, next) => {
   }).send(res);
 });
 
+//*Domain
+
+export const updateTenantDomain = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { domain } = req.body;
+
+  const tenant = await TenantModel.findByIdAndUpdate(
+    id,
+    { domain },
+    { new: true },
+  )
+    .lean()
+    .exec();
+
+  if (!tenant) {
+    throw next(new NotFoundError(`Tenant with id ${id} not found`));
+  }
+
+  return new SuccessMsgResponse('Domain added successfully').send(res);
+});
+
 //*Miscellaneous
 
 export const homeSection = catchAsync(async (req, res, next) => {
-  const { id } = req.body.params;
+  const { id } = req.params; // Change this line
   const homeSection = {
     preset: req.body.preset,
     headerTemplate: req.body.headerTemplate,
@@ -295,13 +296,15 @@ export const createMarketingPage = catchAsync(async (req, res, next) => {
 export const updateMarketingPage = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { marketingPageId, updatedData } = req.body;
+  console.log(marketingPageId,"id");
   const tenant = await TenantModel.findById(id).exec();
   if (!tenant) {
     throw next(new NotFoundError(`Tenant with id ${id} not found`));
   }
   const marketingPageIndex = tenant.marketingPages.findIndex(
-    (page) => page._id === marketingPageId,
+    (page) => page._id.toString() === marketingPageId,
   );
+  console.log(marketingPageIndex,"index");
   if (marketingPageIndex === -1) {
     throw next(
       new NotFoundError(`Marketing page with id ${marketingPageId} not found`),

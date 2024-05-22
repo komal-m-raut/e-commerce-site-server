@@ -46,60 +46,8 @@ export const createTenantPasswordSchema = Joi.object({
   userId: validateObjectId(),
 });
 
-export const updateTenantSchema = Joi.object({
-  businessInfo: Joi.object({
-    gstin: Joi.string(),
-    pan: Joi.string(),
-    businessName: Joi.string(),
-    businessOwnerName: Joi.string(),
-    businessModel: Joi.string(),
-    natureOfBusiness: Joi.string(),
-    tryyonForPlannet: Joi.string(),
-    yearsOfOperation: Joi.number(),
-    avgMrp: Joi.number(),
-    avgSellingPrice: Joi.number(),
-    avgMonthlyTurnover: Joi.number(),
-    percentageOfOnlineBusiness: Joi.number(),
-  }),
-  contactInfo: Joi.object({
-    businessOwnerEmail: Joi.string().email(),
-    businessOwnerContact: Joi.string(),
-    organizationEmail: Joi.string().email(),
-    organizationContact: Joi.string(),
-    primaryEmailId: Joi.string().email(),
-    primaryContactName: Joi.string(),
-    primaryContactNumber: Joi.string(),
-  }),
-  warehouseInfo: Joi.object({
-    warehousePinCode: Joi.string(),
-    gstinDetails: Joi.string(),
-    warehouseAddress: Joi.string(),
-    city: Joi.string(),
-    state: Joi.string(),
-    country: Joi.string(),
-    warehouseEmail: Joi.string().email(),
-    warehouseContact: Joi.string(),
-    operationStartTime: Joi.string(),
-    operationEndTime: Joi.string(),
-    perDayOrderCapacity: Joi.number(),
-  }),
-  bankingInfo: Joi.object({
-    accountHolderName: Joi.string(),
-    accountNumber: Joi.string(),
-    ifscCode: Joi.string(),
-    accountType: Joi.string(),
-    bankName: Joi.string(),
-    bankLocation: Joi.string(),
-    cheque: Joi.string(),
-  }),
-  brandInfo: Joi.object({
-    brandName: Joi.string(),
-    catalogueDetails: Joi.string(),
-    brandLogo: Joi.string(),
-    documentOfProof: Joi.string(),
-    rootCategory: Joi.string(),
-    mainCategory: Joi.string(),
-  }),
+export const updateDomainSchema = Joi.object({
+  domain: Joi.string().optional(),
 });
 
 export const homeSectionSchema = Joi.object({

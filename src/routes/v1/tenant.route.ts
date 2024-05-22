@@ -9,6 +9,7 @@ import {
   homeSection,
   loginTenant,
   updateMarketingPage,
+  updateTenantDomain,
 } from '@src/controller/tenant.controller';
 import { createTenantWarehouse } from '@src/controller/tenantWarehouse.controller';
 import authMiddleware from '@src/middleware/auth';
@@ -22,6 +23,7 @@ import {
   loginTenantSchema,
   marketingPageSchema,
   marketingPageUpdateSchema,
+  updateDomainSchema,
 } from '@src/validation/tenant.validation';
 import { createTenantWarehouseSchema } from '@src/validation/tenantWarehouse.validation';
 import { Router } from 'express';
@@ -30,11 +32,13 @@ import {
   organizationDetailsSchema,
   updateBankingInfoSchema,
   updateBasicInfoSchema,
+  updateTenantCompanySchema,
   verifyGstSchema,
 } from '@src/validation/tenantCompany.validation';
 import {
   createTenantCompany,
   updateTenantCompany,
+  updateTenantCompanyDetails,
 } from '@src/controller/tenantCompany.controller';
 
 const tenantRouter: Router = Router();
@@ -165,9 +169,59 @@ tenantRouter.post(
  */
 tenantRouter.post('/login', validate({ body: loginTenantSchema }), loginTenant);
 
+//*PATCH ROUTE
+
+/**
+ * @swagger
+ * /v1/tenant/update-domain/{id}:
+ *   patch:
+ *     tags:
+ *       - Tenant
+ *     summary: Update tenant domain
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the tenant
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               domain:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Tenant domain updated successfully
+ *       404:
+ *         description: Tenant not found
+ *       500:
+ *         description: Failed to update tenant domain
+ */
+
+tenantRouter.patch(
+  '/update-domain/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: updateDomainSchema, params: idSchema }),
+  updateTenantDomain,
+);
+
 //? Company routes
 
-//*POST ROUTE
 /**
  * @swagger
  * /v1/tenant/create-company:
@@ -188,12 +242,16 @@ tenantRouter.post('/login', validate({ body: loginTenantSchema }), loginTenant);
  *             properties:
  *               name:
  *                 type: string
+ *                 description: The name of the company. This field is required.
  *               description:
  *                 type: string
- *               aadharNumber:
+ *                 description: The description of the company.
+ *               aadhaarNumber:
  *                 type: string
- *               aadharCard:
+ *                 description: The Aadhaar number of the company. This field should have an exact length of 12 and should only contain digits.
+ *               aadhaarCard:
  *                 type: string
+ *                 description: The Aadhaar card of the company.
  *     responses:
  *       200:
  *         description: Company created successfully
@@ -220,6 +278,61 @@ tenantRouter.post(
 
 //*PATCH ROUTE
 
+/**
+ * @swagger
+ * /v1/tenant/{id}:
+ *   patch:
+ *     tags:
+ *       - Tenant
+ *     summary: Update a company
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the company to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               description:
+ *                 type: string
+ *                 description: The description of the company.
+ *               aadhaarNumber:
+ *                 type: string
+ *                 description: The Aadhaar number of the company. This field should have an exact length of 12 and should only contain digits.
+ *               aadhaarCard:
+ *                 type: string
+ *                 description: The Aadhaar card of the company.
+ *     responses:
+ *       200:
+ *         description: Company updated successfully
+ *       400:
+ *         description: Company with this name is already registered by the owner
+ *       500:
+ *         description: Failed to update company
+ */
+
+tenantRouter.patch(
+  '/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  validate({ body: updateTenantCompanySchema, params: idSchema }),
+  updateTenantCompanyDetails,
+);
 /**
  * @swagger
  * /v1/tenant/verify-gstin/{id}:
@@ -628,12 +741,119 @@ tenantRouter.post(
   createTenantBrand,
 );
 
-tenantRouter.post(
+//*PATCH ROUTE
+/**
+ * @swagger
+ * /v1/tenant/home-section/{id}:
+ *   patch:
+ *     tags:
+ *       - Tenant
+ *     summary: Update home section details
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the tenant
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               preset:
+ *                 type: string
+ *               headerTemplate:
+ *                 type: string
+ *               navTemplate:
+ *                 type: string
+ *               sections:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     cardTemplate:
+ *                       type: string
+ *                     heading:
+ *                       type: string
+ *                     cards:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           cssProperties:
+ *                             type: object
+ *     responses:
+ *       200:
+ *         description: Home section updated successfully
+ *       404:
+ *         description: Home section not found
+ *       500:
+ *         description: Failed to update home section
+ */
+
+tenantRouter.patch(
   '/home-section/:id',
   authMiddleware(),
   validate({ body: homeSectionSchema, params: idSchema }),
   homeSection,
 );
+
+/**
+ * @swagger
+ * /v1/tenant/marketing-page/{id}:
+ *   post:
+ *     tags:
+ *       - Tenant
+ *     summary: Update marketing page details
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the tenant
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               slug:
+ *                 type: string
+ *               html:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [active, inactive]
+ *               seo:
+ *                 type: object
+ *                 properties:
+ *                   title:
+ *                     type: string
+ *                   keywords:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                   description:
+ *                     type: string
+ *     responses:
+ *       200:
+ *         description: Marketing page updated successfully
+ *       404:
+ *         description: Marketing page not found
+ *       500:
+ *         description: Failed to update marketing page
+ */
 
 tenantRouter.post(
   '/marketing-page/:id',
@@ -642,7 +862,112 @@ tenantRouter.post(
   createMarketingPage,
 );
 
+// tenantRouter.patch(
+//   '/home-section/:id',
+//   validate({ body: homeSectionSchema, params: idSchema }),
+//   homeSection,
+// );
+
+/**
+ * @swagger
+ * /v1/tenant/marketing-page/{id}:
+ *   patch:
+ *     tags:
+ *       - Tenant
+ *     summary: Update marketing page details
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the tenant
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               marketingPageId:
+ *                 type: string
+ *                 pattern: "^[0-9a-fA-F]{24}$"
+ *                 description: Valid MongoDB ObjectID
+ *               updatedData:
+ *                 type: object
+ *                 properties:
+ *                   title:
+ *                     type: string
+ *                   slug:
+ *                     type: string
+ *                   html:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                     enum: [active, inactive]
+ *                   seo:
+ *                     type: object
+ *                     properties:
+ *                       title:
+ *                         type: string
+ *                       keywords:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                       description:
+ *                         type: string
+ *     responses:
+ *       200:
+ *         description: Marketing page updated successfully
+ *       404:
+ *         description: Marketing page not found
+ *       500:
+ *         description: Failed to update marketing page
+ */
+
+tenantRouter.patch(
+  '/marketing-page/:id',
+  validate({ body: marketingPageUpdateSchema, params: idSchema }),
+  updateMarketingPage,
+);
+
 //*GET ROUTE
+
+/**
+ * @swagger
+ * /v1/tenant:
+ *   get:
+ *     tags:
+ *       - Tenant
+ *     summary: Get all tenants with pagination
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: itemsPerPage
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of tenants to return per page
+ *       - in: query
+ *         name: pageCount
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to return
+ *     responses:
+ *       200:
+ *         description: List of all tenants
+ *       400:
+ *         description: Invalid query parameters
+ *       404:
+ *         description: No tenants found
+ *       500:
+ *         description: Failed to get tenants
+ */
+
 tenantRouter.get(
   '/',
   authMiddleware({
@@ -657,18 +982,43 @@ tenantRouter.get(
   getAllTenants,
 );
 
-tenantRouter.get('/:id', authMiddleware(), getTenant);
+/**
+ * @swagger
+ * /v1/tenant/{id}:
+ *   get:
+ *     tags:
+ *       - Tenant
+ *     summary: Get a single tenant
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the tenant
+ *     responses:
+ *       200:
+ *         description: Tenant found successfully
+ *       404:
+ *         description: Tenant not found
+ *       500:
+ *         description: Failed to get tenant
+ */
 
-tenantRouter.patch(
-  '/home-section/:id',
-  validate({ body: homeSectionSchema, params: idSchema }),
-  homeSection,
-);
-
-tenantRouter.patch(
-  '/marketing-page/:id',
-  validate({ body: marketingPageUpdateSchema, params: idSchema }),
-  updateMarketingPage,
+tenantRouter.get(
+  '/:id',
+  authMiddleware({
+    productPermissions: {
+      createProduct: true,
+      editProduct: true,
+      deleteProduct: true,
+      productDetailReport: true,
+    },
+    userPermissions: { salesReports: true },
+  }),
+  getTenant,
 );
 
 //*DELETE ROUTE
