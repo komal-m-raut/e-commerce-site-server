@@ -1,3 +1,4 @@
+import { TenantModel } from '@src/model/tenant.model';
 import { UserModel } from '@src/model/user.model';
 import { decrypt, encrypt, generateToken } from '@src/services/auth.service';
 import {
@@ -10,7 +11,8 @@ import catchAsync from '@src/utils/catchAsync';
 
 // User sign up
 export const createUser = catchAsync(async (req, res, next) => {
-  const { firstName, lastName, email, phoneNumber, password } = req.body;
+  const { firstName, lastName, email, phoneNumber, password, domain } =
+    req.body;
   // Check if email or phone number is already registered
   const existingUser = await UserModel.findOne({
     $or: [{ email }, { phoneNumber }],
@@ -26,6 +28,7 @@ export const createUser = catchAsync(async (req, res, next) => {
     );
   }
 
+  const tenantId = await TenantModel.findOne({ domain }).lean().exec();
   // Hash password
   const hashedPassword = await encrypt(password);
   const user = await UserModel.create({
@@ -34,6 +37,7 @@ export const createUser = catchAsync(async (req, res, next) => {
     email,
     phoneNumber,
     password: hashedPassword,
+    tenantId,
   });
   if (!user) {
     throw next(new NotFoundError('Failed to create user'));
@@ -81,7 +85,8 @@ export const loginUser = catchAsync(async (req, res, next) => {
     userType: 'user',
     userPermissions: extractedUserPermissions,
     productPermissions: extractedProductPermissions,
-  });  return new SuccessResponse('success', { token, user }).send(res);
+  });
+  return new SuccessResponse('success', { token, user }).send(res);
 });
 
 export const updateUser = catchAsync(async (req, res, next) => {

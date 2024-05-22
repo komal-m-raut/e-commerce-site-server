@@ -19,7 +19,6 @@ import { Router } from 'express';
 
 const userRouter: Router = Router();
 
-//*POST ROUTE
 /**
  * @swagger
  * /v1/user/register:
@@ -39,6 +38,7 @@ const userRouter: Router = Router();
  *               - email
  *               - phoneNumber
  *               - password
+ *               - domain
  *             properties:
  *               firstName:
  *                 type: string
@@ -55,6 +55,9 @@ const userRouter: Router = Router();
  *               password:
  *                 type: string
  *                 description: The user's password.
+ *               domain:
+ *                 type: string
+ *                 description: The user's domain.
  *     responses:
  *       200:
  *         description: User registered successfully
@@ -112,6 +115,8 @@ userRouter.post('/login', validate({ body: loginUserSchema }), loginUser);
  *     tags:
  *       - User
  *     summary: Update user information
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: userId
  *         in: path
