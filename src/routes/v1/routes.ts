@@ -13,6 +13,7 @@ import marketplaceProductRouter from './marketplaceProduct.route';
 import tenantProductRouter from './tenantProduct.route';
 import tenantSkuRouter from './tenantSKU.route';
 import couponRouter from './coupon.route';
+import paymentRouter from './payment.route';
 
 const router = Router();
 
@@ -29,6 +30,7 @@ router.use('/settings', settingsRouter);
 router.use('/sku', skuRouter);
 router.use('/tenant/sku', tenantSkuRouter);
 router.use('/coupons', couponRouter);
+router.use('/payment', paymentRouter);
 router.use('/invoice', invoiceRouter);
 
 export default router;
