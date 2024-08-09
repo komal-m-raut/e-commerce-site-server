@@ -117,6 +117,7 @@ export const createOtp = catchAsync(async (req, res, next) => {
 
   return new SuccessResponse('OTP sent successfully', {
     userId: currUser._id,
+    otp
   }).send(res);
 });
 
