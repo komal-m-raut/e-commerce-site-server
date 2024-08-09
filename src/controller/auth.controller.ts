@@ -80,7 +80,7 @@ export const createOtp = catchAsync(async (req, res, next) => {
       templateType: 'otp' as const,
     };
 
-    await sendMail(mailOptions, next);
+    // await sendMail(mailOptions, next);
 
     console.log('otp', otp);
     await OtpModel.create({
@@ -103,7 +103,7 @@ export const createOtp = catchAsync(async (req, res, next) => {
       ],
       templateType: 'otp' as const,
     };
-    await sendMail(mailOptions, next);
+    // await sendMail(mailOptions, next);
 
     console.log('otp', otp);
     await OtpModel.create({
