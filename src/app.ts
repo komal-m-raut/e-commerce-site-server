@@ -46,13 +46,11 @@ if (config.env === 'production') {
 
 // v1 api routes
 app.use('/v1', router);
-app.get('/favicon.ico', (req, res) => res.status(204));
-app.get('/images/icons/gear.png', (req, res) => res.status(204));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // send back a 404 error for any unknown api request
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, _res: Response, next: NextFunction) => {
   const error = new NotFoundError(`Not Found - ${req.originalUrl}`);
   next(error);
 });
