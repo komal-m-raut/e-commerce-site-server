@@ -20,7 +20,7 @@ build
 coverage
 
 # API keys and secrets
-# .env uncomment after cloning the repo
+.env
 
 # Dependency directory
 node_modules
